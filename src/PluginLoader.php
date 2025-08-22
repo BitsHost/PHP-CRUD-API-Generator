@@ -1,20 +1,40 @@
 <?php
+namespace App;
 
-class PluginLoader {
-    private $plugins = [];
+interface PluginInterface
+{
+    public function register(HookManager $hooks): void;
+}
 
-    public function load($plugin) {
-        // Assume plugins are located in the plugins directory
-        $pluginPath = __DIR__ . '/plugins/' . $plugin . '.php';
-        if (file_exists($pluginPath)) {
-            include $pluginPath;
-            $this->plugins[] = $plugin;
-        } else {
-            throw new Exception('Plugin not found: ' . $plugin);
+class PluginLoader
+{
+    /**
+     * Loads all plugins from the plugins directory and registers them.
+     *
+     * @param HookManager $hooks
+     * @param string $pluginDir
+     */
+    public function loadPlugins(HookManager $hooks, string $pluginDir = __DIR__ . '/../plugins'): void
+    {
+        foreach (glob($pluginDir . '/*.php') as $file) {
+            require_once $file;
+            $className = $this->getClassNameFromFile($file);
+
+            if ($className && class_exists($className) && in_array(PluginInterface::class, class_implements($className))) {
+                $plugin = new $className();
+                $plugin->register($hooks);
+            }
         }
     }
 
-    public function getPlugins() {
-        return $this->plugins;
+    /**
+     * Attempts to derive the fully-qualified class name from the file.
+     * You may customize this for your plugin namespace.
+     */
+    private function getClassNameFromFile($file): ?string
+    {
+        // Assumes plugins are in the global Plugins namespace
+        $basename = basename($file, '.php');
+        return "Plugins\\$basename";
     }
 }
