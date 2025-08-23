@@ -9,6 +9,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Database;
 use App\Router;
 use App\Authenticator;
+use App\HookManager;
+use App\PluginLoader;
 
 // Load configs
 $dbConfig = require __DIR__ . '/../config/db.php';
@@ -17,7 +19,13 @@ $apiConfig = require __DIR__ . '/../config/api.php';
 // Bootstrap
 $db = new Database($dbConfig);
 $auth = new Authenticator($apiConfig);
-$router = new Router($db, $auth);
+$hooks = new HookManager();
+
+// Load plugins
+$pluginLoader = new PluginLoader();
+$pluginLoader->loadPlugins($hooks);
+
+$router = new Router($db, $auth, $hooks);
 
 // Dispatch
 $router->route($_GET);
