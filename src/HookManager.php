@@ -11,7 +11,7 @@ class HookManager
     /**
      * Register a callback for a specific action and timing.
      *
-     * @param string $action E.g. "create", "read", "update", "delete", or "*" for all actions
+     * @param string $action E.g. "create", "read", "update", "delete", or "*" for all
      * @param callable $callback
      * @param string $when "before" or "after"
      */
