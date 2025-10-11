@@ -83,6 +83,11 @@ class Router
 
                 case 'columns':
                     if (isset($query['table'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
                         $this->enforceRbac('read', $query['table']);
                         echo json_encode($this->inspector->getColumns($query['table']));
                     } else {
@@ -93,14 +98,44 @@ class Router
 
                 case 'list':
                     if (isset($query['table'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
                         $this->enforceRbac('list', $query['table']);
                         $opts = [
                             'filter' => $query['filter'] ?? null,
                             'sort' => $query['sort'] ?? null,
-                            'page' => $query['page'] ?? 1,
-                            'page_size' => $query['page_size'] ?? 20,
+                            'page' => Validator::validatePage($query['page'] ?? 1),
+                            'page_size' => Validator::validatePageSize($query['page_size'] ?? 20),
+                            'fields' => $query['fields'] ?? null,
                         ];
+                        // Validate sort if provided
+                        if (isset($opts['sort']) && !Validator::validateSort($opts['sort'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid sort parameter']);
+                            break;
+                        }
                         echo json_encode($this->api->list($query['table'], $opts));
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Missing table parameter']);
+                    }
+                    break;
+
+                case 'count':
+                    if (isset($query['table'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
+                        $this->enforceRbac('list', $query['table']); // Use 'list' permission for count
+                        $opts = [
+                            'filter' => $query['filter'] ?? null,
+                        ];
+                        echo json_encode($this->api->count($query['table'], $opts));
                     } else {
                         http_response_code(400);
                         echo json_encode(['error' => 'Missing table parameter']);
@@ -109,6 +144,16 @@ class Router
 
                 case 'read':
                     if (isset($query['table'], $query['id'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
+                        if (!Validator::validateId($query['id'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid id parameter']);
+                            break;
+                        }
                         $this->enforceRbac('read', $query['table']);
                         echo json_encode($this->api->read($query['table'], $query['id']));
                     } else {
@@ -121,6 +166,11 @@ class Router
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         http_response_code(405);
                         echo json_encode(['error' => 'Method Not Allowed']);
+                        break;
+                    }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
                         break;
                     }
                     $this->enforceRbac('create', $query['table']);
@@ -137,6 +187,16 @@ class Router
                         echo json_encode(['error' => 'Method Not Allowed']);
                         break;
                     }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                        break;
+                    }
+                    if (!isset($query['id']) || !Validator::validateId($query['id'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing id parameter']);
+                        break;
+                    }
                     $this->enforceRbac('update', $query['table']);
                     $data = $_POST;
                     if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
@@ -147,12 +207,64 @@ class Router
 
                 case 'delete':
                     if (isset($query['table'], $query['id'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
+                        if (!Validator::validateId($query['id'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid id parameter']);
+                            break;
+                        }
                         $this->enforceRbac('delete', $query['table']);
                         echo json_encode($this->api->delete($query['table'], $query['id']));
                     } else {
                         http_response_code(400);
                         echo json_encode(['error' => 'Missing table or id parameter']);
                     }
+                    break;
+
+                case 'bulk_create':
+                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                        http_response_code(405);
+                        echo json_encode(['error' => 'Method Not Allowed']);
+                        break;
+                    }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                        break;
+                    }
+                    $this->enforceRbac('create', $query['table']);
+                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                    if (!is_array($data) || empty($data)) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or empty JSON array']);
+                        break;
+                    }
+                    echo json_encode($this->api->bulkCreate($query['table'], $data));
+                    break;
+
+                case 'bulk_delete':
+                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                        http_response_code(405);
+                        echo json_encode(['error' => 'Method Not Allowed']);
+                        break;
+                    }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                        break;
+                    }
+                    $this->enforceRbac('delete', $query['table']);
+                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                    if (!isset($data['ids']) || !is_array($data['ids']) || empty($data['ids'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or empty ids array. Send JSON with "ids" field.']);
+                        break;
+                    }
+                    echo json_encode($this->api->bulkDelete($query['table'], $data['ids']));
                     break;
 
                 case 'openapi':
