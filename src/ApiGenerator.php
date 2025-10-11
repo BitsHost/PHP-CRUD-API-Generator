@@ -16,32 +16,119 @@ class ApiGenerator
     }
 
     /**
-     * Enhanced list: supports filtering, sorting, pagination.
+     * Enhanced list: supports filtering, sorting, pagination, field selection.
      */
     public function list(string $table, array $opts = []): array
     {
         $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
 
+        // --- Field Selection ---
+        $selectedFields = '*';
+        if (!empty($opts['fields'])) {
+            $requestedFields = array_map('trim', explode(',', $opts['fields']));
+            $validFields = array_filter($requestedFields, fn($f) => in_array($f, $colNames, true));
+            if (!empty($validFields)) {
+                $selectedFields = implode(', ', array_map(fn($f) => "`$f`", $validFields));
+            }
+        }
+
         // --- Filtering ---
         $where = [];
         $params = [];
+        $paramCounter = 0; // To handle duplicate column filters
         if (!empty($opts['filter'])) {
-            // Example filter: ['name:Alice', 'email:gmail.com']
+            // Example filter: ['name:eq:Alice', 'age:gt:18', 'email:like:%gmail.com']
             $filters = explode(',', $opts['filter']);
             foreach ($filters as $f) {
-                $parts = explode(':', $f, 2);
-                if (count($parts) === 2 && in_array($parts[0], $colNames, true)) {
+                $parts = explode(':', $f, 3);
+                if (count($parts) === 2) {
+                    // Backward compatibility: col:value means col = value
                     $col = $parts[0];
                     $val = $parts[1];
-                    // Use LIKE for partial match, = for exact
-                    if (str_contains($val, '%')) {
-                        $where[] = "`$col` LIKE :$col";
-                        $params[$col] = $val;
-                    } else {
-                        $where[] = "`$col` = :$col";
-                        $params[$col] = $val;
+                    if (in_array($col, $colNames, true)) {
+                        if (str_contains($val, '%')) {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        } else {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        }
                     }
+                } elseif (count($parts) === 3 && in_array($parts[0], $colNames, true)) {
+                    // New format: col:operator:value
+                    $col = $parts[0];
+                    $operator = strtolower($parts[1]);
+                    $val = $parts[2];
+                    $paramKey = "{$col}_{$paramCounter}";
+                    
+                    switch ($operator) {
+                        case 'eq':
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'neq':
+                        case 'ne':
+                            $where[] = "`$col` != :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gt':
+                            $where[] = "`$col` > :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gte':
+                        case 'ge':
+                            $where[] = "`$col` >= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lt':
+                            $where[] = "`$col` < :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lte':
+                        case 'le':
+                            $where[] = "`$col` <= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'like':
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'in':
+                            // Support for IN operator: col:in:val1|val2|val3
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_in_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'notin':
+                        case 'nin':
+                            // Support for NOT IN operator: col:notin:val1|val2|val3
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_nin_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'null':
+                            $where[] = "`$col` IS NULL";
+                            break;
+                        case 'notnull':
+                            $where[] = "`$col` IS NOT NULL";
+                            break;
+                    }
+                    $paramCounter++;
                 }
             }
         }
@@ -73,7 +160,7 @@ class ApiGenerator
         $offset = ($page - 1) * $pageSize;
         $limit = "LIMIT $pageSize OFFSET $offset";
 
-        $sql = "SELECT * FROM `$table`";
+        $sql = "SELECT $selectedFields FROM `$table`";
         if ($where) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }

@@ -11,7 +11,12 @@ OpenAPI (Swagger) docs, and zero code generation.
 - Auto-discovers tables and columns
 - Full CRUD endpoints for any table
 - Configurable authentication (API Key, Basic Auth, JWT, or none)
-- Advanced query features: filtering, sorting, pagination
+- **Advanced query features:**
+  - **Field selection** - Choose specific columns to return
+  - **Advanced filtering** - Support for multiple comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull)
+  - **Sorting** - Multi-column sorting with ascending/descending order
+  - **Pagination** - Efficient pagination with metadata
+- **Input validation** - Comprehensive validation to prevent SQL injection and invalid inputs
 - RBAC: per-table role-based access control
 - Admin panel (minimal)
 - OpenAPI (Swagger) JSON endpoint for instant docs
@@ -114,23 +119,44 @@ curl -u admin:secret "http://localhost/index.php?action=list&table=users"
 ---
 
 
-### 🔄 Advanced Query Features (Filtering, Sorting, Pagination)
+### 🔄 Advanced Query Features (Filtering, Sorting, Pagination, Field Selection)
 
 The `list` action endpoint now supports advanced query parameters:
 
 | Parameter    | Type    | Description                                                                                       |
 |--------------|---------|---------------------------------------------------------------------------------------------------|
-| `filter`     | string  | Filter rows by column values. Format: `filter=col1:value1,col2:value2`. Use `%` for wildcards.    |
+| `filter`     | string  | Filter rows by column values. Format: `filter=col:op:value` or `filter=col:value` (backward compatible). Use `,` to combine multiple filters. |
 | `sort`       | string  | Sort by columns. Comma-separated. Use `-` prefix for DESC. Example: `sort=-created_at,name`       |
 | `page`       | int     | Page number (1-based). Default: `1`                                                               |
 | `page_size`  | int     | Number of rows per page (max 100). Default: `20`                                                  |
+| `fields`     | string  | Select specific fields. Comma-separated. Example: `fields=id,name,email`                          |
+
+#### Filter Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `eq` or `:` | Equals | `filter=name:eq:Alice` or `filter=name:Alice` |
+| `neq` or `ne` | Not equals | `filter=status:neq:deleted` |
+| `gt` | Greater than | `filter=age:gt:18` |
+| `gte` or `ge` | Greater than or equal | `filter=price:gte:100` |
+| `lt` | Less than | `filter=stock:lt:10` |
+| `lte` or `le` | Less than or equal | `filter=discount:lte:50` |
+| `like` | Pattern match | `filter=email:like:%@gmail.com` |
+| `in` | In list (pipe-separated) | `filter=status:in:active|pending` |
+| `notin` or `nin` | Not in list | `filter=role:notin:admin|super` |
+| `null` | Is NULL | `filter=deleted_at:null:` |
+| `notnull` | Is NOT NULL | `filter=email:notnull:` |
 
 **Examples:**
 
-- `GET /index.php?action=list&table=users&filter=name:Alice`
-- `GET /index.php?action=list&table=users&sort=-created_at,name`
-- `GET /index.php?action=list&table=users&page=2&page_size=10`
-- `GET /index.php?action=list&table=users&filter=email:%gmail.com&sort=name&page=1&page_size=5`
+- **Basic filtering:** `GET /index.php?action=list&table=users&filter=name:Alice`
+- **Advanced filtering:** `GET /index.php?action=list&table=users&filter=age:gt:18,status:eq:active`
+- **Field selection:** `GET /index.php?action=list&table=users&fields=id,name,email`
+- **Sorting:** `GET /index.php?action=list&table=users&sort=-created_at,name`
+- **Pagination:** `GET /index.php?action=list&table=users&page=2&page_size=10`
+- **Combined query:** `GET /index.php?action=list&table=users&filter=email:like:%gmail.com&sort=name&page=1&page_size=5&fields=id,name,email`
+- **IN operator:** `GET /index.php?action=list&table=orders&filter=status:in:pending|processing|shipped`
+- **Multiple conditions:** `GET /index.php?action=list&table=products&filter=price:gte:10,price:lte:100,stock:gt:0`
 
 **Response:**
 ```json
@@ -206,6 +232,9 @@ get:
 - **Enable authentication for any public deployment!**
 - Never commit real credentials—use `.gitignore` and example configs.
 - Restrict DB user privileges.
+- **Input validation**: All user inputs (table names, column names, IDs, filters) are validated to prevent SQL injection and invalid queries.
+- **Parameterized queries**: All database queries use prepared statements with bound parameters.
+- **RBAC enforcement**: Role-based access control is enforced at the routing level before any database operations.
 
 ---
 
