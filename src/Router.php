@@ -207,6 +207,48 @@ class Router
                     }
                     break;
 
+                case 'bulk_create':
+                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                        http_response_code(405);
+                        echo json_encode(['error' => 'Method Not Allowed']);
+                        break;
+                    }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                        break;
+                    }
+                    $this->enforceRbac('create', $query['table']);
+                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                    if (!is_array($data) || empty($data)) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or empty JSON array']);
+                        break;
+                    }
+                    echo json_encode($this->api->bulkCreate($query['table'], $data));
+                    break;
+
+                case 'bulk_delete':
+                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                        http_response_code(405);
+                        echo json_encode(['error' => 'Method Not Allowed']);
+                        break;
+                    }
+                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                        break;
+                    }
+                    $this->enforceRbac('delete', $query['table']);
+                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                    if (!isset($data['ids']) || !is_array($data['ids']) || empty($data['ids'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Invalid or empty ids array. Send JSON with "ids" field.']);
+                        break;
+                    }
+                    echo json_encode($this->api->bulkDelete($query['table'], $data['ids']));
+                    break;
+
                 case 'openapi':
                     // No per-table RBAC needed by default
                     echo json_encode(OpenApiGenerator::generate(

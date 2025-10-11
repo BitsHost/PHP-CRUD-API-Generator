@@ -10,6 +10,7 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 - Auto-discovers tables and columns
 - Full CRUD endpoints for any table
+- **Bulk operations** - Create or delete multiple records efficiently
 - Configurable authentication (API Key, Basic Auth, JWT, or none)
 - **Advanced query features:**
   - **Field selection** - Choose specific columns to return
@@ -92,28 +93,104 @@ return [
 
 All requests go through `public/index.php` with `action` parameter.
 
-| Action    | Method | Usage Example                                               |
-|-----------|--------|------------------------------------------------------------|
-| tables    | GET    | `/index.php?action=tables`                                 |
-| columns   | GET    | `/index.php?action=columns&table=users`                    |
-| list      | GET    | `/index.php?action=list&table=users`                       |
-| read      | GET    | `/index.php?action=read&table=users&id=1`                  |
-| create    | POST   | `/index.php?action=create&table=users` (form POST)         |
-| update    | POST   | `/index.php?action=update&table=users&id=1` (form POST)    |
-| delete    | POST   | `/index.php?action=delete&table=users&id=1`                |
-| openapi   | GET    | `/index.php?action=openapi`                                |
-| login     | POST   | `/index.php?action=login` (JWT only)                       |
+| Action       | Method | Usage Example                                               |
+|--------------|--------|-------------------------------------------------------------|
+| tables       | GET    | `/index.php?action=tables`                                  |
+| columns      | GET    | `/index.php?action=columns&table=users`                     |
+| list         | GET    | `/index.php?action=list&table=users`                        |
+| read         | GET    | `/index.php?action=read&table=users&id=1`                   |
+| create       | POST   | `/index.php?action=create&table=users` (form POST or JSON)  |
+| update       | POST   | `/index.php?action=update&table=users&id=1` (form POST or JSON) |
+| delete       | POST   | `/index.php?action=delete&table=users&id=1`                 |
+| bulk_create  | POST   | `/index.php?action=bulk_create&table=users` (JSON array)    |
+| bulk_delete  | POST   | `/index.php?action=bulk_delete&table=users` (JSON with ids) |
+| openapi      | GET    | `/index.php?action=openapi`                                 |
+| login        | POST   | `/index.php?action=login` (JWT only)                        |
 
 ---
 
 ## 🤖 Example `curl` Commands
 
 ```sh
+# List tables
 curl http://localhost/index.php?action=tables
+
+# List users with API key
 curl -H "X-API-Key: changeme123" "http://localhost/index.php?action=list&table=users"
+
+# JWT login
 curl -X POST -d "username=admin&password=secret" http://localhost/index.php?action=login
+
+# List with JWT token
 curl -H "Authorization: Bearer <token>" "http://localhost/index.php?action=list&table=users"
+
+# Basic auth
 curl -u admin:secret "http://localhost/index.php?action=list&table=users"
+
+# Bulk create
+curl -X POST -H "Content-Type: application/json" \
+  -d '[{"name":"Alice","email":"alice@example.com"},{"name":"Bob","email":"bob@example.com"}]' \
+  "http://localhost/index.php?action=bulk_create&table=users"
+
+# Bulk delete
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"ids":[1,2,3]}' \
+  "http://localhost/index.php?action=bulk_delete&table=users"
+```
+
+---
+
+### 💪 Bulk Operations
+
+The API supports bulk operations for efficient handling of multiple records:
+
+#### Bulk Create
+
+Create multiple records in a single transaction. If any record fails, the entire operation is rolled back.
+
+**Endpoint:** `POST /index.php?action=bulk_create&table=users`
+
+**Request Body (JSON array):**
+```json
+[
+  {"name": "Alice", "email": "alice@example.com", "age": 25},
+  {"name": "Bob", "email": "bob@example.com", "age": 30},
+  {"name": "Charlie", "email": "charlie@example.com", "age": 35}
+]
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "created": 3,
+  "data": [
+    {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 25},
+    {"id": 2, "name": "Bob", "email": "bob@example.com", "age": 30},
+    {"id": 3, "name": "Charlie", "email": "charlie@example.com", "age": 35}
+  ]
+}
+```
+
+#### Bulk Delete
+
+Delete multiple records by their IDs in a single query.
+
+**Endpoint:** `POST /index.php?action=bulk_delete&table=users`
+
+**Request Body (JSON):**
+```json
+{
+  "ids": [1, 2, 3, 4, 5]
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "deleted": 5
+}
 ```
 
 ---

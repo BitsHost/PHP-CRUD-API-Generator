@@ -261,4 +261,60 @@ class ApiGenerator
         }
         return ['success' => true];
     }
+
+    /**
+     * Bulk create multiple records
+     */
+    public function bulkCreate(string $table, array $records): array
+    {
+        if (empty($records)) {
+            return ['error' => 'No records provided for bulk create'];
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $created = [];
+            foreach ($records as $data) {
+                $created[] = $this->create($table, $data);
+            }
+            $this->pdo->commit();
+            return [
+                'success' => true,
+                'created' => count($created),
+                'data' => $created
+            ];
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            return ['error' => 'Bulk create failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Bulk delete multiple records by IDs
+     */
+    public function bulkDelete(string $table, array $ids): array
+    {
+        if (empty($ids)) {
+            return ['error' => 'No IDs provided for bulk delete'];
+        }
+
+        $pk = $this->inspector->getPrimaryKey($table);
+        $placeholders = [];
+        $params = [];
+        
+        foreach ($ids as $i => $id) {
+            $key = "id_$i";
+            $placeholders[] = ":$key";
+            $params[$key] = $id;
+        }
+
+        $sql = "DELETE FROM `$table` WHERE `$pk` IN (" . implode(',', $placeholders) . ")";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        
+        return [
+            'success' => true,
+            'deleted' => $stmt->rowCount()
+        ];
+    }
 }
