@@ -124,6 +124,24 @@ class Router
                     }
                     break;
 
+                case 'count':
+                    if (isset($query['table'])) {
+                        if (!Validator::validateTableName($query['table'])) {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'Invalid table name']);
+                            break;
+                        }
+                        $this->enforceRbac('list', $query['table']); // Use 'list' permission for count
+                        $opts = [
+                            'filter' => $query['filter'] ?? null,
+                        ];
+                        echo json_encode($this->api->count($query['table'], $opts));
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Missing table parameter']);
+                    }
+                    break;
+
                 case 'read':
                     if (isset($query['table'], $query['id'])) {
                         if (!Validator::validateTableName($query['table'])) {

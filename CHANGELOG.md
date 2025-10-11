@@ -5,6 +5,7 @@
 ### New Features
 - **Advanced Filter Operators**: Support for comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull)
 - **Field Selection**: Select specific fields in list queries using the `fields` parameter
+- **Count Endpoint**: New `count` action to get record counts with optional filtering (no pagination overhead)
 - **Bulk Operations**: 
   - `bulk_create` - Create multiple records in a single transaction
   - `bulk_delete` - Delete multiple records by IDs in a single query
@@ -36,6 +37,7 @@
 - Field selection: `/index.php?action=list&table=users&fields=id,name,email`
 - Advanced filtering: `/index.php?action=list&table=users&filter=age:gt:18,status:eq:active`
 - IN operator: `/index.php?action=list&table=orders&filter=status:in:pending|processing|shipped`
+- Count records: `/index.php?action=count&table=users&filter=status:eq:active`
 - Bulk create: `POST /index.php?action=bulk_create&table=users` with JSON array
 - Bulk delete: `POST /index.php?action=bulk_delete&table=users` with `{"ids":[1,2,3]}`
 

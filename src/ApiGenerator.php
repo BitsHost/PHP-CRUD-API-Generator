@@ -317,4 +317,119 @@ class ApiGenerator
             'deleted' => $stmt->rowCount()
         ];
     }
+
+    /**
+     * Count records with optional filtering
+     */
+    public function count(string $table, array $opts = []): array
+    {
+        $columns = $this->inspector->getColumns($table);
+        $colNames = array_column($columns, 'Field');
+
+        // --- Filtering (same as list method) ---
+        $where = [];
+        $params = [];
+        $paramCounter = 0;
+        if (!empty($opts['filter'])) {
+            $filters = explode(',', $opts['filter']);
+            foreach ($filters as $f) {
+                $parts = explode(':', $f, 3);
+                if (count($parts) === 2) {
+                    $col = $parts[0];
+                    $val = $parts[1];
+                    if (in_array($col, $colNames, true)) {
+                        if (str_contains($val, '%')) {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        } else {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        }
+                    }
+                } elseif (count($parts) === 3 && in_array($parts[0], $colNames, true)) {
+                    $col = $parts[0];
+                    $operator = strtolower($parts[1]);
+                    $val = $parts[2];
+                    $paramKey = "{$col}_{$paramCounter}";
+                    
+                    switch ($operator) {
+                        case 'eq':
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'neq':
+                        case 'ne':
+                            $where[] = "`$col` != :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gt':
+                            $where[] = "`$col` > :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gte':
+                        case 'ge':
+                            $where[] = "`$col` >= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lt':
+                            $where[] = "`$col` < :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lte':
+                        case 'le':
+                            $where[] = "`$col` <= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'like':
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'in':
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_in_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'notin':
+                        case 'nin':
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_nin_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'null':
+                            $where[] = "`$col` IS NULL";
+                            break;
+                        case 'notnull':
+                            $where[] = "`$col` IS NOT NULL";
+                            break;
+                    }
+                    $paramCounter++;
+                }
+            }
+        }
+
+        $sql = "SELECT COUNT(*) FROM `$table`";
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $count = (int)$stmt->fetchColumn();
+
+        return ['count' => $count];
+    }
 }

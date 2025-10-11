@@ -154,4 +154,26 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals(1, count($result['data']));
         $this->assertEquals('Alice', $result['data'][0]['name']);
     }
+
+    public function testCount()
+    {
+        $result = $this->api->count($this->table);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('count', $result);
+        $this->assertEquals(5, $result['count']); // We inserted 5 records
+    }
+
+    public function testCountWithFilter()
+    {
+        $result = $this->api->count($this->table, ['filter' => 'status:eq:active']);
+        $this->assertIsArray($result);
+        $this->assertEquals(3, $result['count']); // Alice, Bob, Eve are active
+    }
+
+    public function testCountWithMultipleFilters()
+    {
+        $result = $this->api->count($this->table, ['filter' => 'age:gte:25,status:eq:active']);
+        $this->assertIsArray($result);
+        $this->assertGreaterThanOrEqual(2, $result['count']); // At least Alice (25) and Bob (30)
+    }
 }

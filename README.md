@@ -98,6 +98,7 @@ All requests go through `public/index.php` with `action` parameter.
 | tables       | GET    | `/index.php?action=tables`                                  |
 | columns      | GET    | `/index.php?action=columns&table=users`                     |
 | list         | GET    | `/index.php?action=list&table=users`                        |
+| count        | GET    | `/index.php?action=count&table=users`                       |
 | read         | GET    | `/index.php?action=read&table=users&id=1`                   |
 | create       | POST   | `/index.php?action=create&table=users` (form POST or JSON)  |
 | update       | POST   | `/index.php?action=update&table=users&id=1` (form POST or JSON) |
@@ -190,6 +191,40 @@ Delete multiple records by their IDs in a single query.
 {
   "success": true,
   "deleted": 5
+}
+```
+
+---
+
+### 📊 Count Records
+
+Get the total count of records in a table with optional filtering. This is useful for analytics and doesn't include pagination overhead.
+
+**Endpoint:** `GET /index.php?action=count&table=users`
+
+**Query Parameters:**
+- `filter` - (Optional) Same filter syntax as the list endpoint
+
+**Examples:**
+
+```sh
+# Count all users
+curl "http://localhost/index.php?action=count&table=users"
+
+# Count active users
+curl "http://localhost/index.php?action=count&table=users&filter=status:eq:active"
+
+# Count users over 18
+curl "http://localhost/index.php?action=count&table=users&filter=age:gt:18"
+
+# Count with multiple filters
+curl "http://localhost/index.php?action=count&table=users&filter=status:eq:active,age:gte:18"
+```
+
+**Response:**
+```json
+{
+  "count": 42
 }
 ```
 
