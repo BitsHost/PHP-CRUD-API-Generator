@@ -24,6 +24,8 @@ OpenAPI (Swagger) docs, and zero code generation.
 - Clean PSR-4 codebase
 - PHPUnit tests and extensible architecture
 
+📖 **[See detailed enhancement documentation →](ENHANCEMENTS.md)**
+
 ---
 
 ## 📦 Installation
