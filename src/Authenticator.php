@@ -5,15 +5,78 @@ namespace App;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+/**
+ * API Authenticator
+ * 
+ * Provides multiple authentication methods for securing API access.
+ * Supports API keys, Basic Auth, JWT tokens, and OAuth (placeholder).
+ * 
+ * Features:
+ * - Multiple authentication methods (API Key, Basic Auth, JWT, OAuth)
+ * - JWT token generation and validation
+ * - Role-based access via JWT claims
+ * - Configurable authentication requirements
+ * - Automatic 401 responses for unauthorized access
+ * 
+ * @package App
+ * @author  PHP-CRUD-API-Generator
+ * @version 1.0.0
+ */
 class Authenticator
 {
+    /**
+     * Authentication configuration
+     * 
+     * @var array
+     */
     public array $config;
 
+    /**
+     * Initialize authenticator with configuration
+     * 
+     * @param array $config Authentication configuration with keys:
+     *                      - auth_enabled: Enable/disable authentication (bool)
+     *                      - auth_method: Method to use ('apikey', 'basic', 'jwt', 'oauth')
+     *                      - api_keys: Array of valid API keys (for 'apikey' method)
+     *                      - basic_users: Array of username => password pairs (for 'basic')
+     *                      - jwt_secret: Secret key for JWT signing (for 'jwt')
+     *                      - jwt_issuer: JWT issuer claim (optional)
+     *                      - jwt_audience: JWT audience claim (optional)
+     * 
+     * @example
+     * $auth = new Authenticator([
+     *     'auth_enabled' => true,
+     *     'auth_method' => 'jwt',
+     *     'jwt_secret' => 'your-secret-key',
+     *     'jwt_issuer' => 'api.example.com'
+     * ]);
+     */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * Authenticate the current request
+     * 
+     * Validates credentials based on the configured authentication method.
+     * Returns true if authentication is disabled or credentials are valid.
+     * 
+     * Supported methods:
+     * - apikey: Checks X-API-Key header or api_key query parameter
+     * - basic: HTTP Basic Authentication with username/password
+     * - jwt: Bearer token validation with JWT
+     * - oauth: OAuth bearer token (placeholder implementation)
+     * 
+     * @return bool True if authenticated or auth disabled, false otherwise
+     * 
+     * @example
+     * if ($auth->authenticate()) {
+     *     // User is authenticated
+     * } else {
+     *     // Authentication failed
+     * }
+     */
     public function authenticate(): bool
     {
         if (empty($this->config['auth_enabled'])) {
@@ -61,7 +124,20 @@ class Authenticator
         }
     }
 
-    public function requireAuth()
+    /**
+     * Require authentication or exit with 401 Unauthorized
+     * 
+     * Checks authentication and terminates execution with 401 status
+     * if authentication fails. Use this to protect API endpoints.
+     * 
+     * @return void Exits script if authentication fails
+     * 
+     * @example
+     * // At the beginning of a protected endpoint
+     * $auth->requireAuth();
+     * // Code here only runs if authenticated
+     */
+    public function requireAuth(): void
     {
         if (!$this->authenticate()) {
             http_response_code(401);
@@ -71,6 +147,27 @@ class Authenticator
         }
     }
 
+    /**
+     * Create a JWT token with custom payload
+     * 
+     * Generates a signed JWT token with the provided payload and standard claims.
+     * Automatically adds issued-at (iat), expiration (exp), issuer (iss), and audience (aud).
+     * 
+     * @param array $payload        Custom claims to include in the token (e.g., ['sub' => 'user123', 'role' => 'admin'])
+     * @param int   $expireSeconds  Token lifetime in seconds (default: 3600 = 1 hour)
+     * 
+     * @return string Signed JWT token string
+     * 
+     * @throws \Exception If JWT library not available
+     * 
+     * @example
+     * // Create token for authenticated user
+     * $token = $auth->createJwt([
+     *     'sub' => 'user123',
+     *     'role' => 'admin',
+     *     'email' => 'admin@example.com'
+     * ], 7200); // 2 hours
+     */
     public function createJwt(array $payload, int $expireSeconds = 3600): string
     {
         $now = time();
@@ -84,6 +181,20 @@ class Authenticator
         return JWT::encode($payload, $this->config['jwt_secret'], 'HS256');
     }
 
+    /**
+     * Validate a JWT token
+     * 
+     * Verifies the JWT signature and checks standard claims (exp, iss, aud).
+     * 
+     * @param string $jwt JWT token string to validate
+     * 
+     * @return bool True if token is valid, false otherwise
+     * 
+     * @example
+     * if ($auth->validateJwt($token)) {
+     *     // Token is valid
+     * }
+     */
     public function validateJwt(string $jwt): bool
     {
         try {
@@ -95,6 +206,14 @@ class Authenticator
         }
     }
 
+    /**
+     * Get HTTP request headers
+     * 
+     * Returns all HTTP request headers as an associative array.
+     * Falls back to manual extraction if getallheaders() not available.
+     * 
+     * @return array Associative array of header name => value pairs
+     */
     private function getHeaders(): array
     {
         if (function_exists('getallheaders')) {

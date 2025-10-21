@@ -6,12 +6,14 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 ---
 
-## 🚀 ## 🚀 Features
+## 🚀 Features
 
 - Auto-discovers tables and columns
 - Full CRUD endpoints for any table
 - **Bulk operations** - Create or delete multiple records efficiently
 - Configurable authentication (API Key, Basic Auth, JWT, or none)
+- **Rate limiting** - Prevent API abuse with configurable request limits
+- **Request logging** - Comprehensive logging for debugging and monitoring
 - **Advanced query features:**
   - **Field selection** - Choose specific columns to return
   - **Advanced filtering** - Support for multiple comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull)
@@ -25,6 +27,8 @@ OpenAPI (Swagger) docs, and zero code generation.
 - PHPUnit tests and extensible architecture
 
 📖 **[See detailed enhancement documentation →](ENHANCEMENTS.md)**
+📖 **[Rate Limiting Documentation →](docs/RATE_LIMITING.md)**
+📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
 
 ---
 
@@ -68,9 +72,20 @@ return [
     'jwt_secret' => 'YourSuperSecretKey',
     'jwt_issuer' => 'yourdomain.com',
     'jwt_audience' => 'yourdomain.com',
-    'oauth_providers' => [
-        // 'google' => ['client_id' => '', 'client_secret' => '', ...]
-    ]
+    
+    // Rate limiting (recommended for production)
+    'rate_limit' => [
+        'enabled' => true,
+        'max_requests' => 100,      // 100 requests
+        'window_seconds' => 60,     // per 60 seconds (1 minute)
+    ],
+    
+    // Request logging (recommended for production)
+    'logging' => [
+        'enabled' => true,
+        'log_dir' => __DIR__ . '/../logs',
+        'log_level' => 'info',      // debug, info, warning, error
+    ],
 ];
 ```
 
@@ -344,11 +359,18 @@ get:
 ## 🛡️ Security Notes
 
 - **Enable authentication for any public deployment!**
+- **Enable rate limiting in production** to prevent abuse
+- **Enable request logging** for security auditing and debugging
 - Never commit real credentials—use `.gitignore` and example configs.
 - Restrict DB user privileges.
 - **Input validation**: All user inputs (table names, column names, IDs, filters) are validated to prevent SQL injection and invalid queries.
 - **Parameterized queries**: All database queries use prepared statements with bound parameters.
 - **RBAC enforcement**: Role-based access control is enforced at the routing level before any database operations.
+- **Rate limiting**: Configurable request limits prevent API abuse and DoS attacks.
+- **Sensitive data redaction**: Passwords, tokens, and API keys are automatically redacted from logs.
+
+📖 **[Rate Limiting Documentation →](docs/RATE_LIMITING.md)**
+📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
 
 ---
 
