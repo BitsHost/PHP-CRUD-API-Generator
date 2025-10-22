@@ -35,26 +35,32 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 ## 📦 Installation
 
-### Option 1: Install as Library (Recommended)
+### Option 1: Install as Library (Recommended) ⚡
 
-Install via Composer (Packagist):
+**Just 4 simple steps:**
 
 ```bash
+# 1. Install via Composer
 composer require bitshost/php-crud-api-generator
-```
 
-Then copy 3 files to your project root and modify 2 lines:
-
-```bash
-# Copy files
+# 2. Copy 3 files to your project root
 copy vendor/bitshost/php-crud-api-generator/public/index.php index.php
 copy vendor/bitshost/php-crud-api-generator/dashboard.html dashboard.html
 copy vendor/bitshost/php-crud-api-generator/health.php health.php
 
-# Edit index.php - change 2 config paths to point to vendor (see QUICK_START.md)
+# 3. Edit index.php - Change 2 lines (point config paths to vendor)
+# Change: require __DIR__ . '/config/...'
+# To:     require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/...'
+
+# 4. Configure & run
+notepad vendor/bitshost/php-crud-api-generator/config/db.php
+notepad vendor/bitshost/php-crud-api-generator/config/api.php
+php -S localhost:8000
 ```
 
-**See [Quick Start Guide →](docs/QUICK_START.md) for detailed 5-minute setup.**
+**That's it!** Total modifications: **2 lines of code** 🚀
+
+**📖 [5-Minute Quick Start Guide →](docs/QUICK_START.md)**
 
 ### Option 2: Standalone Project
 
