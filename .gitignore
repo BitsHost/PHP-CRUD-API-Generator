@@ -1,8 +1,25 @@
+# Dependencies
 /vendor/
+/composer.lock
+
+# Configuration files (contain secrets)
 /config/db.php
 /config/api.php
+/config/api.local.php
 /.env
+
+# Logs and storage
+/storage/
+/logs/
+*.log
+
+# Testing artifacts
+jwt_token.txt
+*.token
+test_*.txt
+secrets_*.txt
+
+# IDE and OS
 .DS_Store
 .idea/
 /tests/output/
-/composer.lock

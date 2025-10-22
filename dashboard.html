@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-healthy {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-degraded {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-critical {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .metric-value.small {
+            font-size: 16px;
+        }
+        
+        .health-score {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .health-score-value {
+            font-size: 64px;
+            font-weight: 700;
+            color: #27ae60;
+        }
+        
+        .health-score-value.degraded {
+            color: #f39c12;
+        }
+        
+        .health-score-value.critical {
+            color: #e74c3c;
+        }
+        
+        .chart {
+            height: 200px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .alert.critical {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        
+        .alert.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        
+        .alert.info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+        
+        .timestamp {
+            color: #95a5a6;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ecf0f1;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="refresh-indicator">
+        <span>Auto-refresh: <span id="countdown">30</span>s</span>
+        <button onclick="loadData()">Refresh Now</button>
+    </div>
+    
+    <div class="container">
+        <h1>🔍 API Monitoring Dashboard</h1>
+        
+        <div id="dashboard">
+            <div class="no-data">
+                <div class="loading"></div>
+                <p>Loading monitoring data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let countdown = 30;
+        let countdownInterval;
+        
+        async function loadData() {
+            try {
+                const response = await fetch('health.php?format=json');
+                const data = await response.json();
+                renderDashboard(data);
+                resetCountdown();
+            } catch (error) {
+                console.error('Failed to load monitoring data:', error);
+                document.getElementById('dashboard').innerHTML = `
+                    <div class="card">
+                        <div class="alert critical">
+                            ❌ Failed to load monitoring data. Please check if the API is running.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderDashboard(data) {
+            const dashboard = document.getElementById('dashboard');
+            
+            const statusClass = `status-${data.status}`;
+            const scoreClass = data.health_score >= 80 ? '' : data.health_score >= 50 ? 'degraded' : 'critical';
+            
+            dashboard.innerHTML = `
+                <div class="dashboard-grid">
+                    <!-- Health Status Card -->
+                    <div class="card">
+                        <h2>Overall Health</h2>
+                        <div class="health-score">
+                            <div class="health-score-value ${scoreClass}">${data.health_score}</div>
+                            <div style="margin-top: 8px;">
+                                <span class="status-badge ${statusClass}">${data.status}</span>
+                            </div>
+                        </div>
+                        <div class="timestamp">Last updated: ${data.timestamp}</div>
+                        <div class="timestamp">Uptime: ${data.uptime}</div>
+                    </div>
+                    
+                    <!-- Request Metrics Card -->
+                    <div class="card">
+                        <h2>📊 Request Metrics</h2>
+                        <div class="metric">
+                            <span class="metric-label">Total Requests</span>
+                            <span class="metric-value">${data.statistics.total_requests}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Total Errors</span>
+                            <span class="metric-value">${data.statistics.total_errors}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Error Rate</span>
+                            <span class="metric-value small">${data.statistics.error_rate}%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Metrics Card -->
+                    <div class="card">
+                        <h2>⚡ Performance</h2>
+                        <div class="metric">
+                            <span class="metric-label">Avg Response Time</span>
+                            <span class="metric-value small">${data.statistics.avg_response_time}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Min Response Time</span>
+                            <span class="metric-value small">${data.statistics.min_response_time}ms</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Max Response Time</span>
+                            <span class="metric-value small">${data.statistics.max_response_time}ms</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Metrics Card -->
+                    <div class="card">
+                        <h2>🔒 Security</h2>
+                        <div class="metric">
+                            <span class="metric-label">Auth Failures</span>
+                            <span class="metric-value">${data.statistics.auth_failures}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Rate Limit Hits</span>
+                            <span class="metric-value">${data.statistics.rate_limit_hits}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Time Window</span>
+                            <span class="metric-value small">${data.statistics.time_window} min</span>
+                        </div>
+                    </div>
+                </div>
+                
+                ${renderSystemMetrics(data.system_metrics)}
+                ${renderIssues(data.issues)}
+                ${renderAlerts(data.recent_alerts)}
+                ${renderStatusCodes(data.statistics.status_code_distribution)}
+            `;
+        }
+        
+        function renderSystemMetrics(metrics) {
+            if (!metrics || Object.keys(metrics).length === 0) {
+                return '';
+            }
+            
+            const memoryUsage = (metrics.memory_usage / 1024 / 1024).toFixed(2);
+            const memoryPeak = (metrics.memory_peak / 1024 / 1024).toFixed(2);
+            const diskFree = (metrics.disk_free / 1024 / 1024 / 1024).toFixed(2);
+            const diskTotal = (metrics.disk_total / 1024 / 1024 / 1024).toFixed(2);
+            
+            return `
+                <div class="card">
+                    <h2>💻 System Metrics</h2>
+                    <div class="metric">
+                        <span class="metric-label">Memory Usage</span>
+                        <span class="metric-value small">${memoryUsage} MB</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Memory Peak</span>
+                        <span class="metric-value small">${memoryPeak} MB</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Disk Free</span>
+                        <span class="metric-value small">${diskFree} / ${diskTotal} GB</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Disk Usage</span>
+                        <span class="metric-value small">${metrics.disk_usage_percent}%</span>
+                    </div>
+                    ${metrics.cpu_load ? `
+                    <div class="metric">
+                        <span class="metric-label">CPU Load (1/5/15 min)</span>
+                        <span class="metric-value small">
+                            ${metrics.cpu_load['1min'].toFixed(2)} / 
+                            ${metrics.cpu_load['5min'].toFixed(2)} / 
+                            ${metrics.cpu_load['15min'].toFixed(2)}
+                        </span>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        function renderIssues(issues) {
+            if (!issues || issues.length === 0) {
+                return `
+                    <div class="card">
+                        <h2>✅ No Active Issues</h2>
+                        <p style="color: #27ae60; padding: 20px 0; text-align: center;">
+                            All systems operating normally
+                        </p>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="card">
+                    <h2>⚠️ Active Issues</h2>
+                    ${issues.map(issue => `
+                        <div class="alert critical">
+                            ${issue}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function renderAlerts(alerts) {
+            if (!alerts || alerts.length === 0) {
+                return '';
+            }
+            
+            return `
+                <div class="card">
+                    <h2>🔔 Recent Alerts (Last 60 minutes)</h2>
+                    ${alerts.map(alert => `
+                        <div class="alert ${alert.level}">
+                            <strong>${alert.level.toUpperCase()}:</strong> ${alert.message}
+                            <div class="timestamp">${alert.datetime}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function renderStatusCodes(distribution) {
+            if (!distribution || Object.keys(distribution).length === 0) {
+                return '';
+            }
+            
+            return `
+                <div class="card">
+                    <h2>📈 HTTP Status Code Distribution</h2>
+                    ${Object.entries(distribution).map(([code, count]) => {
+                        const percentage = (count / Object.values(distribution).reduce((a, b) => a + b, 0) * 100).toFixed(1);
+                        return `
+                            <div class="metric">
+                                <span class="metric-label">${code} ${getStatusText(code)}</span>
+                                <span class="metric-value small">${count} (${percentage}%)</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        function getStatusText(code) {
+            const codes = {
+                200: 'OK',
+                201: 'Created',
+                204: 'No Content',
+                400: 'Bad Request',
+                401: 'Unauthorized',
+                403: 'Forbidden',
+                404: 'Not Found',
+                429: 'Too Many Requests',
+                500: 'Internal Server Error',
+                503: 'Service Unavailable'
+            };
+            return codes[code] || '';
+        }
+        
+        function resetCountdown() {
+            countdown = 30;
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            countdownInterval = setInterval(() => {
+                countdown--;
+                document.getElementById('countdown').textContent = countdown;
+                if (countdown <= 0) {
+                    loadData();
+                }
+            }, 1000);
+        }
+        
+        // Initial load
+        loadData();
+    </script>
+</body>
+</html>
