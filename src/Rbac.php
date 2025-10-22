@@ -96,14 +96,27 @@ class Rbac
             return false;
         }
         $perms = $this->roles[$role];
-        // Wildcard table permissions
+        
+        // Check for explicit DENY (empty array or 'deny' marker)
+        // This takes precedence over wildcard permissions
+        if (isset($perms[$table])) {
+            // Empty array = explicit deny
+            if (empty($perms[$table])) {
+                return false;
+            }
+            // Check if action is allowed for this specific table
+            if (in_array($action, $perms[$table], true)) {
+                return true;
+            }
+            // If table is explicitly defined but action not in list, deny
+            return false;
+        }
+        
+        // Wildcard table permissions (only if table not explicitly defined)
         if (isset($perms['*']) && in_array($action, $perms['*'], true)) {
             return true;
         }
-        // Table-specific permissions
-        if (isset($perms[$table]) && in_array($action, $perms[$table], true)) {
-            return true;
-        }
+        
         return false;
     }
 }

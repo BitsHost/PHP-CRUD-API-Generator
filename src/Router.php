@@ -86,6 +86,7 @@ class Router
     private Rbac $rbac;
     private RateLimiter $rateLimiter;
     private RequestLogger $logger;
+    private ?Monitor $monitor = null;
     private array $apiConfig;
     private bool $authEnabled;
     private float $requestStartTime;
@@ -132,6 +133,11 @@ class Router
         
         // Initialize request logger with config
         $this->logger = new RequestLogger($this->apiConfig['logging'] ?? []);
+        
+        // Initialize monitor if enabled
+        if (!empty($this->apiConfig['monitoring']['enabled'])) {
+            $this->monitor = new Monitor($this->apiConfig['monitoring'] ?? []);
+        }
         
         // Track request start time
         $this->requestStartTime = microtime(true);
@@ -269,6 +275,15 @@ class Router
                 $this->rateLimiter->getRequestCount($identifier),
                 $this->rateLimiter->getRemainingRequests($identifier) + $this->rateLimiter->getRequestCount($identifier)
             );
+            
+            // Record security event
+            if ($this->monitor) {
+                $this->monitor->recordSecurityEvent('rate_limit_hit', [
+                    'identifier' => $identifier,
+                    'requests' => $this->rateLimiter->getRequestCount($identifier),
+                ]);
+            }
+            
             $this->rateLimiter->sendRateLimitResponse($identifier);
         }
 
@@ -276,20 +291,84 @@ class Router
         foreach ($this->rateLimiter->getHeaders($identifier) as $name => $value) {
             header("$name: $value");
         }
+        
+        // Record request metric
+        if ($this->monitor) {
+            $this->monitor->recordRequest([
+                'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                'action' => $query['action'] ?? null,
+                'table' => $query['table'] ?? null,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'user' => $this->auth->getCurrentUser()['username'] ?? null,
+            ]);
+        }
 
         // JWT login endpoint (always accessible if method is JWT)
         if (($query['action'] ?? '') === 'login' && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
             $post = $_POST;
-            $users = $this->auth->config['basic_users'] ?? [];
             $user = $post['username'] ?? '';
             $pass = $post['password'] ?? '';
-            if (isset($users[$user]) && $users[$user] === $pass) {
+            
+            $authenticated = false;
+            $userRole = 'readonly'; // default
+            
+            // Try database authentication first (if enabled)
+            if (!empty($this->auth->config['use_database_auth']) && $this->db) {
+                $pdo = $this->db->getPdo();
+                $stmt = $pdo->prepare(
+                    "SELECT id, username, email, password_hash, role, active 
+                     FROM api_users 
+                     WHERE username = :username AND active = 1"
+                );
+                $stmt->execute(['username' => $user]);
+                $dbUser = $stmt->fetch(\PDO::FETCH_ASSOC);
+                
+                if ($dbUser && password_verify($pass, $dbUser['password_hash'])) {
+                    $authenticated = true;
+                    $userRole = $dbUser['role'];
+                    
+                    // Update last login
+                    $updateStmt = $pdo->prepare("UPDATE api_users SET last_login = NOW() WHERE id = :id");
+                    $updateStmt->execute(['id' => $dbUser['id']]);
+                }
+            }
+            
+            // Fallback to config file authentication
+            if (!$authenticated) {
+                $users = $this->auth->config['basic_users'] ?? [];
+                if (isset($users[$user]) && $users[$user] === $pass) {
+                    $authenticated = true;
+                    $userRole = $this->auth->config['user_roles'][$user] ?? 'readonly';
+                }
+            }
+            
+            if ($authenticated) {
                 $this->logger->logAuth('jwt', true, $user);
-                $token = $this->auth->createJwt(['sub' => $user]);
+                
+                // Record auth success
+                if ($this->monitor) {
+                    $this->monitor->recordSecurityEvent('auth_success', [
+                        'method' => 'jwt',
+                        'user' => $user,
+                    ]);
+                }
+                
+                // Create JWT with user role
+                $token = $this->auth->createJwt(['sub' => $user, 'role' => $userRole]);
                 $this->logResponse(['token' => $token], 200, $query);
                 echo json_encode(['token' => $token]);
             } else {
                 $this->logger->logAuth('jwt', false, $user, 'Invalid credentials');
+                
+                // Record auth failure
+                if ($this->monitor) {
+                    $this->monitor->recordSecurityEvent('auth_failure', [
+                        'method' => 'jwt',
+                        'reason' => 'Invalid credentials',
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                    ]);
+                }
+                
                 http_response_code(401);
                 $this->logResponse(['error' => 'Invalid credentials'], 401, $query);
                 echo json_encode(['error' => 'Invalid credentials']);
@@ -306,6 +385,16 @@ class Router
                     $identifier,
                     'Authentication failed'
                 );
+                
+                // Record auth failure
+                if ($this->monitor) {
+                    $this->monitor->recordSecurityEvent('auth_failure', [
+                        'method' => $this->auth->config['auth_method'] ?? 'unknown',
+                        'reason' => 'Authentication failed',
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                    ]);
+                }
+                
                 $this->auth->requireAuth();
             } else {
                 $this->logger->logAuth(
@@ -313,6 +402,14 @@ class Router
                     true,
                     $this->auth->getCurrentUser() ?? $identifier
                 );
+                
+                // Record auth success
+                if ($this->monitor) {
+                    $this->monitor->recordSecurityEvent('auth_success', [
+                        'method' => $this->auth->config['auth_method'] ?? 'unknown',
+                        'user' => $this->auth->getCurrentUser()['username'] ?? $identifier,
+                    ]);
+                }
             }
         }
 
@@ -552,6 +649,17 @@ class Router
                 'trace' => $e->getTraceAsString(),
                 'query' => $query
             ]);
+            
+            // Record error metric
+            if ($this->monitor) {
+                $this->monitor->recordError($e->getMessage(), [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'action' => $query['action'] ?? null,
+                    'table' => $query['table'] ?? null,
+                ]);
+            }
+            
             http_response_code(500);
             $error = ['error' => $e->getMessage()];
             $this->logResponse($error, 500, $query);
@@ -704,5 +812,14 @@ class Router
         ];
 
         $this->logger->logRequest($request, $response, $executionTime);
+        
+        // Record response metric
+        if ($this->monitor) {
+            $this->monitor->recordResponse(
+                $statusCode,
+                $executionTime * 1000, // Convert to milliseconds
+                $response['size']
+            );
+        }
     }
 }

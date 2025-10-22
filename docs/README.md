@@ -14,8 +14,18 @@ Welcome to the PHP-CRUD-API-Generator documentation! This folder contains compre
 ## 🎯 Feature Documentation
 
 ### Core Features
+- **[AUTHENTICATION.md](AUTHENTICATION.md)** ⭐ - Complete authentication guide (API Key, Basic Auth, JWT, RBAC)
 - **[RATE_LIMITING.md](RATE_LIMITING.md)** - Rate limiting configuration and usage
 - **[MONITORING.md](MONITORING.md)** - Monitoring system setup and features
+
+### User Management & Security
+- **[USER_MANAGEMENT.md](USER_MANAGEMENT.md)** - Database user management system
+- **[QUICK_START_USERS.md](QUICK_START_USERS.md)** - 5-minute user setup guide
+- **[SECURITY_RBAC_TESTS.md](SECURITY_RBAC_TESTS.md)** - RBAC testing and verification
+- **[PERFORMANCE_AUTHENTICATION.md](PERFORMANCE_AUTHENTICATION.md)** - Authentication performance optimization
+
+### Data Relationships
+- **[CLIENT_SIDE_JOINS.md](CLIENT_SIDE_JOINS.md)** - Working with related data and client-side joins
 
 ### Implementation Guides
 - **[RATE_LIMITING_IMPLEMENTATION.md](RATE_LIMITING_IMPLEMENTATION.md)** - Detailed rate limiting implementation
@@ -93,6 +103,11 @@ docs/
 
 ### I want to...
 - **Get started quickly** → Read [Main README](../README.md)
+- **Set up authentication** → [AUTHENTICATION.md](AUTHENTICATION.md) ⭐
+- **Add new users** → [QUICK_START_USERS.md](QUICK_START_USERS.md)
+- **Understand RBAC** → [AUTHENTICATION.md - RBAC Section](AUTHENTICATION.md#role-based-access-control-rbac)
+- **Optimize performance** → [PERFORMANCE_AUTHENTICATION.md](PERFORMANCE_AUTHENTICATION.md)
+- **Work with related data** → [CLIENT_SIDE_JOINS.md](CLIENT_SIDE_JOINS.md)
 - **Set up rate limiting** → [RATE_LIMITING.md](RATE_LIMITING.md)
 - **Enable monitoring** → [MONITORING_QUICKSTART.md](MONITORING_QUICKSTART.md)
 - **Understand the code** → [PHPDOC_COMPLETE.md](PHPDOC_COMPLETE.md)
