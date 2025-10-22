@@ -6,12 +6,14 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 ---
 
-## 🚀 ## 🚀 Features
+## 🚀 Features
 
 - Auto-discovers tables and columns
 - Full CRUD endpoints for any table
 - **Bulk operations** - Create or delete multiple records efficiently
 - Configurable authentication (API Key, Basic Auth, JWT, or none)
+- **Rate limiting** - Prevent API abuse with configurable request limits
+- **Request logging** - Comprehensive logging for debugging and monitoring
 - **Advanced query features:**
   - **Field selection** - Choose specific columns to return
   - **Advanced filtering** - Support for multiple comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull)
@@ -25,6 +27,8 @@ OpenAPI (Swagger) docs, and zero code generation.
 - PHPUnit tests and extensible architecture
 
 📖 **[See detailed enhancement documentation →](ENHANCEMENTS.md)**
+📖 **[Rate Limiting Documentation →](docs/RATE_LIMITING.md)**
+📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
 
 ---
 
@@ -68,11 +72,52 @@ return [
     'jwt_secret' => 'YourSuperSecretKey',
     'jwt_issuer' => 'yourdomain.com',
     'jwt_audience' => 'yourdomain.com',
-    'oauth_providers' => [
-        // 'google' => ['client_id' => '', 'client_secret' => '', ...]
-    ]
+    
+    // Rate limiting (recommended for production)
+    'rate_limit' => [
+        'enabled' => true,
+        'max_requests' => 100,      // 100 requests
+        'window_seconds' => 60,     // per 60 seconds (1 minute)
+    ],
+    
+    // Request logging (recommended for production)
+    'logging' => [
+        'enabled' => true,
+        'log_dir' => __DIR__ . '/../logs',
+        'log_level' => 'info',      // debug, info, warning, error
+    ],
 ];
 ```
+
+---
+
+## 🔒 Security Setup (Production)
+
+⚠️ **IMPORTANT:** This framework ships with **example credentials for development**.  
+You **MUST** change these before deploying to production!
+
+### Quick Security Setup:
+
+```bash
+# 1. Generate secure secrets (JWT secret + API keys)
+php scripts/generate_secrets.php
+
+# 2. Update config/api.php with generated secrets
+
+# 3. Create admin user in database
+php scripts/create_user.php admin admin@yoursite.com YourSecurePassword123! admin
+```
+
+### What to Change:
+
+- [ ] `jwt_secret` - Generate with: `php scripts/generate_jwt_secret.php`
+- [ ] `api_keys` - Use long random strings (64+ characters)
+- [ ] Default admin password in `sql/create_api_users.sql`
+- [ ] Database credentials in `config/db.php`
+
+📖 **Full security guide:** [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md)
+
+---
 
 ---
 
@@ -344,11 +389,18 @@ get:
 ## 🛡️ Security Notes
 
 - **Enable authentication for any public deployment!**
+- **Enable rate limiting in production** to prevent abuse
+- **Enable request logging** for security auditing and debugging
 - Never commit real credentials—use `.gitignore` and example configs.
 - Restrict DB user privileges.
 - **Input validation**: All user inputs (table names, column names, IDs, filters) are validated to prevent SQL injection and invalid queries.
 - **Parameterized queries**: All database queries use prepared statements with bound parameters.
 - **RBAC enforcement**: Role-based access control is enforced at the routing level before any database operations.
+- **Rate limiting**: Configurable request limits prevent API abuse and DoS attacks.
+- **Sensitive data redaction**: Passwords, tokens, and API keys are automatically redacted from logs.
+
+📖 **[Rate Limiting Documentation →](docs/RATE_LIMITING.md)**
+📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
 
 ---
 
@@ -360,9 +412,77 @@ get:
 
 ---
 
+### 🔗 Working with Related Data (Client-Side Joins)
+
+Your API provides all the data you need - it's up to the client to decide how to combine it. This approach gives you maximum flexibility and control.
+
+**Current approach:** Fetch related data in separate requests and combine on the client side.
+
+#### Quick Example: Get User with Posts
+
+```javascript
+// 1. Fetch user
+const user = await fetch('/api.php?action=read&table=users&id=123')
+  .then(r => r.json());
+
+// 2. Fetch user's posts
+const posts = await fetch('/api.php?action=list&table=posts&filter=user_id:123')
+  .then(r => r.json());
+
+// 3. Combine however you want
+const userData = {
+  ...user,
+  posts: posts.data
+};
+```
+
+#### Optimization: Use IN Operator for Batch Fetching
+
+```javascript
+// Get multiple related records in one request
+const postIds = '1|2|3|4|5';  // IDs from previous query
+const comments = await fetch(
+  `/api.php?action=list&table=comments&filter=post_id:in:${postIds}`
+).then(r => r.json());
+
+// Group by post_id on client
+const commentsByPost = comments.data.reduce((acc, comment) => {
+  acc[comment.post_id] = acc[comment.post_id] || [];
+  acc[comment.post_id].push(comment);
+  return acc;
+}, {});
+```
+
+#### Parallel Fetching for Performance
+
+```javascript
+// Fetch multiple resources simultaneously
+const [user, posts, comments] = await Promise.all([
+  fetch('/api.php?action=read&table=users&id=123').then(r => r.json()),
+  fetch('/api.php?action=list&table=posts&filter=user_id:123').then(r => r.json()),
+  fetch('/api.php?action=list&table=comments&filter=user_id:123').then(r => r.json())
+]);
+
+// All requests happen at once - much faster!
+```
+
+📖 **[See complete client-side join examples →](docs/CLIENT_SIDE_JOINS.md)**
+
+**Why this approach?**
+- ✅ Client decides what data to fetch and when
+- ✅ Easy to optimize with caching and parallel requests
+- ✅ Different clients can have different data needs
+- ✅ Standard REST API practice
+- ✅ No server-side complexity for joins
+
+**Future:** Auto-join/expand features may be added based on user demand.
+
+---
+
 ## 🗺️ Roadmap
 
-- Relations / Linked Data (auto-join, populate, or expand related records)
+- **Client-side joins** ✅ (Current - simple and flexible!)
+- Relations / Linked Data (auto-join, populate, or expand related records) - *Future, based on demand*
 - API Versioning (when needed)
 - OAuth/SSO (if targeting SaaS/public)
 - More DB support (Postgres, SQLite, etc.)

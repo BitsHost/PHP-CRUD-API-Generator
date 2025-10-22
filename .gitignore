@@ -1,14 +1,25 @@
+# Dependencies
 /vendor/
+/composer.lock
+
+# Configuration files (contain secrets)
 /config/db.php
 /config/api.php
+/config/api.local.php
 /.env
+
+# Logs and storage
+/storage/
+/logs/
+*.log
+
+# Testing artifacts
+jwt_token.txt
+*.token
+test_*.txt
+secrets_*.txt
+
+# IDE and OS
 .DS_Store
 .idea/
 /tests/output/
-/composer.lock
-*.log
-storage/rate_limits/ratelimit_1d5e684a4ecd3a1aef262113f8dbf4e562bc47a6bcad24c10353fa190106eb14.dat
-storage/rate_limits/ratelimit_227a139b2d0f158050b5542327a01af02caf27028d0e765c5c3b769a71257468.dat
-storage/rate_limits/ratelimit_2726370cd97bc103fdebe2302b232c8cf4966d92945a1ad8e151886bc933189a.dat
-storage/rate_limits/ratelimit_aa73da63e26b40a1bb701c2b4c024870ec49264ba9c8372522459568fa8b5396.dat
-storage/rate_limits/ratelimit_dabd1db8d35ab13106274f61f1bf977812cce4f477b15014cf38fb796c50a4c4.dat
