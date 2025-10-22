@@ -1,5 +1,10 @@
 # PHP CRUD API Generator
 
+[![Latest Stable Version](https://poser.pugx.org/bitshost/php-crud-api-generator/v/stable)](https://packagist.org/packages/bitshost/php-crud-api-generator)
+[![Total Downloads](https://poser.pugx.org/bitshost/php-crud-api-generator/downloads)](https://packagist.org/packages/bitshost/php-crud-api-generator)
+[![License](https://poser.pugx.org/bitshost/php-crud-api-generator/license)](https://packagist.org/packages/bitshost/php-crud-api-generator)
+[![PHP Version](https://img.shields.io/badge/php-%3E%3D8.0-blue.svg)](https://php.net)
+
 Expose your MySQL/MariaDB database as a secure, flexible, and instant REST-like API.  
 Features optional authentication (API key, Basic Auth, JWT, OAuth-ready),  
 OpenAPI (Swagger) docs, and zero code generation.
