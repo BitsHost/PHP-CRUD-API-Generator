@@ -382,9 +382,77 @@ get:
 
 ---
 
+### 🔗 Working with Related Data (Client-Side Joins)
+
+Your API provides all the data you need - it's up to the client to decide how to combine it. This approach gives you maximum flexibility and control.
+
+**Current approach:** Fetch related data in separate requests and combine on the client side.
+
+#### Quick Example: Get User with Posts
+
+```javascript
+// 1. Fetch user
+const user = await fetch('/api.php?action=read&table=users&id=123')
+  .then(r => r.json());
+
+// 2. Fetch user's posts
+const posts = await fetch('/api.php?action=list&table=posts&filter=user_id:123')
+  .then(r => r.json());
+
+// 3. Combine however you want
+const userData = {
+  ...user,
+  posts: posts.data
+};
+```
+
+#### Optimization: Use IN Operator for Batch Fetching
+
+```javascript
+// Get multiple related records in one request
+const postIds = '1|2|3|4|5';  // IDs from previous query
+const comments = await fetch(
+  `/api.php?action=list&table=comments&filter=post_id:in:${postIds}`
+).then(r => r.json());
+
+// Group by post_id on client
+const commentsByPost = comments.data.reduce((acc, comment) => {
+  acc[comment.post_id] = acc[comment.post_id] || [];
+  acc[comment.post_id].push(comment);
+  return acc;
+}, {});
+```
+
+#### Parallel Fetching for Performance
+
+```javascript
+// Fetch multiple resources simultaneously
+const [user, posts, comments] = await Promise.all([
+  fetch('/api.php?action=read&table=users&id=123').then(r => r.json()),
+  fetch('/api.php?action=list&table=posts&filter=user_id:123').then(r => r.json()),
+  fetch('/api.php?action=list&table=comments&filter=user_id:123').then(r => r.json())
+]);
+
+// All requests happen at once - much faster!
+```
+
+📖 **[See complete client-side join examples →](docs/CLIENT_SIDE_JOINS.md)**
+
+**Why this approach?**
+- ✅ Client decides what data to fetch and when
+- ✅ Easy to optimize with caching and parallel requests
+- ✅ Different clients can have different data needs
+- ✅ Standard REST API practice
+- ✅ No server-side complexity for joins
+
+**Future:** Auto-join/expand features may be added based on user demand.
+
+---
+
 ## 🗺️ Roadmap
 
-- Relations / Linked Data (auto-join, populate, or expand related records)
+- **Client-side joins** ✅ (Current - simple and flexible!)
+- Relations / Linked Data (auto-join, populate, or expand related records) - *Future, based on demand*
 - API Versioning (when needed)
 - OAuth/SSO (if targeting SaaS/public)
 - More DB support (Postgres, SQLite, etc.)

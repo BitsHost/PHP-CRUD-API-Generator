@@ -2,6 +2,81 @@
 
 namespace App;
 
+/**
+ * API Router
+ * 
+ * Main routing class that handles all API requests, coordinates authentication,
+ * authorization, rate limiting, logging, and delegates CRUD operations to ApiGenerator.
+ * Acts as the central orchestrator for the entire API request lifecycle.
+ * 
+ * Request Lifecycle:
+ * 1. Rate limiting check (with headers)
+ * 2. Authentication (if enabled)
+ * 3. Route parsing and validation
+ * 4. RBAC authorization check
+ * 5. Business logic execution (via ApiGenerator)
+ * 6. Response formatting and logging
+ * 7. Error handling
+ * 
+ * Features:
+ * - Automatic rate limiting with configurable thresholds
+ * - Multi-method authentication (API key, Basic, JWT, OAuth)
+ * - Role-based access control (RBAC) enforcement
+ * - Comprehensive request/response logging
+ * - Input validation for all parameters
+ * - JWT login endpoint (/api.php?action=login)
+ * - OpenAPI specification generation
+ * - Bulk operations (bulk_create, bulk_delete)
+ * - Schema introspection (tables, columns)
+ * - Full CRUD operations (list, read, create, update, delete, count)
+ * - Error handling with proper HTTP status codes
+ * - JSON request/response formatting
+ * - Execution time tracking
+ * 
+ * Supported Actions:
+ * - tables: List all database tables
+ * - columns: Get column information for a table
+ * - list: Retrieve paginated, filtered, sorted records
+ * - count: Count records with optional filters
+ * - read: Get single record by ID
+ * - create: Insert new record
+ * - update: Modify existing record
+ * - delete: Remove record by ID
+ * - bulk_create: Insert multiple records in transaction
+ * - bulk_delete: Remove multiple records by IDs
+ * - openapi: Generate OpenAPI 3.0 specification
+ * - login: JWT authentication endpoint
+ * 
+ * @package App
+ * @author Adrian D
+ * @copyright 2025 BitHost
+ * @license MIT
+ * @version 1.4.0
+ * @link https://upmvc.com
+ * 
+ * @example
+ * // Basic usage in index.php or api.php
+ * $db = new Database(['dsn' => 'mysql:host=localhost;dbname=mydb', ...]);
+ * $auth = new Authenticator(['auth_method' => 'apikey', ...]);
+ * $router = new Router($db, $auth);
+ * 
+ * // Parse query string
+ * $query = $_GET;
+ * 
+ * // Route the request
+ * $router->route($query);
+ * // Automatically handles rate limiting, auth, RBAC, logging
+ * 
+ * @example
+ * // API requests
+ * GET  /api.php?action=list&table=users&page=1&page_size=20
+ * GET  /api.php?action=read&table=users&id=123
+ * POST /api.php?action=create&table=users (body: {"name": "John"})
+ * POST /api.php?action=update&table=users&id=123 (body: {"name": "Jane"})
+ * GET  /api.php?action=delete&table=users&id=123
+ * POST /api.php?action=bulk_create&table=users (body: [{"name": "A"}, {"name": "B"}])
+ * GET  /api.php?action=openapi
+ */
 class Router
 {
     private Database $db;
@@ -15,6 +90,31 @@ class Router
     private bool $authEnabled;
     private float $requestStartTime;
 
+    /**
+     * Initialize Router
+     * 
+     * Sets up all components needed for request handling including database connection,
+     * authentication, authorization, rate limiting, and logging. Loads configuration
+     * from config/api.php and initializes subsystems.
+     * 
+     * @param Database $db Database connection instance
+     * @param Authenticator $auth Authenticator instance with configured auth method
+     * 
+     * @example
+     * $db = new Database([
+     *     'dsn' => 'mysql:host=localhost;dbname=mydb',
+     *     'username' => 'root',
+     *     'password' => 'secret'
+     * ]);
+     * 
+     * $auth = new Authenticator([
+     *     'auth_method' => 'jwt',
+     *     'jwt_secret' => 'your-secret-key',
+     *     'jwt_expiration' => 3600
+     * ]);
+     * 
+     * $router = new Router($db, $auth);
+     */
     public function __construct(Database $db, Authenticator $auth)
     {
         $pdo = $db->getPdo();
@@ -38,9 +138,37 @@ class Router
     }
 
     /**
-     * Checks if the current user (via Authenticator) is allowed to perform $action on $table.
-     * If not, sends a 403 response and exits.
-     * No-op if auth/rbac is disabled.
+     * Enforce RBAC (Role-Based Access Control)
+     * 
+     * Checks if the current authenticated user has permission to perform the specified
+     * action on the given table. Sends 403 Forbidden response and exits if permission
+     * is denied. Skips check if authentication is disabled in config.
+     * 
+     * Uses the following permission format: "table:action" (e.g., "users:create")
+     * Supports wildcard permissions: "*:*" grants all access
+     * 
+     * @param string $action Action to perform (list, read, create, update, delete)
+     * @param string|null $table Table name to check permissions for (null skips check)
+     * @return void No return value; exits on permission denial
+     * 
+     * @example
+     * // Internal usage (called automatically by route())
+     * $this->enforceRbac('create', 'users');
+     * // If user role doesn't have 'users:create' permission, sends 403 and exits
+     * 
+     * @example
+     * // RBAC configuration in config/api.php
+     * 'roles' => [
+     *     'admin' => ['*' => ['*']],  // All permissions
+     *     'editor' => [
+     *         'posts' => ['list', 'read', 'create', 'update'],
+     *         'users' => ['read']
+     *     ],
+     *     'viewer' => [
+     *         'posts' => ['list', 'read'],
+     *         'users' => ['read']
+     *     ]
+     * ]
      */
     private function enforceRbac(string $action, ?string $table = null)
     {
@@ -61,6 +189,71 @@ class Router
         }
     }
 
+    /**
+     * Route API request
+     * 
+     * Main routing method that processes API requests through the complete lifecycle:
+     * rate limiting, authentication, validation, authorization, execution, and logging.
+     * Handles all supported actions and returns JSON responses with appropriate HTTP
+     * status codes.
+     * 
+     * Request Flow:
+     * 1. Check rate limit (returns 429 if exceeded)
+     * 2. Handle JWT login (if action=login)
+     * 3. Authenticate user (if auth enabled)
+     * 4. Parse and validate action/parameters
+     * 5. Enforce RBAC permissions
+     * 6. Execute business logic via ApiGenerator
+     * 7. Log request/response
+     * 8. Return JSON response
+     * 
+     * Supported Query Parameters:
+     * - action: Required action name (tables, list, read, create, etc.)
+     * - table: Table name for CRUD operations
+     * - id: Record ID for read/update/delete
+     * - page: Page number for pagination (default: 1)
+     * - page_size: Records per page (default: 20, max: 100)
+     * - filter: Filter conditions (e.g., "name:eq:John,age:gt:18")
+     * - sort: Sort order (e.g., "name:asc,created_at:desc")
+     * - fields: Comma-separated field list to return
+     * 
+     * POST Body Formats:
+     * - create/update: JSON object {"field": "value"}
+     * - bulk_create: JSON array [{"field": "value"}, ...]
+     * - bulk_delete: JSON object {"ids": [1, 2, 3]}
+     * 
+     * @param array $query Query parameters from $_GET (typically)
+     * @return void Outputs JSON response directly, no return value
+     * 
+     * @example
+     * // List users with pagination and filters
+     * $router->route([
+     *     'action' => 'list',
+     *     'table' => 'users',
+     *     'page' => 1,
+     *     'page_size' => 20,
+     *     'filter' => 'status:eq:active,age:gt:18',
+     *     'sort' => 'created_at:desc'
+     * ]);
+     * // Output: {"records": [...], "pagination": {...}}
+     * 
+     * @example
+     * // Create new record (requires POST)
+     * $_POST = ['name' => 'John Doe', 'email' => 'john@example.com'];
+     * $router->route(['action' => 'create', 'table' => 'users']);
+     * // Output: {"id": 123}
+     * 
+     * @example
+     * // JWT login
+     * $_POST = ['username' => 'admin', 'password' => 'secret'];
+     * $router->route(['action' => 'login']);
+     * // Output: {"token": "eyJ0eXAiOiJKV1QiLCJhbGc..."}
+     * 
+     * @example
+     * // Get OpenAPI specification
+     * $router->route(['action' => 'openapi']);
+     * // Output: {"openapi": "3.0.0", "info": {...}, "paths": {...}}
+     */
     public function route(array $query)
     {
         header('Content-Type: application/json');
@@ -368,9 +561,29 @@ class Router
 
     /**
      * Get unique identifier for rate limiting
-     * Uses authenticated user, API key, or IP address (in that order)
-     *
-     * @return string Unique identifier for rate limiting
+     * 
+     * Determines the best available identifier for rate limiting in priority order:
+     * 1. Authenticated user (most accurate, per-user limits)
+     * 2. API key hash (for API key authentication)
+     * 3. Client IP address (fallback, supports proxies)
+     * 
+     * Handles X-Forwarded-For and X-Real-IP headers for proxied requests.
+     * Multiple IPs in X-Forwarded-For are handled by using the first (client) IP.
+     * 
+     * @return string Unique identifier with prefix (user:, apikey:, or ip:)
+     * 
+     * @example
+     * // For authenticated user
+     * // Returns: "user:john@example.com"
+     * 
+     * // For API key auth
+     * // Returns: "apikey:a3f5c8..." (SHA-256 hash)
+     * 
+     * // For anonymous/IP-based
+     * // Returns: "ip:192.168.1.100"
+     * 
+     * // Behind proxy with X-Forwarded-For
+     * // Returns: "ip:203.0.113.45" (first IP from list)
      */
     private function getRateLimitIdentifier(): string
     {
@@ -404,9 +617,23 @@ class Router
     }
 
     /**
-     * Get request headers (helper method)
-     *
-     * @return array Associative array of headers
+     * Get request headers
+     * 
+     * Retrieves all HTTP request headers using getallheaders() if available,
+     * otherwise parses $_SERVER array for HTTP_* variables. Provides cross-platform
+     * compatibility for header access.
+     * 
+     * @return array Associative array of header names to values
+     *   Header names are normalized to Title-Case format (e.g., "Content-Type")
+     * 
+     * @example
+     * $headers = $this->getRequestHeaders();
+     * // Returns: [
+     * //   'Content-Type' => 'application/json',
+     * //   'Authorization' => 'Bearer eyJ0eXAi...',
+     * //   'X-Api-Key' => 'abc123...',
+     * //   'User-Agent' => 'Mozilla/5.0...'
+     * // ]
      */
     private function getRequestHeaders(): array
     {
@@ -426,11 +653,34 @@ class Router
 
     /**
      * Log the response
-     *
-     * @param mixed $responseBody Response body
-     * @param int $statusCode HTTP status code
-     * @param array $query Query parameters
-     * @return void
+     * 
+     * Creates comprehensive log entry for the completed request including execution time,
+     * HTTP status code, request/response bodies, headers, and user context. Automatically
+     * called after each route execution for audit trail and debugging.
+     * 
+     * Captures:
+     * - HTTP method and action
+     * - Table name (if applicable)
+     * - Client IP and authenticated user
+     * - Request headers and body
+     * - Response status, body, and size
+     * - Execution time in seconds
+     * 
+     * @param mixed $responseBody Response payload (array, object, or scalar)
+     * @param int $statusCode HTTP status code (200, 201, 400, 403, 404, 500, etc.)
+     * @param array $query Query parameters from the request
+     * @return void No return value; logs to configured RequestLogger
+     * 
+     * @example
+     * // Internal usage (called automatically)
+     * $this->logResponse(['id' => 123], 201, ['action' => 'create', 'table' => 'users']);
+     * 
+     * // Creates log entry with:
+     * // - Request: POST /api.php?action=create&table=users
+     * // - Response: 201 Created, {"id": 123}, 12 bytes
+     * // - Execution: 0.045s (45ms)
+     * // - User: john@example.com
+     * // - IP: 192.168.1.100
      */
     private function logResponse($responseBody, int $statusCode, array $query): void
     {
