@@ -91,6 +91,36 @@ return [
 
 ---
 
+## 🔒 Security Setup (Production)
+
+⚠️ **IMPORTANT:** This framework ships with **example credentials for development**.  
+You **MUST** change these before deploying to production!
+
+### Quick Security Setup:
+
+```bash
+# 1. Generate secure secrets (JWT secret + API keys)
+php scripts/generate_secrets.php
+
+# 2. Update config/api.php with generated secrets
+
+# 3. Create admin user in database
+php scripts/create_user.php admin admin@yoursite.com YourSecurePassword123! admin
+```
+
+### What to Change:
+
+- [ ] `jwt_secret` - Generate with: `php scripts/generate_jwt_secret.php`
+- [ ] `api_keys` - Use long random strings (64+ characters)
+- [ ] Default admin password in `sql/create_api_users.sql`
+- [ ] Database credentials in `config/db.php`
+
+📖 **Full security guide:** [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md)
+
+---
+
+---
+
 ## 🔐 Authentication Modes
 
 - **No auth:** `'auth_enabled' => false`
