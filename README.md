@@ -62,13 +62,25 @@ php -S localhost:8000
 
 **📖 [5-Minute Quick Start Guide →](docs/QUICK_START.md)**
 
-### Option 2: Standalone Project
+### Option 2: Standalone Project (Even Simpler!)
 
-Clone or download the full project:
+Download complete ready-to-use project:
 
 ```bash
-composer create-project bitshost/php-crud-api-generator
+composer create-project bitshost/php-crud-api-generator my-api
+cd my-api
+
+# Configure
+cp config/db.example.php config/db.php
+cp config/api.example.php config/api.php
+notepad config/db.php
+notepad config/api.php
+
+# Run
+php -S localhost:8000
 ```
+
+**That's it!** Everything in one folder, ready to run. **0 lines to modify** 🚀
 
 ---
 
