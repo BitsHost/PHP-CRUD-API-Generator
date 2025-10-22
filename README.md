@@ -29,10 +29,36 @@ OpenAPI (Swagger) docs, and zero code generation.
 📖 **[See detailed enhancement documentation →](ENHANCEMENTS.md)**
 📖 **[Rate Limiting Documentation →](docs/RATE_LIMITING.md)**
 📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
+📖 **[Quick Start (5 minutes) →](docs/QUICK_START.md)**
 
 ---
 
 ## 📦 Installation
+
+### Option 1: Install as Library (Recommended)
+
+Install via Composer (Packagist):
+
+```bash
+composer require bitshost/php-crud-api-generator
+```
+
+Then copy 3 files to your project root and modify 2 lines:
+
+```bash
+# Copy files
+copy vendor/bitshost/php-crud-api-generator/public/index.php index.php
+copy vendor/bitshost/php-crud-api-generator/dashboard.html dashboard.html
+copy vendor/bitshost/php-crud-api-generator/health.php health.php
+
+# Edit index.php - change 2 config paths to point to vendor (see QUICK_START.md)
+```
+
+**See [Quick Start Guide →](docs/QUICK_START.md) for detailed 5-minute setup.**
+
+### Option 2: Standalone Project
+
+Clone or download the full project:
 
 ```bash
 composer create-project bitshost/php-crud-api-generator
@@ -42,12 +68,27 @@ composer create-project bitshost/php-crud-api-generator
 
 ## ⚙️ Configuration
 
+### If installed as library (via composer require):
+
+Edit config files in vendor directory:
+
+```bash
+notepad vendor/bitshost/php-crud-api-generator/config/db.php
+notepad vendor/bitshost/php-crud-api-generator/config/api.php
+```
+
+### If standalone project (via composer create-project):
+
 Copy and edit config files:
 
 ```bash
 cp config/db.example.php config/db.php
 cp config/api.example.php config/api.php
 ```
+
+---
+
+**Config file structure:**
 
 Edit `config/db.php`:
 
