@@ -1,12 +1,10 @@
 {
   "name": "bitshost/php-crud-api-generator",
-  "description": "Instant REST API for MySQL/MariaDB with JWT auth, rate limiting, monitoring, and zero code generation",
-  "type": "library",
+  "description": "Automatic, configurable CRUD API generator for MySQL/MariaDB in PHP (with optional authentication)",
+  "type": "project",
   "license": "MIT",
-  "keywords": ["api", "rest", "crud", "mysql", "jwt", "authentication", "rate-limiting", "monitoring", "swagger", "openapi"],
-  "homepage": "https://github.com/BitsHost/php-crud-api-generator",
   "minimum-stability": "stable",
-  "authors": [
+   "authors": [
         {
             "name": "Adrian D",
             "email": "contact@delvirai.net",
@@ -25,9 +23,5 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^10.0"
-  },
-  "support": {
-    "issues": "https://github.com/BitsHost/php-crud-api-generator/issues",
-    "source": "https://github.com/BitsHost/php-crud-api-generator"
   }
 }

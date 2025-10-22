@@ -4,47 +4,11 @@ namespace App;
 
 use PDO;
 
-/**
- * API Generator Class
- * 
- * Generates RESTful CRUD operations for database tables with advanced features
- * including filtering, sorting, pagination, field selection, and counting.
- * 
- * Features:
- * - Dynamic CRUD operations (list, read, create, update, delete)
- * - Advanced filtering with multiple operators (eq, neq, gt, gte, lt, lte, like, in, between)
- * - Flexible sorting (single and multiple fields)
- * - Pagination support (page/limit)
- * - Field selection (specific columns)
- * - Record counting
- * - Bulk operations
- * - Safe parameter binding to prevent SQL injection
- * 
- * @package App
- * @author  PHP-CRUD-API-Generator
- * @version 1.0.0
- */
 class ApiGenerator
 {
-    /**
-     * PDO database connection instance
-     * 
-     * @var PDO
-     */
     private PDO $pdo;
-    
-    /**
-     * Schema inspector instance for database introspection
-     * 
-     * @var SchemaInspector
-     */
     private SchemaInspector $inspector;
 
-    /**
-     * Initialize API Generator
-     * 
-     * @param PDO $pdo PDO database connection instance
-     */
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -52,45 +16,7 @@ class ApiGenerator
     }
 
     /**
-     * List records from a table with advanced filtering, sorting, and pagination
-     * 
-     * Supports:
-     * - Field selection: opts['fields'] = 'id,name,email'
-     * - Filtering: opts['filter'] = 'name:eq:John,age:gt:18'
-     * - Sorting: opts['sort'] = 'name:asc,created_at:desc'
-     * - Pagination: opts['page'] = 1, opts['limit'] = 20
-     * 
-     * Filter operators:
-     * - eq: Equal (=)
-     * - neq/ne: Not equal (!=)
-     * - gt: Greater than (>)
-     * - gte/ge: Greater than or equal (>=)
-     * - lt: Less than (<)
-     * - lte/le: Less than or equal (<=)
-     * - like: Pattern matching (LIKE)
-     * - in: In list (IN)
-     * - between: Between range (BETWEEN)
-     * 
-     * @param string $table Table name to query
-     * @param array  $opts  Query options (fields, filter, sort, page, limit)
-     * 
-     * @return array Array of records matching the criteria
-     * 
-     * @throws \PDOException If database query fails
-     * 
-     * @example
-     * // Get all users
-     * $api->list('users');
-     * 
-     * @example
-     * // Get users with filtering and pagination
-     * $api->list('users', [
-     *     'fields' => 'id,name,email',
-     *     'filter' => 'age:gt:18,status:eq:active',
-     *     'sort' => 'name:asc',
-     *     'page' => 1,
-     *     'limit' => 20
-     * ]);
+     * Enhanced list: supports filtering, sorting, pagination, field selection.
      */
     public function list(string $table, array $opts = []): array
     {
@@ -263,26 +189,6 @@ class ApiGenerator
         ];
     }
 
-    /**
-     * Read a single record by primary key
-     * 
-     * Retrieves a single record from the specified table using its primary key value.
-     * Automatically detects the primary key column name.
-     * 
-     * @param string     $table Table name to query
-     * @param int|string $id    Primary key value to search for
-     * 
-     * @return array|null Record data as associative array, or null if not found
-     * 
-     * @throws \PDOException If database query fails
-     * 
-     * @example
-     * // Read user with ID 5
-     * $user = $api->read('users', 5);
-     * if ($user) {
-     *     echo $user['name'];
-     * }
-     */
     public function read(string $table, $id): ?array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -292,28 +198,6 @@ class ApiGenerator
         return $row === false ? null : $row;
     }
 
-    /**
-     * Create a new record in the table
-     * 
-     * Inserts a new record with the provided data and returns the created record
-     * including the auto-generated primary key.
-     * 
-     * @param string $table Table name to insert into
-     * @param array  $data  Associative array of column => value pairs
-     * 
-     * @return array The created record including generated ID
-     * 
-     * @throws \PDOException If database insert fails or validation errors occur
-     * 
-     * @example
-     * // Create new user
-     * $newUser = $api->create('users', [
-     *     'name' => 'John Doe',
-     *     'email' => 'john@example.com',
-     *     'age' => 30
-     * ]);
-     * echo "Created user with ID: " . $newUser['id'];
-     */
     public function create(string $table, array $data): array
     {
         $cols = array_keys($data);
@@ -330,27 +214,6 @@ class ApiGenerator
         return $this->read($table, $id);
     }
 
-    /**
-     * Update an existing record by primary key
-     * 
-     * Updates specified fields of a record identified by its primary key.
-     * Only provided fields are updated; others remain unchanged.
-     * 
-     * @param string     $table Table name to update
-     * @param int|string $id    Primary key value of record to update
-     * @param array      $data  Associative array of column => value pairs to update
-     * 
-     * @return array Updated record data, or error array if record not found
-     * 
-     * @throws \PDOException If database update fails
-     * 
-     * @example
-     * // Update user email
-     * $updated = $api->update('users', 5, [
-     *     'email' => 'newemail@example.com',
-     *     'updated_at' => date('Y-m-d H:i:s')
-     * ]);
-     */
     public function update(string $table, $id, array $data): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -388,25 +251,6 @@ class ApiGenerator
         return $updated;
     }
 
-    /**
-     * Delete a record by primary key
-     * 
-     * Permanently removes a record from the table identified by its primary key.
-     * 
-     * @param string     $table Table name to delete from
-     * @param int|string $id    Primary key value of record to delete
-     * 
-     * @return array Success status or error message if record not found
-     * 
-     * @throws \PDOException If database delete fails
-     * 
-     * @example
-     * // Delete user with ID 5
-     * $result = $api->delete('users', 5);
-     * if ($result['success']) {
-     *     echo "User deleted successfully";
-     * }
-     */
     public function delete(string $table, $id): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -419,26 +263,7 @@ class ApiGenerator
     }
 
     /**
-     * Bulk create multiple records in a transaction
-     * 
-     * Creates multiple records in a single database transaction.
-     * If any record fails, all changes are rolled back.
-     * 
-     * @param string $table   Table name to insert into
-     * @param array  $records Array of associative arrays, each containing record data
-     * 
-     * @return array Success status with count of created records, or error
-     * 
-     * @throws \PDOException If database transaction fails
-     * 
-     * @example
-     * // Create multiple users at once
-     * $result = $api->bulkCreate('users', [
-     *     ['name' => 'John', 'email' => 'john@example.com'],
-     *     ['name' => 'Jane', 'email' => 'jane@example.com'],
-     *     ['name' => 'Bob', 'email' => 'bob@example.com']
-     * ]);
-     * echo "Created " . $result['created'] . " users";
+     * Bulk create multiple records
      */
     public function bulkCreate(string $table, array $records): array
     {
@@ -465,22 +290,7 @@ class ApiGenerator
     }
 
     /**
-     * Bulk delete multiple records by their primary keys
-     * 
-     * Deletes multiple records in a single query based on their primary key values.
-     * More efficient than deleting records one by one.
-     * 
-     * @param string $table Table name to delete from
-     * @param array  $ids   Array of primary key values to delete
-     * 
-     * @return array Success status with count of deleted records, or error
-     * 
-     * @throws \PDOException If database delete fails
-     * 
-     * @example
-     * // Delete multiple users
-     * $result = $api->bulkDelete('users', [5, 10, 15, 20]);
-     * echo "Deleted " . $result['deleted'] . " users";
+     * Bulk delete multiple records by IDs
      */
     public function bulkDelete(string $table, array $ids): array
     {
@@ -509,29 +319,7 @@ class ApiGenerator
     }
 
     /**
-     * Count records in a table with optional filtering
-     * 
-     * Returns the total count of records matching the filter criteria.
-     * Supports the same filter operators as the list() method.
-     * 
-     * @param string $table Table name to count records from
-     * @param array  $opts  Query options (filter)
-     * 
-     * @return array Array containing the total count
-     * 
-     * @throws \PDOException If database query fails
-     * 
-     * @example
-     * // Count all users
-     * $result = $api->count('users');
-     * echo "Total users: " . $result['count'];
-     * 
-     * @example
-     * // Count active users over age 18
-     * $result = $api->count('users', [
-     *     'filter' => 'status:eq:active,age:gt:18'
-     * ]);
-     * echo "Active adult users: " . $result['count'];
+     * Count records with optional filtering
      */
     public function count(string $table, array $opts = []): array
     {
