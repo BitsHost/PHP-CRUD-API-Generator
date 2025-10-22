@@ -16,7 +16,7 @@ $apiConfig = require __DIR__ . '/../config/api.php';
 
 // Bootstrap
 $db = new Database($dbConfig);
-$auth = new Authenticator($apiConfig, $db->getPdo());
+$auth = new Authenticator($apiConfig);
 $router = new Router($db, $auth);
 
 // Dispatch
