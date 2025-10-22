@@ -49,8 +49,12 @@ copy vendor/bitshost/php-crud-api-generator/dashboard.html dashboard.html
 copy vendor/bitshost/php-crud-api-generator/health.php health.php
 
 # 3. Edit index.php - Change 2 lines (point config paths to vendor)
-# Change: require __DIR__ . '/config/...'
-# To:     require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/...'
+# On line ~51, change:
+#   $dbConfig = require __DIR__ . '/../config/db.php';
+#   $apiConfig = require __DIR__ . '/../config/api.php';
+# To:
+#   $dbConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/db.php';
+#   $apiConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/api.php';
 
 # 4. Configure & run
 notepad vendor/bitshost/php-crud-api-generator/config/db.php
