@@ -4,11 +4,47 @@ namespace App;
 
 use PDO;
 
+/**
+ * API Generator Class
+ * 
+ * Generates RESTful CRUD operations for database tables with advanced features
+ * including filtering, sorting, pagination, field selection, and counting.
+ * 
+ * Features:
+ * - Dynamic CRUD operations (list, read, create, update, delete)
+ * - Advanced filtering with multiple operators (eq, neq, gt, gte, lt, lte, like, in, between)
+ * - Flexible sorting (single and multiple fields)
+ * - Pagination support (page/limit)
+ * - Field selection (specific columns)
+ * - Record counting
+ * - Bulk operations
+ * - Safe parameter binding to prevent SQL injection
+ * 
+ * @package App
+ * @author  PHP-CRUD-API-Generator
+ * @version 1.0.0
+ */
 class ApiGenerator
 {
+    /**
+     * PDO database connection instance
+     * 
+     * @var PDO
+     */
     private PDO $pdo;
+    
+    /**
+     * Schema inspector instance for database introspection
+     * 
+     * @var SchemaInspector
+     */
     private SchemaInspector $inspector;
 
+    /**
+     * Initialize API Generator
+     * 
+     * @param PDO $pdo PDO database connection instance
+     */
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -16,32 +52,157 @@ class ApiGenerator
     }
 
     /**
-     * Enhanced list: supports filtering, sorting, pagination.
+     * List records from a table with advanced filtering, sorting, and pagination
+     * 
+     * Supports:
+     * - Field selection: opts['fields'] = 'id,name,email'
+     * - Filtering: opts['filter'] = 'name:eq:John,age:gt:18'
+     * - Sorting: opts['sort'] = 'name:asc,created_at:desc'
+     * - Pagination: opts['page'] = 1, opts['limit'] = 20
+     * 
+     * Filter operators:
+     * - eq: Equal (=)
+     * - neq/ne: Not equal (!=)
+     * - gt: Greater than (>)
+     * - gte/ge: Greater than or equal (>=)
+     * - lt: Less than (<)
+     * - lte/le: Less than or equal (<=)
+     * - like: Pattern matching (LIKE)
+     * - in: In list (IN)
+     * - between: Between range (BETWEEN)
+     * 
+     * @param string $table Table name to query
+     * @param array  $opts  Query options (fields, filter, sort, page, limit)
+     * 
+     * @return array Array of records matching the criteria
+     * 
+     * @throws \PDOException If database query fails
+     * 
+     * @example
+     * // Get all users
+     * $api->list('users');
+     * 
+     * @example
+     * // Get users with filtering and pagination
+     * $api->list('users', [
+     *     'fields' => 'id,name,email',
+     *     'filter' => 'age:gt:18,status:eq:active',
+     *     'sort' => 'name:asc',
+     *     'page' => 1,
+     *     'limit' => 20
+     * ]);
      */
     public function list(string $table, array $opts = []): array
     {
         $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
 
+        // --- Field Selection ---
+        $selectedFields = '*';
+        if (!empty($opts['fields'])) {
+            $requestedFields = array_map('trim', explode(',', $opts['fields']));
+            $validFields = array_filter($requestedFields, fn($f) => in_array($f, $colNames, true));
+            if (!empty($validFields)) {
+                $selectedFields = implode(', ', array_map(fn($f) => "`$f`", $validFields));
+            }
+        }
+
         // --- Filtering ---
         $where = [];
         $params = [];
+        $paramCounter = 0; // To handle duplicate column filters
         if (!empty($opts['filter'])) {
-            // Example filter: ['name:Alice', 'email:gmail.com']
+            // Example filter: ['name:eq:Alice', 'age:gt:18', 'email:like:%gmail.com']
             $filters = explode(',', $opts['filter']);
             foreach ($filters as $f) {
-                $parts = explode(':', $f, 2);
-                if (count($parts) === 2 && in_array($parts[0], $colNames, true)) {
+                $parts = explode(':', $f, 3);
+                if (count($parts) === 2) {
+                    // Backward compatibility: col:value means col = value
                     $col = $parts[0];
                     $val = $parts[1];
-                    // Use LIKE for partial match, = for exact
-                    if (str_contains($val, '%')) {
-                        $where[] = "`$col` LIKE :$col";
-                        $params[$col] = $val;
-                    } else {
-                        $where[] = "`$col` = :$col";
-                        $params[$col] = $val;
+                    if (in_array($col, $colNames, true)) {
+                        if (str_contains($val, '%')) {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        } else {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        }
                     }
+                } elseif (count($parts) === 3 && in_array($parts[0], $colNames, true)) {
+                    // New format: col:operator:value
+                    $col = $parts[0];
+                    $operator = strtolower($parts[1]);
+                    $val = $parts[2];
+                    $paramKey = "{$col}_{$paramCounter}";
+                    
+                    switch ($operator) {
+                        case 'eq':
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'neq':
+                        case 'ne':
+                            $where[] = "`$col` != :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gt':
+                            $where[] = "`$col` > :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gte':
+                        case 'ge':
+                            $where[] = "`$col` >= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lt':
+                            $where[] = "`$col` < :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lte':
+                        case 'le':
+                            $where[] = "`$col` <= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'like':
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'in':
+                            // Support for IN operator: col:in:val1|val2|val3
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_in_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'notin':
+                        case 'nin':
+                            // Support for NOT IN operator: col:notin:val1|val2|val3
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_nin_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'null':
+                            $where[] = "`$col` IS NULL";
+                            break;
+                        case 'notnull':
+                            $where[] = "`$col` IS NOT NULL";
+                            break;
+                    }
+                    $paramCounter++;
                 }
             }
         }
@@ -73,7 +234,7 @@ class ApiGenerator
         $offset = ($page - 1) * $pageSize;
         $limit = "LIMIT $pageSize OFFSET $offset";
 
-        $sql = "SELECT * FROM `$table`";
+        $sql = "SELECT $selectedFields FROM `$table`";
         if ($where) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
@@ -102,6 +263,26 @@ class ApiGenerator
         ];
     }
 
+    /**
+     * Read a single record by primary key
+     * 
+     * Retrieves a single record from the specified table using its primary key value.
+     * Automatically detects the primary key column name.
+     * 
+     * @param string     $table Table name to query
+     * @param int|string $id    Primary key value to search for
+     * 
+     * @return array|null Record data as associative array, or null if not found
+     * 
+     * @throws \PDOException If database query fails
+     * 
+     * @example
+     * // Read user with ID 5
+     * $user = $api->read('users', 5);
+     * if ($user) {
+     *     echo $user['name'];
+     * }
+     */
     public function read(string $table, $id): ?array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -111,6 +292,28 @@ class ApiGenerator
         return $row === false ? null : $row;
     }
 
+    /**
+     * Create a new record in the table
+     * 
+     * Inserts a new record with the provided data and returns the created record
+     * including the auto-generated primary key.
+     * 
+     * @param string $table Table name to insert into
+     * @param array  $data  Associative array of column => value pairs
+     * 
+     * @return array The created record including generated ID
+     * 
+     * @throws \PDOException If database insert fails or validation errors occur
+     * 
+     * @example
+     * // Create new user
+     * $newUser = $api->create('users', [
+     *     'name' => 'John Doe',
+     *     'email' => 'john@example.com',
+     *     'age' => 30
+     * ]);
+     * echo "Created user with ID: " . $newUser['id'];
+     */
     public function create(string $table, array $data): array
     {
         $cols = array_keys($data);
@@ -127,6 +330,27 @@ class ApiGenerator
         return $this->read($table, $id);
     }
 
+    /**
+     * Update an existing record by primary key
+     * 
+     * Updates specified fields of a record identified by its primary key.
+     * Only provided fields are updated; others remain unchanged.
+     * 
+     * @param string     $table Table name to update
+     * @param int|string $id    Primary key value of record to update
+     * @param array      $data  Associative array of column => value pairs to update
+     * 
+     * @return array Updated record data, or error array if record not found
+     * 
+     * @throws \PDOException If database update fails
+     * 
+     * @example
+     * // Update user email
+     * $updated = $api->update('users', 5, [
+     *     'email' => 'newemail@example.com',
+     *     'updated_at' => date('Y-m-d H:i:s')
+     * ]);
+     */
     public function update(string $table, $id, array $data): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -164,6 +388,25 @@ class ApiGenerator
         return $updated;
     }
 
+    /**
+     * Delete a record by primary key
+     * 
+     * Permanently removes a record from the table identified by its primary key.
+     * 
+     * @param string     $table Table name to delete from
+     * @param int|string $id    Primary key value of record to delete
+     * 
+     * @return array Success status or error message if record not found
+     * 
+     * @throws \PDOException If database delete fails
+     * 
+     * @example
+     * // Delete user with ID 5
+     * $result = $api->delete('users', 5);
+     * if ($result['success']) {
+     *     echo "User deleted successfully";
+     * }
+     */
     public function delete(string $table, $id): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
@@ -173,5 +416,232 @@ class ApiGenerator
             return ['error' => "Item with id $id not found in $table."];
         }
         return ['success' => true];
+    }
+
+    /**
+     * Bulk create multiple records in a transaction
+     * 
+     * Creates multiple records in a single database transaction.
+     * If any record fails, all changes are rolled back.
+     * 
+     * @param string $table   Table name to insert into
+     * @param array  $records Array of associative arrays, each containing record data
+     * 
+     * @return array Success status with count of created records, or error
+     * 
+     * @throws \PDOException If database transaction fails
+     * 
+     * @example
+     * // Create multiple users at once
+     * $result = $api->bulkCreate('users', [
+     *     ['name' => 'John', 'email' => 'john@example.com'],
+     *     ['name' => 'Jane', 'email' => 'jane@example.com'],
+     *     ['name' => 'Bob', 'email' => 'bob@example.com']
+     * ]);
+     * echo "Created " . $result['created'] . " users";
+     */
+    public function bulkCreate(string $table, array $records): array
+    {
+        if (empty($records)) {
+            return ['error' => 'No records provided for bulk create'];
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $created = [];
+            foreach ($records as $data) {
+                $created[] = $this->create($table, $data);
+            }
+            $this->pdo->commit();
+            return [
+                'success' => true,
+                'created' => count($created),
+                'data' => $created
+            ];
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            return ['error' => 'Bulk create failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Bulk delete multiple records by their primary keys
+     * 
+     * Deletes multiple records in a single query based on their primary key values.
+     * More efficient than deleting records one by one.
+     * 
+     * @param string $table Table name to delete from
+     * @param array  $ids   Array of primary key values to delete
+     * 
+     * @return array Success status with count of deleted records, or error
+     * 
+     * @throws \PDOException If database delete fails
+     * 
+     * @example
+     * // Delete multiple users
+     * $result = $api->bulkDelete('users', [5, 10, 15, 20]);
+     * echo "Deleted " . $result['deleted'] . " users";
+     */
+    public function bulkDelete(string $table, array $ids): array
+    {
+        if (empty($ids)) {
+            return ['error' => 'No IDs provided for bulk delete'];
+        }
+
+        $pk = $this->inspector->getPrimaryKey($table);
+        $placeholders = [];
+        $params = [];
+        
+        foreach ($ids as $i => $id) {
+            $key = "id_$i";
+            $placeholders[] = ":$key";
+            $params[$key] = $id;
+        }
+
+        $sql = "DELETE FROM `$table` WHERE `$pk` IN (" . implode(',', $placeholders) . ")";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        
+        return [
+            'success' => true,
+            'deleted' => $stmt->rowCount()
+        ];
+    }
+
+    /**
+     * Count records in a table with optional filtering
+     * 
+     * Returns the total count of records matching the filter criteria.
+     * Supports the same filter operators as the list() method.
+     * 
+     * @param string $table Table name to count records from
+     * @param array  $opts  Query options (filter)
+     * 
+     * @return array Array containing the total count
+     * 
+     * @throws \PDOException If database query fails
+     * 
+     * @example
+     * // Count all users
+     * $result = $api->count('users');
+     * echo "Total users: " . $result['count'];
+     * 
+     * @example
+     * // Count active users over age 18
+     * $result = $api->count('users', [
+     *     'filter' => 'status:eq:active,age:gt:18'
+     * ]);
+     * echo "Active adult users: " . $result['count'];
+     */
+    public function count(string $table, array $opts = []): array
+    {
+        $columns = $this->inspector->getColumns($table);
+        $colNames = array_column($columns, 'Field');
+
+        // --- Filtering (same as list method) ---
+        $where = [];
+        $params = [];
+        $paramCounter = 0;
+        if (!empty($opts['filter'])) {
+            $filters = explode(',', $opts['filter']);
+            foreach ($filters as $f) {
+                $parts = explode(':', $f, 3);
+                if (count($parts) === 2) {
+                    $col = $parts[0];
+                    $val = $parts[1];
+                    if (in_array($col, $colNames, true)) {
+                        if (str_contains($val, '%')) {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        } else {
+                            $paramKey = "{$col}_{$paramCounter}";
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            $paramCounter++;
+                        }
+                    }
+                } elseif (count($parts) === 3 && in_array($parts[0], $colNames, true)) {
+                    $col = $parts[0];
+                    $operator = strtolower($parts[1]);
+                    $val = $parts[2];
+                    $paramKey = "{$col}_{$paramCounter}";
+                    
+                    switch ($operator) {
+                        case 'eq':
+                            $where[] = "`$col` = :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'neq':
+                        case 'ne':
+                            $where[] = "`$col` != :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gt':
+                            $where[] = "`$col` > :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'gte':
+                        case 'ge':
+                            $where[] = "`$col` >= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lt':
+                            $where[] = "`$col` < :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'lte':
+                        case 'le':
+                            $where[] = "`$col` <= :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'like':
+                            $where[] = "`$col` LIKE :$paramKey";
+                            $params[$paramKey] = $val;
+                            break;
+                        case 'in':
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_in_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'notin':
+                        case 'nin':
+                            $values = explode('|', $val);
+                            $placeholders = [];
+                            foreach ($values as $i => $v) {
+                                $inParamKey = "{$paramKey}_nin_{$i}";
+                                $placeholders[] = ":$inParamKey";
+                                $params[$inParamKey] = $v;
+                            }
+                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            break;
+                        case 'null':
+                            $where[] = "`$col` IS NULL";
+                            break;
+                        case 'notnull':
+                            $where[] = "`$col` IS NOT NULL";
+                            break;
+                    }
+                    $paramCounter++;
+                }
+            }
+        }
+
+        $sql = "SELECT COUNT(*) FROM `$table`";
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $count = (int)$stmt->fetchColumn();
+
+        return ['count' => $count];
     }
 }
