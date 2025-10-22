@@ -1,0 +1,6 @@
+# Ignore all storage files
+*
+
+# Except subdirectory .gitignore files
+!.gitignore
+!*/.gitignore
