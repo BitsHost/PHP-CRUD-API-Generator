@@ -31,6 +31,7 @@ OpenAPI (Swagger) docs, and zero code generation.
 📖 **[Request Logging Documentation →](docs/REQUEST_LOGGING.md)**
 📖 **[Quick Start (5 minutes) →](docs/QUICK_START.md)**
 🔌 **[Integration with upMVC Framework →](https://github.com/upMVC/upMVC/blob/main/docs/INTEGRATION_PHP_CRUD_API.md)** - **NEW!** Full-stack power combo
+⚖️ **[Comparison with PHP-CRUD-API v2 →](docs/COMPARISON.md)** - **NEW!** Detailed feature comparison and when to use each
 
 ---
 
