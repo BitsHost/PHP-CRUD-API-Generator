@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * API Configuration (User File)
+ * 
+ * This file is where YOU configure the API behavior.
+ * Edit the values below to customize authentication, RBAC, rate limiting, etc.
+ * 
+ * HOW IT WORKS:
+ * 1. You edit this simple PHP array
+ * 2. Framework loads it via src/Config/ApiConfig.php (you don't need to touch that)
+ * 3. Framework gets type-safe configuration with validation
+ * 
+ * See docs/CONFIG_FLOW.md for technical details
+ * See docs/AUTHENTICATION.md for authentication guide
+ */
+
 return [
     // ========================================
     // AUTHENTICATION SETTINGS
