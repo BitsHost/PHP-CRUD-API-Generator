@@ -30,10 +30,10 @@
 **Usage:**
 ```bash
 # Header (recommended)
-curl -H "X-API-Key: changeme123" http://localhost/api.php?action=tables
+curl -H "X-API-Key: changeme123" http://localhost:8000?action=tables
 
 # Query parameter
-curl "http://localhost/api.php?action=tables&api_key=changeme123"
+curl "http://localhost:8000?action=tables&api_key=changeme123"
 ```
 
 ---
@@ -55,7 +55,7 @@ curl "http://localhost/api.php?action=tables&api_key=changeme123"
 **Usage:**
 ```bash
 # cURL
-curl -u admin:secret http://localhost/api.php?action=tables
+curl -u admin:secret http://localhost:8000?action=tables
 
 # JavaScript
 const credentials = btoa('admin:secret');
@@ -85,7 +85,7 @@ php scripts/create_user.php john john@email.com SecurePass123! readonly
 ```bash
 curl -X POST \
   -d "username=john&password=SecurePass123!" \
-  http://localhost/api.php?action=login
+  http://localhost:8000?action=login
 
 # Response:
 # {"success":true,"token":"eyJ0eXAi...","expires_in":3600,"user":"john","role":"readonly"}
@@ -94,7 +94,7 @@ curl -X POST \
 **Step 2 - Use Token:**
 ```bash
 curl -H "Authorization: Bearer eyJ0eXAi..." \
-  http://localhost/api.php?action=tables
+  http://localhost:8000?action=tables
 ```
 
 **JavaScript Example:**
@@ -224,7 +224,7 @@ php -r "echo bin2hex(random_bytes(32));"
 php scripts/create_user.php <username> <email> <password> <role>
 
 # Test authentication
-curl -H "X-API-Key: changeme123" http://localhost/api.php?action=tables
+curl -H "X-API-Key: changeme123" http://localhost:8000?action=tables
 
 # View monitoring dashboard
 # http://localhost/PHP-CRUD-API-Generator/dashboard.html
@@ -243,3 +243,4 @@ curl -H "X-API-Key: changeme123" http://localhost/api.php?action=tables
 ---
 
 **Need help?** Read the full guide: [docs/AUTHENTICATION.md](AUTHENTICATION.md)
+

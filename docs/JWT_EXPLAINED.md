@@ -699,13 +699,13 @@ php scripts/generate_jwt_secret.php
 ### Login (Get Token)
 ```bash
 curl -X POST -d "username=john&password=pass" \
-  http://localhost/api.php?action=login
+  http://localhost:8000?action=login
 ```
 
 ### Use Token
 ```bash
 curl -H "Authorization: Bearer <token>" \
-  http://localhost/api.php?action=tables
+  http://localhost:8000?action=tables
 ```
 
 ### Token Lifespan
@@ -750,3 +750,4 @@ $decoded = JWT::decode($token, new Key($secret, 'HS256'));
 **Version:** 1.4.0 Phoenix  
 **Last Updated:** October 22, 2025  
 **Author:** PHP-CRUD-API-Generator Team
+

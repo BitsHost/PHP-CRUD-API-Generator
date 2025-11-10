@@ -778,7 +778,8 @@ php scripts/create_user.php admin admin@example.com SecurePass123! admin
 # 3. Update index.php to use DatabaseAuthenticator
 
 # 4. Test
-curl -H "X-API-Key: YOUR_API_KEY" http://localhost/api.php?action=tables
+curl -H "X-API-Key: YOUR_API_KEY" http://localhost:8000?action=tables
 ```
 
 **Done!** You now have a scalable, secure user management system.
+

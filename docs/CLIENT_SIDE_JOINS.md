@@ -346,7 +346,7 @@ const profile = await userRepo.getProfileData(123);
 ```php
 <?php
 class ApiClient {
-    private $baseUrl = 'http://localhost/api.php';
+    private $baseUrl = 'http://localhost:8000';
 
     public function getUserWithPosts($userId) {
         // Fetch user
@@ -383,7 +383,7 @@ import requests
 from typing import Dict, List
 
 class ApiClient:
-    def __init__(self, base_url: str = 'http://localhost/api.php'):
+    def __init__(self, base_url: str = 'http://localhost:8000'):
         self.base_url = base_url
 
     def get_user_with_posts(self, user_id: int) -> Dict:
@@ -740,3 +740,4 @@ This approach works great for most applications. Only implement auto-joins when 
 ---
 
 **Questions or need help?** Open an issue on GitHub!
+

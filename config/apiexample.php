@@ -36,8 +36,8 @@ return [
     // API KEY AUTHENTICATION SETTINGS
     // ------------------------------------------
     // Array of valid API keys (use long random strings in production)
-    // Usage: curl -H "X-API-Key: changeme123" http://localhost/api.php?action=tables
-    // Or:    http://localhost/api.php?action=tables&api_key=changeme123
+    // Usage: curl -H "X-API-Key: changeme123" http://localhost:8000?action=tables
+    // Or:    http://localhost:8000?action=tables&api_key=changeme123
     'api_keys' => ['changeme123'],
     
     // Default role assigned to ALL API key users (since keys don't have individual roles)
@@ -48,7 +48,7 @@ return [
     // BASIC AUTHENTICATION SETTINGS
     // ------------------------------------------
     // Config file users (simple but not recommended for production)
-    // Usage: curl -u admin:secret http://localhost/api.php?action=tables
+    // Usage: curl -u admin:secret http://localhost:8000?action=tables
     'basic_users' => [
         'admin' => 'secret',      // username => password
         'user' => 'userpass',

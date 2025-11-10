@@ -117,14 +117,14 @@ return [
 
 **Postman:**
 ```
-GET http://localhost/api.php?action=tables
+GET http://localhost:8000?action=tables
 
 Headers:
   X-API-Key: changeme123
 
 Steps:
 1. Create new request (GET)
-2. URL: http://localhost/api.php?action=tables
+2. URL: http://localhost:8000?action=tables
 3. Go to "Headers" tab
 4. Add header:
    - Key: X-API-Key
@@ -134,21 +134,21 @@ Steps:
 
 **HTTPie:**
 ```bash
-http GET http://localhost/api.php action==tables X-API-Key:changeme123
+http GET http://localhost:8000 action==tables X-API-Key:changeme123
 
 # Or with explicit header syntax:
-http http://localhost/api.php action==tables "X-API-Key: changeme123"
+http http://localhost:8000 action==tables "X-API-Key: changeme123"
 ```
 
 **cURL:**
 ```bash
 curl -H "X-API-Key: changeme123" \
-  http://localhost/api.php?action=tables
+  http://localhost:8000?action=tables
 ```
 
 **JavaScript (Fetch):**
 ```javascript
-fetch('http://localhost/api.php?action=tables', {
+fetch('http://localhost:8000?action=tables', {
   headers: {
     'X-API-Key': 'changeme123'
   }
@@ -159,7 +159,7 @@ fetch('http://localhost/api.php?action=tables', {
 
 **PHP:**
 ```php
-$ch = curl_init('http://localhost/api.php?action=tables');
+$ch = curl_init('http://localhost:8000?action=tables');
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'X-API-Key: changeme123'
 ]);
@@ -171,7 +171,7 @@ $response = curl_exec($ch);
 import requests
 
 response = requests.get(
-    'http://localhost/api.php?action=tables',
+    'http://localhost:8000?action=tables',
     headers={'X-API-Key': 'changeme123'}
 )
 print(response.json())
@@ -183,18 +183,18 @@ print(response.json())
 
 **URL:**
 ```
-http://localhost/api.php?action=tables&api_key=changeme123
+http://localhost:8000?action=tables&api_key=changeme123
 ```
 
 ⚠️ **Warning:** Query parameters are logged in server access logs. Use headers for production.
 
 **Postman:**
 ```
-GET http://localhost/api.php?action=tables&api_key=changeme123
+GET http://localhost:8000?action=tables&api_key=changeme123
 
 Steps:
 1. Create new request (GET)
-2. URL: http://localhost/api.php
+2. URL: http://localhost:8000
 3. Go to "Params" tab
 4. Add parameters:
    - action: tables
@@ -204,17 +204,17 @@ Steps:
 
 **HTTPie:**
 ```bash
-http GET http://localhost/api.php action==tables api_key==changeme123
+http GET http://localhost:8000 action==tables api_key==changeme123
 ```
 
 **cURL:**
 ```bash
-curl "http://localhost/api.php?action=tables&api_key=changeme123"
+curl "http://localhost:8000?action=tables&api_key=changeme123"
 ```
 
 **JavaScript:**
 ```javascript
-fetch('http://localhost/api.php?action=tables&api_key=changeme123')
+fetch('http://localhost:8000?action=tables&api_key=changeme123')
   .then(res => res.json());
 ```
 
@@ -283,7 +283,7 @@ fetch('http://localhost/api.php?action=tables&api_key=changeme123')
 
 **Postman:**
 ```
-GET http://localhost/api.php?action=tables
+GET http://localhost:8000?action=tables
 
 Authorization:
   Type: Basic Auth
@@ -292,7 +292,7 @@ Authorization:
 
 Steps:
 1. Create new request (GET)
-2. URL: http://localhost/api.php?action=tables
+2. URL: http://localhost:8000?action=tables
 3. Go to "Authorization" tab
 4. Type: Select "Basic Auth" from dropdown
 5. Username: admin
@@ -306,23 +306,23 @@ Authorization: Basic YWRtaW46c2VjcmV0
 **HTTPie:**
 ```bash
 # Method 1: Simple syntax (HTTPie handles Basic Auth automatically)
-http -a admin:secret GET http://localhost/api.php action==tables
+http -a admin:secret GET http://localhost:8000 action==tables
 
 # Method 2: Explicit header (manual Base64 encoding)
-http GET http://localhost/api.php action==tables "Authorization: Basic YWRtaW46c2VjcmV0"
+http GET http://localhost:8000 action==tables "Authorization: Basic YWRtaW46c2VjcmV0"
 ```
 
 **cURL:**
 ```bash
 curl -u admin:secret \
-  http://localhost/api.php?action=tables
+  http://localhost:8000?action=tables
 ```
 
 **JavaScript (Fetch):**
 ```javascript
 const credentials = btoa('admin:secret'); // Base64 encode
 
-fetch('http://localhost/api.php?action=tables', {
+fetch('http://localhost:8000?action=tables', {
   headers: {
     'Authorization': 'Basic ' + credentials
   }
@@ -332,7 +332,7 @@ fetch('http://localhost/api.php?action=tables', {
 
 **PHP:**
 ```php
-$ch = curl_init('http://localhost/api.php?action=tables');
+$ch = curl_init('http://localhost:8000?action=tables');
 curl_setopt($ch, CURLOPT_USERPWD, 'admin:secret');
 $response = curl_exec($ch);
 ```
@@ -343,7 +343,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 response = requests.get(
-    'http://localhost/api.php?action=tables',
+    'http://localhost:8000?action=tables',
     auth=HTTPBasicAuth('admin', 'secret')
 )
 ```
@@ -354,7 +354,7 @@ response = requests.get(
 
 Simply visit the URL in a browser:
 ```
-http://localhost/api.php?action=tables
+http://localhost:8000?action=tables
 ```
 
 Browser will prompt for username and password automatically.
@@ -465,14 +465,14 @@ The API accepts login credentials in **3 different formats**:
 
 **cURL:**
 ```bash
-curl -X POST "http://localhost/api.php?action=login" \
+curl -X POST "http://localhost:8000?action=login" \
   -H "Content-Type: application/json" \
   -d '{"username":"john","password":"SecurePass123!"}'
 ```
 
 **Postman:**
 ```
-POST http://localhost/api.php?action=login
+POST http://localhost:8000?action=login
 
 Headers:
   Content-Type: application/json
@@ -486,7 +486,7 @@ Body → raw → JSON:
 
 **HTTPie:**
 ```bash
-http POST http://localhost/api.php action==login username=john password=SecurePass123!
+http POST http://localhost:8000 action==login username=john password=SecurePass123!
 ```
 
 ---
@@ -499,12 +499,12 @@ http POST http://localhost/api.php action==login username=john password=SecurePa
 ```bash
 curl -X POST \
   -d "username=john&password=SecurePass123!" \
-  http://localhost/api.php?action=login
+  http://localhost:8000?action=login
 ```
 
 **Postman:**
 ```
-POST http://localhost/api.php?action=login
+POST http://localhost:8000?action=login
 
 Body → x-www-form-urlencoded:
   username: john
@@ -524,12 +524,12 @@ Body → x-www-form-urlencoded:
 curl -X POST \
   -F "username=john" \
   -F "password=SecurePass123!" \
-  http://localhost/api.php?action=login
+  http://localhost:8000?action=login
 ```
 
 **Postman:**
 ```
-POST http://localhost/api.php?action=login
+POST http://localhost:8000?action=login
 
 Body → form-data:
   username: john
@@ -572,7 +572,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1Qi...
 TOKEN="eyJ0eXAiOiJKV1Qi..."
 
 curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost/api.php?action=tables
+  http://localhost:8000?action=tables
 ```
 
 **JavaScript (Fetch):**
@@ -903,7 +903,7 @@ $role = $decoded->role;  // No database query!
 **Test 1: Admin can access system tables**
 ```bash
 curl -H "X-API-Key: changeme123" \
-  http://localhost/api.php?table=api_users&action=list
+  http://localhost:8000?table=api_users&action=list
 
 # Expected: 200 OK with user list
 ```
@@ -911,7 +911,7 @@ curl -H "X-API-Key: changeme123" \
 **Test 2: Readonly blocked from system tables**
 ```bash
 curl -u john:password123 \
-  http://localhost/api.php?table=api_users&action=list
+  http://localhost:8000?table=api_users&action=list
 
 # Expected: 403 Forbidden
 ```
@@ -919,7 +919,7 @@ curl -u john:password123 \
 **Test 3: Readonly can view regular tables**
 ```bash
 curl -u john:password123 \
-  http://localhost/api.php?table=products&action=list
+  http://localhost:8000?table=products&action=list
 
 # Expected: 200 OK with product list
 ```
@@ -928,7 +928,7 @@ curl -u john:password123 \
 ```bash
 curl -X POST -u alice:alicepass \
   -d "username=hacker&role=admin" \
-  http://localhost/api.php?table=api_users&action=create
+  http://localhost:8000?table=api_users&action=create
 
 # Expected: 403 Forbidden
 ```
@@ -941,7 +941,7 @@ curl -X POST -u alice:alicepass \
 
 ❌ **HTTP (Insecure):**
 ```
-http://api.example.com/api.php
+http://api.example.com
 ```
 - Credentials sent in plaintext
 - Tokens can be intercepted
@@ -949,7 +949,7 @@ http://api.example.com/api.php
 
 ✅ **HTTPS (Secure):**
 ```
-https://api.example.com/api.php
+https://api.example.com
 ```
 
 ---
@@ -1071,13 +1071,13 @@ header('Access-Control-Allow-Headers: Authorization, X-API-Key, Content-Type');
 'auth_method' => 'jwt',  # Must match your usage
 
 # Test with API key
-curl -H "X-API-Key: changeme123" http://localhost/api.php?action=tables
+curl -H "X-API-Key: changeme123" http://localhost:8000?action=tables
 
 # Test with Basic Auth
-curl -u admin:secret http://localhost/api.php?action=tables
+curl -u admin:secret http://localhost:8000?action=tables
 
 # Test JWT login
-curl -X POST -d "username=john&password=pass" http://localhost/api.php?action=login
+curl -X POST -d "username=john&password=pass" http://localhost:8000?action=login
 ```
 
 ---
@@ -1225,7 +1225,7 @@ php -r "
 #### 1. API Key Authentication
 ```
 Request Type: GET
-URL: http://localhost/api.php?action=tables
+URL: http://localhost:8000?action=tables
 
 Option A - Header (Recommended):
 ├── Headers tab
@@ -1239,7 +1239,7 @@ Option B - Query Parameter:
 #### 2. Basic Authentication
 ```
 Request Type: GET
-URL: http://localhost/api.php?action=tables
+URL: http://localhost:8000?action=tables
 
 Authorization tab:
 ├── Type: Basic Auth
@@ -1251,7 +1251,7 @@ Authorization tab:
 ```
 Step 1 - Login:
 Request Type: POST
-URL: http://localhost/api.php?action=login
+URL: http://localhost:8000?action=login
 
 Body → x-www-form-urlencoded:
 ├── username: john
@@ -1261,7 +1261,7 @@ Response: Copy the "token" value
 
 Step 2 - Use Token:
 Request Type: GET
-URL: http://localhost/api.php?action=tables
+URL: http://localhost:8000?action=tables
 
 Headers tab:
 └── Add: Authorization = Bearer eyJ0eXAiOiJKV1Qi...
@@ -1273,19 +1273,19 @@ Headers tab:
 
 ```bash
 # API Key (Header)
-http GET http://localhost/api.php action==tables X-API-Key:changeme123
+http GET http://localhost:8000 action==tables X-API-Key:changeme123
 
 # API Key (Query Parameter)
-http GET http://localhost/api.php action==tables api_key==changeme123
+http GET http://localhost:8000 action==tables api_key==changeme123
 
 # Basic Auth
-http -a admin:secret GET http://localhost/api.php action==tables
+http -a admin:secret GET http://localhost:8000 action==tables
 
 # JWT Login
-http POST http://localhost/api.php action==login username=john password=SecurePass123!
+http POST http://localhost:8000 action==login username=john password=SecurePass123!
 
 # JWT Request (after login)
-http GET http://localhost/api.php action==tables "Authorization: Bearer TOKEN_HERE"
+http GET http://localhost:8000 action==tables "Authorization: Bearer TOKEN_HERE"
 ```
 
 ---
@@ -1330,3 +1330,5 @@ http GET http://localhost/api.php action==tables "Authorization: Bearer TOKEN_HE
 
 **Version:** 1.0.0  
 **Last Updated:** October 22, 2025
+
+

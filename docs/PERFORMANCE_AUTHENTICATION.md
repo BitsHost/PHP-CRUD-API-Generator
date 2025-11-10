@@ -31,7 +31,7 @@
 
 ```bash
 # Login request (1 database query)
-curl -X POST http://your-api/api.php?action=login \
+curl -X POST http://your-api?action=login \
   -d "username=john&password=SecurePass123!"
 
 # Response:
@@ -45,7 +45,7 @@ curl -X POST http://your-api/api.php?action=login \
 ```bash
 # All subsequent requests use the token
 curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-     http://your-api/api.php?action=list&table=posts
+     http://your-api?action=list&table=posts
 
 # No database authentication query!
 # JWT is validated in memory (microseconds)
@@ -204,7 +204,7 @@ Body: username=john&password=SecurePass123!
 
 ```javascript
 // Step 1: Login once
-const loginResponse = await fetch('http://api.com/api.php?action=login', {
+const loginResponse = await fetch('http://api.com?action=login', {
     method: 'POST',
     body: new URLSearchParams({
         username: 'john',
@@ -217,7 +217,7 @@ const { token } = await loginResponse.json();
 localStorage.setItem('jwt_token', token);
 
 // Step 3: Use token for all requests
-const apiResponse = await fetch('http://api.com/api.php?action=list&table=posts', {
+const apiResponse = await fetch('http://api.com?action=list&table=posts', {
     headers: {
         'Authorization': `Bearer ${token}`
     }
@@ -296,3 +296,4 @@ curl -H "Authorization: Bearer $TOKEN" \
 - 🎯 **99.8% performance improvement**
 
 **Recommendation:** Switch to JWT authentication (already implemented in your system). Change one line in config and you're done!
+
