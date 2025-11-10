@@ -115,6 +115,31 @@ return [
 
 #### Method 1: Header (Recommended)
 
+**Postman:**
+```
+GET http://localhost/api.php?action=tables
+
+Headers:
+  X-API-Key: changeme123
+
+Steps:
+1. Create new request (GET)
+2. URL: http://localhost/api.php?action=tables
+3. Go to "Headers" tab
+4. Add header:
+   - Key: X-API-Key
+   - Value: changeme123
+5. Click "Send"
+```
+
+**HTTPie:**
+```bash
+http GET http://localhost/api.php action==tables X-API-Key:changeme123
+
+# Or with explicit header syntax:
+http http://localhost/api.php action==tables "X-API-Key: changeme123"
+```
+
 **cURL:**
 ```bash
 curl -H "X-API-Key: changeme123" \
@@ -162,6 +187,30 @@ http://localhost/api.php?action=tables&api_key=changeme123
 ```
 
 ⚠️ **Warning:** Query parameters are logged in server access logs. Use headers for production.
+
+**Postman:**
+```
+GET http://localhost/api.php?action=tables&api_key=changeme123
+
+Steps:
+1. Create new request (GET)
+2. URL: http://localhost/api.php
+3. Go to "Params" tab
+4. Add parameters:
+   - action: tables
+   - api_key: changeme123
+5. Click "Send"
+```
+
+**HTTPie:**
+```bash
+http GET http://localhost/api.php action==tables api_key==changeme123
+```
+
+**cURL:**
+```bash
+curl "http://localhost/api.php?action=tables&api_key=changeme123"
+```
 
 **JavaScript:**
 ```javascript
@@ -231,6 +280,37 @@ fetch('http://localhost/api.php?action=tables&api_key=changeme123')
 ### Usage Examples
 
 #### Method 1: Authorization Header
+
+**Postman:**
+```
+GET http://localhost/api.php?action=tables
+
+Authorization:
+  Type: Basic Auth
+  Username: admin
+  Password: secret
+
+Steps:
+1. Create new request (GET)
+2. URL: http://localhost/api.php?action=tables
+3. Go to "Authorization" tab
+4. Type: Select "Basic Auth" from dropdown
+5. Username: admin
+6. Password: secret
+7. Click "Send"
+
+Postman automatically encodes credentials as Base64 and adds header:
+Authorization: Basic YWRtaW46c2VjcmV0
+```
+
+**HTTPie:**
+```bash
+# Method 1: Simple syntax (HTTPie handles Basic Auth automatically)
+http -a admin:secret GET http://localhost/api.php action==tables
+
+# Method 2: Explicit header (manual Base64 encoding)
+http GET http://localhost/api.php action==tables "Authorization: Basic YWRtaW46c2VjcmV0"
+```
 
 **cURL:**
 ```bash
@@ -1140,6 +1220,78 @@ php -r "
 
 ## Summary - Quick Reference
 
+### Postman Quick Setup Guide
+
+#### 1. API Key Authentication
+```
+Request Type: GET
+URL: http://localhost/api.php?action=tables
+
+Option A - Header (Recommended):
+├── Headers tab
+└── Add: X-API-Key = changeme123
+
+Option B - Query Parameter:
+├── Params tab
+└── Add: api_key = changeme123
+```
+
+#### 2. Basic Authentication
+```
+Request Type: GET
+URL: http://localhost/api.php?action=tables
+
+Authorization tab:
+├── Type: Basic Auth
+├── Username: admin
+└── Password: secret
+```
+
+#### 3. JWT Authentication
+```
+Step 1 - Login:
+Request Type: POST
+URL: http://localhost/api.php?action=login
+
+Body → x-www-form-urlencoded:
+├── username: john
+└── password: SecurePass123!
+
+Response: Copy the "token" value
+
+Step 2 - Use Token:
+Request Type: GET
+URL: http://localhost/api.php?action=tables
+
+Headers tab:
+└── Add: Authorization = Bearer eyJ0eXAiOiJKV1Qi...
+```
+
+---
+
+### HTTPie Quick Syntax Guide
+
+```bash
+# API Key (Header)
+http GET http://localhost/api.php action==tables X-API-Key:changeme123
+
+# API Key (Query Parameter)
+http GET http://localhost/api.php action==tables api_key==changeme123
+
+# Basic Auth
+http -a admin:secret GET http://localhost/api.php action==tables
+
+# JWT Login
+http POST http://localhost/api.php action==login username=john password=SecurePass123!
+
+# JWT Request (after login)
+http GET http://localhost/api.php action==tables "Authorization: Bearer TOKEN_HERE"
+```
+
+---
+
+### Method Comparison Table
+
 | Feature | API Key | Basic Auth | JWT |
 |---------|---------|------------|-----|
 | **Config Value** | `'apikey'` | `'basic'` | `'jwt'` |
@@ -1152,6 +1304,8 @@ php -r "
 | **Performance** | ⚡ Fast | ⚡ Fast | ⚡⚡⚡ Very Fast |
 | **Security** | 🔒 Medium | 🔒 Medium | 🔒🔒 High |
 | **User Tracking** | ❌ (shared key) | ✅ | ✅ |
+| **Postman Setup** | Headers or Params | Authorization tab | Headers (after login) |
+| **HTTPie Syntax** | `X-API-Key:value` | `-a user:pass` | `"Authorization: Bearer ..."` |
 
 ---
 
