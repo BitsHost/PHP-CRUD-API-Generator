@@ -93,33 +93,21 @@ class CacheManager
                 break;
 
             case 'redis':
-                // Will be implemented later
-                if (class_exists('App\Cache\Drivers\RedisCache')) {
-                    $this->driver = new \App\Cache\Drivers\RedisCache($this->config);
-                } else {
-                    // Fallback to file cache
-                    $this->driver = new FileCache($this->config);
-                }
+                // Redis driver not yet implemented - fallback to file cache
+                // TODO: Implement RedisCache driver in src/Cache/Drivers/RedisCache.php
+                $this->driver = new FileCache($this->config);
                 break;
 
             case 'memcached':
-                // Will be implemented later
-                if (class_exists('App\Cache\Drivers\MemcachedCache')) {
-                    $this->driver = new \App\Cache\Drivers\MemcachedCache($this->config);
-                } else {
-                    // Fallback to file cache
-                    $this->driver = new FileCache($this->config);
-                }
+                // Memcached driver not yet implemented - fallback to file cache
+                // TODO: Implement MemcachedCache driver in src/Cache/Drivers/MemcachedCache.php
+                $this->driver = new FileCache($this->config);
                 break;
 
             case 'apcu':
-                // Will be implemented later
-                if (class_exists('App\Cache\Drivers\ApcuCache')) {
-                    $this->driver = new \App\Cache\Drivers\ApcuCache($this->config);
-                } else {
-                    // Fallback to file cache
-                    $this->driver = new FileCache($this->config);
-                }
+                // APCu driver not yet implemented - fallback to file cache
+                // TODO: Implement ApcuCache driver in src/Cache/Drivers/ApcuCache.php
+                $this->driver = new FileCache($this->config);
                 break;
 
             default:
