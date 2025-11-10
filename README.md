@@ -35,6 +35,28 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 ---
 
+## 🔒 SECURITY WARNING
+
+**⚠️ CRITICAL:** The admin dashboard (`dashboard.html`) and health endpoint (`health.php`) expose sensitive information and **MUST BE PROTECTED** before deploying to production!
+
+**These files reveal:**
+- API statistics, error rates, and performance metrics
+- Authentication failures and security threats
+- System information (memory, CPU, disk usage)
+
+**🛡️ [SECURE YOUR DASHBOARD NOW →](docs/DASHBOARD_SECURITY.md)** - Complete protection guide
+
+**Quick Fix (5 minutes):** Add IP whitelist to `.htaccess`:
+```apache
+<Files "dashboard.html">
+    Order Deny,Allow
+    Deny from all
+    Allow from YOUR.IP.ADDRESS  # Replace with your IP
+</Files>
+```
+
+---
+
 ## 📦 Installation
 
 ### Option 1: Install as Library (Recommended) ⚡
@@ -50,7 +72,15 @@ copy vendor/bitshost/php-crud-api-generator/public/index.php index.php
 copy vendor/bitshost/php-crud-api-generator/dashboard.html dashboard.html
 copy vendor/bitshost/php-crud-api-generator/health.php health.php
 
-# 3. Edit index.php - Change 2 lines (point config paths to vendor)
+# 3. 🔒 SECURE admin files (IMPORTANT!)
+# Add this to .htaccess in your project root:
+echo '<Files "dashboard.html">' >> .htaccess
+echo '    Order Deny,Allow' >> .htaccess
+echo '    Deny from all' >> .htaccess
+echo '    Allow from 127.0.0.1' >> .htaccess
+echo '</Files>' >> .htaccess
+
+# 4. Edit index.php - Change 2 lines (point config paths to vendor)
 # On line ~51, change:
 #   $dbConfig = require __DIR__ . '/../config/db.php';
 #   $apiConfig = require __DIR__ . '/../config/api.php';
@@ -58,7 +88,7 @@ copy vendor/bitshost/php-crud-api-generator/health.php health.php
 #   $dbConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/db.php';
 #   $apiConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/api.php';
 
-# 4. Configure & run
+# 5. Configure & run
 notepad vendor/bitshost/php-crud-api-generator/config/db.php
 notepad vendor/bitshost/php-crud-api-generator/config/api.php
 php -S localhost:8000
@@ -67,6 +97,7 @@ php -S localhost:8000
 **That's it!** Total modifications: **2 lines of code** 🚀
 
 **📖 [5-Minute Quick Start Guide →](docs/QUICK_START.md)**
+**🔒 [Secure Your Dashboard →](docs/DASHBOARD_SECURITY.md)** ← **DO THIS BEFORE PRODUCTION!**
 
 ### Option 2: Standalone Project (Even Simpler!)
 
