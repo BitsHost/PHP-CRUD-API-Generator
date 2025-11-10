@@ -2,6 +2,10 @@
 
 namespace App;
 
+use App\Cache\CacheManager;
+use App\Config\ApiConfig;
+use App\Config\CacheConfig;
+
 /**
  * API Router
  * 
@@ -87,7 +91,8 @@ class Router
     private RateLimiter $rateLimiter;
     private RequestLogger $logger;
     private ?Monitor $monitor = null;
-    private array $apiConfig;
+    private ?CacheManager $cache = null;
+    private ApiConfig $apiConfig;
     private bool $authEnabled;
     private float $requestStartTime;
 
@@ -124,19 +129,29 @@ class Router
         $this->api = new ApiGenerator($pdo);
         $this->auth = $auth;
 
-        $this->apiConfig = require __DIR__ . '/../config/api.php';
-        $this->authEnabled = $this->apiConfig['auth_enabled'] ?? true;
-        $this->rbac = new Rbac($this->apiConfig['roles'] ?? [], $this->apiConfig['user_roles'] ?? []);
+        // Load configuration using PSR-4 Config classes
+        $this->apiConfig = ApiConfig::fromFile(__DIR__ . '/../config/api.php');
+        $this->authEnabled = $this->apiConfig->isAuthEnabled();
+        $this->rbac = new Rbac(
+            $this->apiConfig->getRoles(),
+            $this->apiConfig->getUserRoles()
+        );
         
         // Initialize rate limiter with config
-        $this->rateLimiter = new RateLimiter($this->apiConfig['rate_limit'] ?? []);
+        $this->rateLimiter = new RateLimiter($this->apiConfig->getRateLimitConfig());
         
         // Initialize request logger with config
-        $this->logger = new RequestLogger($this->apiConfig['logging'] ?? []);
+        $this->logger = new RequestLogger($this->apiConfig->getLoggingConfig());
         
         // Initialize monitor if enabled
-        if (!empty($this->apiConfig['monitoring']['enabled'])) {
-            $this->monitor = new Monitor($this->apiConfig['monitoring'] ?? []);
+        if ($this->apiConfig->isMonitoringEnabled()) {
+            $this->monitor = new Monitor($this->apiConfig->getMonitoringConfig());
+        }
+        
+        // Initialize cache if enabled (using PSR-4 Config class)
+        $cacheConfig = CacheConfig::fromFile(__DIR__ . '/../config/cache.php');
+        if ($cacheConfig->isEnabled()) {
+            $this->cache = new CacheManager($cacheConfig->toArray());
         }
         
         // Track request start time
@@ -305,7 +320,14 @@ class Router
 
         // JWT login endpoint (always accessible if method is JWT)
         if (($query['action'] ?? '') === 'login' && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
+            // Handle both JSON body and form data
             $post = $_POST;
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+            if (stripos($contentType, 'application/json') !== false) {
+                $jsonInput = file_get_contents('php://input');
+                $post = json_decode($jsonInput, true) ?? [];
+            }
+            
             $user = $post['username'] ?? '';
             $pass = $post['password'] ?? '';
             
@@ -354,9 +376,24 @@ class Router
                 }
                 
                 // Create JWT with user role
-                $token = $this->auth->createJwt(['sub' => $user, 'role' => $userRole]);
-                $this->logResponse(['token' => $token], 200, $query);
-                echo json_encode(['token' => $token]);
+                $payload = ['sub' => $user, 'role' => $userRole];
+                $token = $this->auth->createJwt($payload);
+                
+                // Decode token to get expiration time
+                $tokenParts = explode('.', $token);
+                $tokenPayload = json_decode(base64_decode($tokenParts[1]), true);
+                $expiresAt = $tokenPayload['exp'] ?? (time() + 3600);
+                
+                // Return complete response with token, expiration, and user info
+                $response = [
+                    'token' => $token,
+                    'expires_at' => $expiresAt,
+                    'user' => $user,
+                    'role' => $userRole
+                ];
+                
+                $this->logResponse($response, 200, $query);
+                echo json_encode($response);
             } else {
                 $this->logger->logAuth('jwt', false, $user, 'Invalid credentials');
                 
@@ -460,7 +497,42 @@ class Router
                             echo json_encode(['error' => 'Invalid sort parameter']);
                             break;
                         }
-                        $result = $this->api->list($query['table'], $opts);
+                        
+                        // ========================================
+                        // CACHE CHECK
+                        // ========================================
+                        $cacheHit = false;
+                        $result = null;
+                        
+                        if ($this->cache && $this->cache->shouldCache($query['table'])) {
+                            $cacheKey = $this->cache->generateKey($query['table'], $opts);
+                            $result = $this->cache->get($cacheKey);
+                            
+                            if ($result !== null) {
+                                $cacheHit = true;
+                                $ttl = $this->cache->getTtl($query['table']);
+                                header('X-Cache-Hit: true');
+                                header('X-Cache-TTL: ' . $ttl);
+                            }
+                        }
+                        
+                        // If not cached, fetch from database
+                        if ($result === null) {
+                            $result = $this->api->list($query['table'], $opts);
+                            
+                            // Store in cache
+                            if ($this->cache && $this->cache->shouldCache($query['table'])) {
+                                $this->cache->set($cacheKey, $result, $query['table']);
+                                $ttl = $this->cache->getTtl($query['table']);
+                                header('X-Cache-Hit: false');
+                                header('X-Cache-Stored: true');
+                                header('X-Cache-TTL: ' . $ttl);
+                            }
+                        }
+                        // ========================================
+                        // END CACHE CHECK
+                        // ========================================
+                        
                         $this->logResponse($result, 200, $query);
                         echo json_encode($result);
                     } else {
@@ -528,6 +600,12 @@ class Router
                         $data = json_decode(file_get_contents('php://input'), true) ?? [];
                     }
                     $result = $this->api->create($query['table'], $data);
+                    
+                    // Invalidate cache for this table
+                    if ($this->cache) {
+                        $this->cache->invalidateTable($query['table']);
+                    }
+                    
                     $this->logResponse($result, 201, $query);
                     echo json_encode($result);
                     break;
@@ -554,6 +632,12 @@ class Router
                         $data = json_decode(file_get_contents('php://input'), true) ?? [];
                     }
                     $result = $this->api->update($query['table'], $query['id'], $data);
+                    
+                    // Invalidate cache for this table
+                    if ($this->cache) {
+                        $this->cache->invalidateTable($query['table']);
+                    }
+                    
                     $this->logResponse($result, 200, $query);
                     echo json_encode($result);
                     break;
@@ -572,6 +656,12 @@ class Router
                         }
                         $this->enforceRbac('delete', $query['table']);
                         $result = $this->api->delete($query['table'], $query['id']);
+                        
+                        // Invalidate cache for this table
+                        if ($this->cache) {
+                            $this->cache->invalidateTable($query['table']);
+                        }
+                        
                         $this->logResponse($result, 200, $query);
                         echo json_encode($result);
                     } else {
@@ -599,6 +689,12 @@ class Router
                         break;
                     }
                     $result = $this->api->bulkCreate($query['table'], $data);
+                    
+                    // Invalidate cache for this table
+                    if ($this->cache) {
+                        $this->cache->invalidateTable($query['table']);
+                    }
+                    
                     $this->logResponse($result, 201, $query);
                     echo json_encode($result);
                     break;
@@ -622,6 +718,12 @@ class Router
                         break;
                     }
                     $result = $this->api->bulkDelete($query['table'], $data['ids']);
+                    
+                    // Invalidate cache for this table
+                    if ($this->cache) {
+                        $this->cache->invalidateTable($query['table']);
+                    }
+                    
                     $this->logResponse($result, 200, $query);
                     echo json_encode($result);
                     break;
@@ -702,7 +804,7 @@ class Router
         }
 
         // Priority 2: API Key (for apikey auth)
-        if (($this->apiConfig['auth_method'] ?? '') === 'apikey') {
+        if ($this->apiConfig->getAuthMethod() === 'apikey') {
             $headers = $this->getRequestHeaders();
             $apiKey = $headers['X-API-Key'] ?? ($_GET['api_key'] ?? null);
             if ($apiKey) {

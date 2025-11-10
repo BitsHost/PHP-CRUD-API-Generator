@@ -369,13 +369,39 @@ bin2hex(random_bytes(32))
 
 #### Step 1: Login (Get Token)
 
-**Request:**
-```bash
-POST /api.php?action=login
-Content-Type: application/x-www-form-urlencoded
+The API accepts login credentials in **3 formats**:
 
-username=john&password=SecurePass123!
+##### Option 1: JSON Body (Recommended for Modern APIs)
+
+**cURL:**
+```bash
+curl -X POST "http://localhost/api.php?action=login" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"john","password":"SecurePass123!"}'
 ```
+
+**Postman:**
+```
+POST http://localhost/api.php?action=login
+
+Headers:
+  Content-Type: application/json
+
+Body → raw → JSON:
+{
+  "username": "john",
+  "password": "SecurePass123!"
+}
+```
+
+**HTTPie:**
+```bash
+http POST http://localhost/api.php action==login username=john password=SecurePass123!
+```
+
+---
+
+##### Option 2: Form Data (application/x-www-form-urlencoded)
 
 **cURL:**
 ```bash
@@ -384,12 +410,43 @@ curl -X POST \
   http://localhost/api.php?action=login
 ```
 
+**Postman:**
+```
+POST http://localhost/api.php?action=login
+
+Body → x-www-form-urlencoded:
+  username: john
+  password: SecurePass123!
+```
+
+---
+
+##### Option 3: Multipart Form Data
+
+**cURL:**
+```bash
+curl -X POST \
+  -F "username=john" \
+  -F "password=SecurePass123!" \
+  http://localhost/api.php?action=login
+```
+
+**Postman:**
+```
+POST http://localhost/api.php?action=login
+
+Body → form-data:
+  username: john
+  password: SecurePass123!
+```
+
+---
+
 **Response (Success):**
 ```json
 {
-  "success": true,
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzQ4...",
-  "expires_in": 3600,
+  "expires_at": 1699568400,
   "user": "john",
   "role": "readonly"
 }

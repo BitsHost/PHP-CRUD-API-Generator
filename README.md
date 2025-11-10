@@ -220,16 +220,19 @@ php scripts/create_user.php admin admin@yoursite.com YourSecurePassword123! admi
 
 ## 🔐 Authentication Modes
 
+Configure in `config/api.php`:
+
 - **No auth:** `'auth_enabled' => false`
 - **API Key:** `'auth_enabled' => true, 'auth_method' => 'apikey'`  
   Client: `X-API-Key` header or `?api_key=...`
 - **Basic Auth:** `'auth_method' => 'basic'`  
-  Client: HTTP Basic Auth
-- **JWT:** `'auth_method' => 'jwt'`  
-  1. `POST /index.php?action=login` with `username` and `password` (from `basic_users`)
+  Client: HTTP Basic Auth (username:password)
+- **JWT:** `'auth_method' => 'jwt'` (Recommended for production)  
+  1. POST to `/index.php?action=login` with credentials
   2. Use returned token as `Authorization: Bearer <token>`
 - **OAuth (future):** `'auth_method' => 'oauth'`  
-  (Implement provider logic as needed)
+
+📖 **[Complete Authentication Guide →](docs/AUTHENTICATION.md)** - Detailed examples with Postman, HTTPie, cURL (JSON, Form Data, Multipart)
 
 ---
 
