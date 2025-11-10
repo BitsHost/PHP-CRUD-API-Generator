@@ -369,7 +369,17 @@ bin2hex(random_bytes(32))
 
 #### Step 1: Login (Get Token)
 
-The API accepts login credentials in **3 formats**:
+The API accepts login credentials in **3 different formats**:
+
+| Format | Content-Type | Is JSON? | Use Case |
+|--------|-------------|----------|----------|
+| **JSON** | `application/json` | ✅ Yes | Modern APIs, JavaScript apps |
+| **Form Data** | `application/x-www-form-urlencoded` | ❌ No | Traditional HTML forms |
+| **Multipart** | `multipart/form-data` | ❌ No | File uploads |
+
+**Important:** Only Option 1 (JSON) uses actual JSON format!
+
+---
 
 ##### Option 1: JSON Body (Recommended for Modern APIs)
 
@@ -401,7 +411,9 @@ http POST http://localhost/api.php action==login username=john password=SecurePa
 
 ---
 
-##### Option 2: Form Data (application/x-www-form-urlencoded)
+##### Option 2: Form Data (URL-encoded, NOT JSON)
+
+**Format:** `application/x-www-form-urlencoded` (traditional HTML form format)
 
 **cURL:**
 ```bash
@@ -417,11 +429,15 @@ POST http://localhost/api.php?action=login
 Body → x-www-form-urlencoded:
   username: john
   password: SecurePass123!
+
+(This is NOT JSON - it's the same format as URL query parameters)
 ```
 
 ---
 
-##### Option 3: Multipart Form Data
+##### Option 3: Multipart Form Data (for file uploads, NOT JSON)
+
+**Format:** `multipart/form-data` (used when uploading files)
 
 **cURL:**
 ```bash
@@ -438,6 +454,8 @@ POST http://localhost/api.php?action=login
 Body → form-data:
   username: john
   password: SecurePass123!
+
+(This is NOT JSON - it's a multipart format for file uploads)
 ```
 
 ---
