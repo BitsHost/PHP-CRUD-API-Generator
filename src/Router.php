@@ -6,7 +6,7 @@ use App\Cache\CacheManager;
 use App\Config\ApiConfig;
 use App\Config\CacheConfig;
 use App\Controller\LoginController;
-use App\Actions;
+use App\Http\Action;
 
 /**
  * API Router
@@ -321,7 +321,7 @@ class Router
         }
 
         // JWT login endpoint (always accessible if method is JWT)
-        if (($query['action'] ?? '') === Actions::LOGIN && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
+    if (($query['action'] ?? '') === Action::LOGIN && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
             $controller = new LoginController($this->db, $this->auth, $this->logger, $this->monitor);
             [$payload, $status] = $controller->handle($query);
             http_response_code($status);
@@ -369,14 +369,14 @@ class Router
 
         try {
             switch ($query['action'] ?? '') {
-                case 'tables':
+                case Action::TABLES:
                     // No per-table RBAC needed
                     $result = $this->inspector->getTables();
                     $this->logResponse($result, 200, $query);
                     echo json_encode($result);
                     break;
 
-                case 'columns':
+                case Action::COLUMNS:
                     if (isset($query['table'])) {
                         if (!Validator::validateTableName($query['table'])) {
                             http_response_code(400);
@@ -393,7 +393,7 @@ class Router
                     }
                     break;
 
-                case 'list':
+                case Action::LIST:
                     if (isset($query['table'])) {
                         if (!Validator::validateTableName($query['table'])) {
                             http_response_code(400);
@@ -458,7 +458,7 @@ class Router
                     }
                     break;
 
-                case 'count':
+                case Action::COUNT:
                     if (isset($query['table'])) {
                         if (!Validator::validateTableName($query['table'])) {
                             http_response_code(400);
@@ -478,7 +478,7 @@ class Router
                     }
                     break;
 
-                case 'read':
+                case Action::READ:
                     if (isset($query['table'], $query['id'])) {
                         if (!Validator::validateTableName($query['table'])) {
                             http_response_code(400);
@@ -500,7 +500,7 @@ class Router
                     }
                     break;
 
-                case 'create':
+                case Action::CREATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         http_response_code(405);
                         echo json_encode(['error' => 'Method Not Allowed']);
@@ -527,7 +527,7 @@ class Router
                     echo json_encode($result);
                     break;
 
-                case 'update':
+                case Action::UPDATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         http_response_code(405);
                         echo json_encode(['error' => 'Method Not Allowed']);
@@ -559,7 +559,7 @@ class Router
                     echo json_encode($result);
                     break;
 
-                case 'delete':
+                case Action::DELETE:
                     if (isset($query['table'], $query['id'])) {
                         if (!Validator::validateTableName($query['table'])) {
                             http_response_code(400);
@@ -587,7 +587,7 @@ class Router
                     }
                     break;
 
-                case 'bulk_create':
+                case Action::BULK_CREATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         http_response_code(405);
                         echo json_encode(['error' => 'Method Not Allowed']);
@@ -616,7 +616,7 @@ class Router
                     echo json_encode($result);
                     break;
 
-                case 'bulk_delete':
+                case Action::BULK_DELETE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                         http_response_code(405);
                         echo json_encode(['error' => 'Method Not Allowed']);
@@ -645,7 +645,7 @@ class Router
                     echo json_encode($result);
                     break;
 
-                case 'openapi':
+                case Action::OPENAPI:
                     // No per-table RBAC needed by default
                     $result = OpenApiGenerator::generate(
                         $this->inspector->getTables(),

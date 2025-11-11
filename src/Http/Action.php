@@ -1,13 +1,11 @@
 <?php
-namespace App;
+namespace App\Http;
 
 /**
- * Actions constants centralize string literals to reduce typos and enable
- * future refactors (enum / attribute mapping) with minimal diff.
+ * Action constants to avoid magic strings in routing/authorization.
  */
-final class Actions
+final class Action
 {
-    public const LOGIN = 'login';
     public const TABLES = 'tables';
     public const COLUMNS = 'columns';
     public const LIST = 'list';
@@ -19,4 +17,5 @@ final class Actions
     public const BULK_CREATE = 'bulk_create';
     public const BULK_DELETE = 'bulk_delete';
     public const OPENAPI = 'openapi';
+    public const LOGIN = 'login';
 }
