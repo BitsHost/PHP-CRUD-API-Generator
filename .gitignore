@@ -19,6 +19,13 @@ jwt_token.txt
 test_*.txt
 secrets_*.txt
 
+# Private business documents (NEVER COMMIT!)
+/private-vault/
+private-vault/**
+*.private.md
+*.secret.md
+*.confidential.md
+
 # IDE and OS
 .DS_Store
 .idea/
