@@ -5,6 +5,8 @@ namespace App;
 use App\Cache\CacheManager;
 use App\Config\ApiConfig;
 use App\Config\CacheConfig;
+use App\Controller\LoginController;
+use App\Actions;
 
 /**
  * API Router
@@ -319,97 +321,12 @@ class Router
         }
 
         // JWT login endpoint (always accessible if method is JWT)
-        if (($query['action'] ?? '') === 'login' && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
-            // Handle both JSON body and form data
-            $post = $_POST;
-            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-            if (stripos($contentType, 'application/json') !== false) {
-                $jsonInput = file_get_contents('php://input');
-                $post = json_decode($jsonInput, true) ?? [];
-            }
-            
-            $user = $post['username'] ?? '';
-            $pass = $post['password'] ?? '';
-            
-            $authenticated = false;
-            $userRole = 'readonly'; // default
-            
-            // Try database authentication first (if enabled)
-            if (!empty($this->auth->config['use_database_auth']) && $this->db) {
-                $pdo = $this->db->getPdo();
-                $stmt = $pdo->prepare(
-                    "SELECT id, username, email, password_hash, role, active 
-                     FROM api_users 
-                     WHERE username = :username AND active = 1"
-                );
-                $stmt->execute(['username' => $user]);
-                $dbUser = $stmt->fetch(\PDO::FETCH_ASSOC);
-                
-                if ($dbUser && password_verify($pass, $dbUser['password_hash'])) {
-                    $authenticated = true;
-                    $userRole = $dbUser['role'];
-                    
-                    // Update last login
-                    $updateStmt = $pdo->prepare("UPDATE api_users SET last_login = NOW() WHERE id = :id");
-                    $updateStmt->execute(['id' => $dbUser['id']]);
-                }
-            }
-            
-            // Fallback to config file authentication
-            if (!$authenticated) {
-                $users = $this->auth->config['basic_users'] ?? [];
-                if (isset($users[$user]) && $users[$user] === $pass) {
-                    $authenticated = true;
-                    $userRole = $this->auth->config['user_roles'][$user] ?? 'readonly';
-                }
-            }
-            
-            if ($authenticated) {
-                $this->logger->logAuth('jwt', true, $user);
-                
-                // Record auth success
-                if ($this->monitor) {
-                    $this->monitor->recordSecurityEvent('auth_success', [
-                        'method' => 'jwt',
-                        'user' => $user,
-                    ]);
-                }
-                
-                // Create JWT with user role
-                $payload = ['sub' => $user, 'role' => $userRole];
-                $token = $this->auth->createJwt($payload);
-                
-                // Decode token to get expiration time
-                $tokenParts = explode('.', $token);
-                $tokenPayload = json_decode(base64_decode($tokenParts[1]), true);
-                $expiresAt = $tokenPayload['exp'] ?? (time() + 3600);
-                
-                // Return complete response with token, expiration, and user info
-                $response = [
-                    'token' => $token,
-                    'expires_at' => $expiresAt,
-                    'user' => $user,
-                    'role' => $userRole
-                ];
-                
-                $this->logResponse($response, 200, $query);
-                echo json_encode($response);
-            } else {
-                $this->logger->logAuth('jwt', false, $user, 'Invalid credentials');
-                
-                // Record auth failure
-                if ($this->monitor) {
-                    $this->monitor->recordSecurityEvent('auth_failure', [
-                        'method' => 'jwt',
-                        'reason' => 'Invalid credentials',
-                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                    ]);
-                }
-                
-                http_response_code(401);
-                $this->logResponse(['error' => 'Invalid credentials'], 401, $query);
-                echo json_encode(['error' => 'Invalid credentials']);
-            }
+        if (($query['action'] ?? '') === Actions::LOGIN && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
+            $controller = new LoginController($this->db, $this->auth, $this->logger, $this->monitor);
+            [$payload, $status] = $controller->handle($query);
+            http_response_code($status);
+            $this->logResponse($payload, $status, $query);
+            echo json_encode($payload);
             return;
         }
 
