@@ -7,6 +7,14 @@ use App\Config\ApiConfig;
 use App\Config\CacheConfig;
 use App\Controller\LoginController;
 use App\Http\Action;
+use App\Http\Response;
+use App\Support\QueryValidator;
+use App\Http\Middleware\RateLimitMiddleware;
+use App\Security\RbacGuard;
+use App\Http\Middleware\CorsMiddleware;
+use App\Http\ErrorResponder;
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\DocsController;
 
 /**
  * API Router
@@ -90,13 +98,16 @@ class Router
     private ApiGenerator $api;
     public Authenticator $auth;
     private Rbac $rbac;
-    private RateLimiter $rateLimiter;
+    private RbacGuard $rbacGuard;
+    private RateLimitMiddleware $rateLimitMiddleware;
     private RequestLogger $logger;
     private ?Monitor $monitor = null;
     private ?CacheManager $cache = null;
     private ApiConfig $apiConfig;
     private bool $authEnabled;
     private float $requestStartTime;
+    private CorsMiddleware $cors;
+    private ErrorResponder $errors;
 
     /**
      * Initialize Router
@@ -138,12 +149,22 @@ class Router
             $this->apiConfig->getRoles(),
             $this->apiConfig->getUserRoles()
         );
-        
-        // Initialize rate limiter with config
-        $this->rateLimiter = new RateLimiter($this->apiConfig->getRateLimitConfig());
+        $this->rbacGuard = new RbacGuard($this->rbac);
         
         // Initialize request logger with config
         $this->logger = new RequestLogger($this->apiConfig->getLoggingConfig());
+
+    // Initialize rate limiter + middleware with config (logger must exist first)
+    $rateLimiter = new RateLimiter($this->apiConfig->getRateLimitConfig());
+    $this->rateLimitMiddleware = new RateLimitMiddleware($rateLimiter, $this->logger, $this->monitor);
+
+    // Initialize CORS middleware (using defaults for now)
+    $this->cors = new CorsMiddleware([ /* TODO: load from config when available */ ]);
+
+    // Initialize error responder
+    $this->errors = new ErrorResponder($this->logger, $this->monitor, true);
+        
+    // (moved logger initialization earlier)
         
         // Initialize monitor if enabled
         if ($this->apiConfig->isMonitoringEnabled()) {
@@ -193,24 +214,7 @@ class Router
      *     ]
      * ]
      */
-    private function enforceRbac(string $action, ?string $table = null)
-    {
-        if (!$this->authEnabled) {
-            return; // skip RBAC if auth is disabled
-        }
-        $role = $this->auth->getCurrentUserRole();
-        if (!$role) {
-            http_response_code(403);
-            echo json_encode(['error' => 'Forbidden: No role assigned']);
-            exit;
-        }
-        if (!$table) return;
-        if (!$this->rbac->isAllowed($role, $table, $action)) {
-            http_response_code(403);
-            echo json_encode(['error' => "Forbidden: $role cannot $action on $table"]);
-            exit;
-        }
-    }
+    // RBAC checks are delegated to RbacGuard
 
     /**
      * Route API request
@@ -279,34 +283,20 @@ class Router
      */
     public function route(array $query)
     {
-        header('Content-Type: application/json');
+        // CORS headers first; handle preflight early
+        if ($this->cors->handlePreflight()) {
+            return;
+        }
+        $this->cors->apply();
+
+        // Content-Type header will be set per-response via Response helper
 
         // ========================================
         // RATE LIMITING CHECK
         // ========================================
         $identifier = $this->getRateLimitIdentifier();
-        if (!$this->rateLimiter->checkLimit($identifier)) {
-            // Log rate limit hit
-            $this->logger->logRateLimit(
-                $identifier,
-                $this->rateLimiter->getRequestCount($identifier),
-                $this->rateLimiter->getRemainingRequests($identifier) + $this->rateLimiter->getRequestCount($identifier)
-            );
-            
-            // Record security event
-            if ($this->monitor) {
-                $this->monitor->recordSecurityEvent('rate_limit_hit', [
-                    'identifier' => $identifier,
-                    'requests' => $this->rateLimiter->getRequestCount($identifier),
-                ]);
-            }
-            
-            $this->rateLimiter->sendRateLimitResponse($identifier);
-        }
-
-        // Add rate limit headers to response
-        foreach ($this->rateLimiter->getHeaders($identifier) as $name => $value) {
-            header("$name: $value");
+        if (!$this->rateLimitMiddleware->checkAndRespond($identifier)) {
+            return; // 429 already returned
         }
         
         // Record request metric
@@ -324,9 +314,8 @@ class Router
     if (($query['action'] ?? '') === Action::LOGIN && ($this->auth->config['auth_method'] ?? '') === 'jwt') {
             $controller = new LoginController($this->db, $this->auth, $this->logger, $this->monitor);
             [$payload, $status] = $controller->handle($query);
-            http_response_code($status);
             $this->logResponse($payload, $status, $query);
-            echo json_encode($payload);
+            Response::json($payload, $status);
             return;
         }
 
@@ -370,48 +359,39 @@ class Router
         try {
             switch ($query['action'] ?? '') {
                 case Action::TABLES:
-                    // No per-table RBAC needed
-                    $result = $this->inspector->getTables();
-                    $this->logResponse($result, 200, $query);
-                    echo json_encode($result);
+                    // Delegate to ApiController
+                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
+                    [$payload, $status] = $apiCtl->tables();
+                    $this->logResponse($payload, $status, $query);
+                    Response::json($payload, $status);
                     break;
 
                 case Action::COLUMNS:
-                    if (isset($query['table'])) {
-                        if (!Validator::validateTableName($query['table'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid table name']);
-                            break;
-                        }
-                        $this->enforceRbac('read', $query['table']);
-                        $result = $this->inspector->getColumns($query['table']);
-                        $this->logResponse($result, 200, $query);
-                        echo json_encode($result);
-                    } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Missing table parameter']);
-                    }
+                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
+                    [$payload, $status] = $apiCtl->columns($this->auth->getCurrentUserRole(), $query['table'] ?? null);
+                    $this->logResponse($payload, $status, $query);
+                    Response::json($payload, $status);
                     break;
 
                 case Action::LIST:
                     if (isset($query['table'])) {
-                        if (!Validator::validateTableName($query['table'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid table name']);
+                        if (!QueryValidator::table($query['table'])) {
+                            $this->logResponse(['error' => 'Invalid table name'], 400, $query);
+                            Response::error('Invalid table name', 400);
                             break;
                         }
-                        $this->enforceRbac('list', $query['table']);
+                        $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'list');
                         $opts = [
                             'filter' => $query['filter'] ?? null,
                             'sort' => $query['sort'] ?? null,
-                            'page' => Validator::validatePage($query['page'] ?? 1),
-                            'page_size' => Validator::validatePageSize($query['page_size'] ?? 20),
+                            'page' => QueryValidator::page($query['page'] ?? 1),
+                            'page_size' => QueryValidator::pageSize($query['page_size'] ?? 20),
                             'fields' => $query['fields'] ?? null,
                         ];
                         // Validate sort if provided
-                        if (isset($opts['sort']) && !Validator::validateSort($opts['sort'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid sort parameter']);
+                        if (isset($opts['sort']) && !QueryValidator::sort($opts['sort'])) {
+                            $this->logResponse(['error' => 'Invalid sort parameter'], 400, $query);
+                            Response::error('Invalid sort parameter', 400);
                             break;
                         }
                         
@@ -420,6 +400,7 @@ class Router
                         // ========================================
                         $cacheHit = false;
                         $result = null;
+                        $responseHeaders = [];
                         
                         if ($this->cache && $this->cache->shouldCache($query['table'])) {
                             $cacheKey = $this->cache->generateKey($query['table'], $opts);
@@ -428,8 +409,8 @@ class Router
                             if ($result !== null) {
                                 $cacheHit = true;
                                 $ttl = $this->cache->getTtl($query['table']);
-                                header('X-Cache-Hit: true');
-                                header('X-Cache-TTL: ' . $ttl);
+                                $responseHeaders['X-Cache-Hit'] = 'true';
+                                $responseHeaders['X-Cache-TTL'] = (string)$ttl;
                             }
                         }
                         
@@ -441,9 +422,9 @@ class Router
                             if ($this->cache && $this->cache->shouldCache($query['table'])) {
                                 $this->cache->set($cacheKey, $result, $query['table']);
                                 $ttl = $this->cache->getTtl($query['table']);
-                                header('X-Cache-Hit: false');
-                                header('X-Cache-Stored: true');
-                                header('X-Cache-TTL: ' . $ttl);
+                                $responseHeaders['X-Cache-Hit'] = 'false';
+                                $responseHeaders['X-Cache-Stored'] = 'true';
+                                $responseHeaders['X-Cache-TTL'] = (string)$ttl;
                             }
                         }
                         // ========================================
@@ -451,67 +432,67 @@ class Router
                         // ========================================
                         
                         $this->logResponse($result, 200, $query);
-                        echo json_encode($result);
+                        Response::json($result, 200, $responseHeaders);
                     } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Missing table parameter']);
+                        $this->logResponse(['error' => 'Missing table parameter'], 400, $query);
+                        Response::error('Missing table parameter', 400);
                     }
                     break;
 
                 case Action::COUNT:
                     if (isset($query['table'])) {
-                        if (!Validator::validateTableName($query['table'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid table name']);
+                        if (!QueryValidator::table($query['table'])) {
+                            $this->logResponse(['error' => 'Invalid table name'], 400, $query);
+                            Response::error('Invalid table name', 400);
                             break;
                         }
-                        $this->enforceRbac('list', $query['table']); // Use 'list' permission for count
+                        $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'list'); // Use 'list' permission for count
                         $opts = [
                             'filter' => $query['filter'] ?? null,
                         ];
                         $result = $this->api->count($query['table'], $opts);
                         $this->logResponse($result, 200, $query);
-                        echo json_encode($result);
+                        Response::json($result, 200);
                     } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Missing table parameter']);
+                        $this->logResponse(['error' => 'Missing table parameter'], 400, $query);
+                        Response::error('Missing table parameter', 400);
                     }
                     break;
 
                 case Action::READ:
                     if (isset($query['table'], $query['id'])) {
-                        if (!Validator::validateTableName($query['table'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid table name']);
+                        if (!QueryValidator::table($query['table'])) {
+                            $this->logResponse(['error' => 'Invalid table name'], 400, $query);
+                            Response::error('Invalid table name', 400);
                             break;
                         }
-                        if (!Validator::validateId($query['id'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid id parameter']);
+                        if (!QueryValidator::id($query['id'])) {
+                            $this->logResponse(['error' => 'Invalid id parameter'], 400, $query);
+                            Response::error('Invalid id parameter', 400);
                             break;
                         }
-                        $this->enforceRbac('read', $query['table']);
+                        $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'read');
                         $result = $this->api->read($query['table'], $query['id']);
                         $this->logResponse($result, 200, $query);
-                        echo json_encode($result);
+                        Response::json($result, 200);
                     } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Missing table or id parameter']);
+                        $this->logResponse(['error' => 'Missing table or id parameter'], 400, $query);
+                        Response::error('Missing table or id parameter', 400);
                     }
                     break;
 
                 case Action::CREATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        http_response_code(405);
-                        echo json_encode(['error' => 'Method Not Allowed']);
+                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
+                        Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                    if (!isset($query['table']) || !QueryValidator::table($query['table'])) {
+                        $this->logResponse(['error' => 'Invalid or missing table parameter'], 400, $query);
+                        Response::error('Invalid or missing table parameter', 400);
                         break;
                     }
-                    $this->enforceRbac('create', $query['table']);
+                    $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'create');
                     $data = $_POST;
                     if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
                         $data = json_decode(file_get_contents('php://input'), true) ?? [];
@@ -524,26 +505,26 @@ class Router
                     }
                     
                     $this->logResponse($result, 201, $query);
-                    echo json_encode($result);
+                    Response::json($result, 201);
                     break;
 
                 case Action::UPDATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        http_response_code(405);
-                        echo json_encode(['error' => 'Method Not Allowed']);
+                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
+                        Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                    if (!isset($query['table']) || !QueryValidator::table($query['table'])) {
+                        $this->logResponse(['error' => 'Invalid or missing table parameter'], 400, $query);
+                        Response::error('Invalid or missing table parameter', 400);
                         break;
                     }
-                    if (!isset($query['id']) || !Validator::validateId($query['id'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or missing id parameter']);
+                    if (!isset($query['id']) || !QueryValidator::id($query['id'])) {
+                        $this->logResponse(['error' => 'Invalid or missing id parameter'], 400, $query);
+                        Response::error('Invalid or missing id parameter', 400);
                         break;
                     }
-                    $this->enforceRbac('update', $query['table']);
+                    $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'update');
                     $data = $_POST;
                     if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
                         $data = json_decode(file_get_contents('php://input'), true) ?? [];
@@ -556,22 +537,22 @@ class Router
                     }
                     
                     $this->logResponse($result, 200, $query);
-                    echo json_encode($result);
+                    Response::json($result, 200);
                     break;
 
                 case Action::DELETE:
                     if (isset($query['table'], $query['id'])) {
-                        if (!Validator::validateTableName($query['table'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid table name']);
+                        if (!QueryValidator::table($query['table'])) {
+                            $this->logResponse(['error' => 'Invalid table name'], 400, $query);
+                            Response::error('Invalid table name', 400);
                             break;
                         }
-                        if (!Validator::validateId($query['id'])) {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'Invalid id parameter']);
+                        if (!QueryValidator::id($query['id'])) {
+                            $this->logResponse(['error' => 'Invalid id parameter'], 400, $query);
+                            Response::error('Invalid id parameter', 400);
                             break;
                         }
-                        $this->enforceRbac('delete', $query['table']);
+                        $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'delete');
                         $result = $this->api->delete($query['table'], $query['id']);
                         
                         // Invalidate cache for this table
@@ -580,29 +561,29 @@ class Router
                         }
                         
                         $this->logResponse($result, 200, $query);
-                        echo json_encode($result);
+                        Response::json($result, 200);
                     } else {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Missing table or id parameter']);
+                        $this->logResponse(['error' => 'Missing table or id parameter'], 400, $query);
+                        Response::error('Missing table or id parameter', 400);
                     }
                     break;
 
                 case Action::BULK_CREATE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        http_response_code(405);
-                        echo json_encode(['error' => 'Method Not Allowed']);
+                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
+                        Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                    if (!isset($query['table']) || !QueryValidator::table($query['table'])) {
+                        $this->logResponse(['error' => 'Invalid or missing table parameter'], 400, $query);
+                        Response::error('Invalid or missing table parameter', 400);
                         break;
                     }
-                    $this->enforceRbac('create', $query['table']);
+                    $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'create');
                     $data = json_decode(file_get_contents('php://input'), true) ?? [];
                     if (!is_array($data) || empty($data)) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or empty JSON array']);
+                        $this->logResponse(['error' => 'Invalid or empty JSON array'], 400, $query);
+                        Response::error('Invalid or empty JSON array', 400);
                         break;
                     }
                     $result = $this->api->bulkCreate($query['table'], $data);
@@ -613,25 +594,25 @@ class Router
                     }
                     
                     $this->logResponse($result, 201, $query);
-                    echo json_encode($result);
+                    Response::json($result, 201);
                     break;
 
                 case Action::BULK_DELETE:
                     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        http_response_code(405);
-                        echo json_encode(['error' => 'Method Not Allowed']);
+                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
+                        Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    if (!isset($query['table']) || !Validator::validateTableName($query['table'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or missing table parameter']);
+                    if (!isset($query['table']) || !QueryValidator::table($query['table'])) {
+                        $this->logResponse(['error' => 'Invalid or missing table parameter'], 400, $query);
+                        Response::error('Invalid or missing table parameter', 400);
                         break;
                     }
-                    $this->enforceRbac('delete', $query['table']);
+                    $this->rbacGuard->guard($this->authEnabled, $this->auth->getCurrentUserRole(), $query['table'], 'delete');
                     $data = json_decode(file_get_contents('php://input'), true) ?? [];
                     if (!isset($data['ids']) || !is_array($data['ids']) || empty($data['ids'])) {
-                        http_response_code(400);
-                        echo json_encode(['error' => 'Invalid or empty ids array. Send JSON with "ids" field.']);
+                        $this->logResponse(['error' => 'Invalid or empty ids array. Send JSON with "ids" field.'], 400, $query);
+                        Response::error('Invalid or empty ids array. Send JSON with "ids" field.', 400);
                         break;
                     }
                     $result = $this->api->bulkDelete($query['table'], $data['ids']);
@@ -642,47 +623,28 @@ class Router
                     }
                     
                     $this->logResponse($result, 200, $query);
-                    echo json_encode($result);
+                    Response::json($result, 200);
                     break;
 
                 case Action::OPENAPI:
-                    // No per-table RBAC needed by default
-                    $result = OpenApiGenerator::generate(
-                        $this->inspector->getTables(),
-                        $this->inspector
-                    );
-                    $this->logResponse($result, 200, $query);
-                    echo json_encode($result);
+                    $docsCtl = new DocsController($this->inspector);
+                    [$payload, $status] = $docsCtl->openapi();
+                    $this->logResponse($payload, $status, $query);
+                    Response::json($payload, $status);
                     break;
 
                 default:
-                    http_response_code(400);
                     $error = ['error' => 'Invalid action'];
                     $this->logResponse($error, 400, $query);
-                    echo json_encode($error);
+                    Response::json($error, 400);
             }
         } catch (\Throwable $e) {
-            $this->logger->logError($e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                'query' => $query
-            ]);
-            
-            // Record error metric
-            if ($this->monitor) {
-                $this->monitor->recordError($e->getMessage(), [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'action' => $query['action'] ?? null,
-                    'table' => $query['table'] ?? null,
-                ]);
-            }
-            
-            http_response_code(500);
-            $error = ['error' => $e->getMessage()];
-            $this->logResponse($error, 500, $query);
-            echo json_encode($error);
+            [$payload, $status] = $this->errors->fromException($e, [
+                'query' => $query,
+                'action' => $query['action'] ?? null,
+                'table' => $query['table'] ?? null,
+            ], 500);
+            $this->logResponse($payload, $status, $query);
         }
     }
 
