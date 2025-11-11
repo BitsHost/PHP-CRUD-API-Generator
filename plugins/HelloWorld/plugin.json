@@ -1,0 +1,8 @@
+{
+  "name": "hello_world",
+  "display_name": "Hello World Plugin",
+  "version": "1.0.0",
+  "class": "Plugins\\HelloWorld\\Plugin",
+  "enabled": true,
+  "dependencies": []
+}
