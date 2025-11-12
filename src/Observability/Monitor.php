@@ -372,6 +372,9 @@ class Monitor
 		return sprintf('%d days, %d hours, %d minutes', $days, $hours, $minutes);
 	}
     
+	/**
+	 * @param array<string,mixed> $context
+	 */
 	public function triggerAlert(string $level, string $message, array $context = []): bool
 	{
 		if (!$this->config['enabled']) {
@@ -400,6 +403,9 @@ class Monitor
 		return true;
 	}
     
+	/**
+	 * @return array<int,array<string,mixed>>
+	 */
 	public function getRecentAlerts(int $minutes = 60): array
 	{
 		$cutoff = time() - ($minutes * 60);
@@ -459,6 +465,9 @@ class Monitor
 		return $failures;
 	}
     
+	/**
+	 * @param array<string,mixed> $metric
+	 */
 	private function writeMetric(array $metric): bool
 	{
 		$file = $this->getMetricsFile(date('Y-m-d'));
@@ -467,6 +476,9 @@ class Monitor
 		return file_put_contents($file, $line, FILE_APPEND | LOCK_EX) !== false;
 	}
     
+	/**
+	 * @param array<string,mixed> $alert
+	 */
 	private function writeAlert(array $alert): bool
 	{
 		$file = $this->getAlertsFile(date('Y-m-d'));
@@ -485,6 +497,20 @@ class Monitor
 		return $this->alertsDir . '/alerts_' . $date . '.log';
 	}
     
+	/**
+	 * @return array{
+	 *   total_requests:int,
+	 *   total_errors:int,
+	 *   error_rate:int|float,
+	 *   avg_response_time:int|float,
+	 *   min_response_time:int|float,
+	 *   max_response_time:int|float,
+	 *   auth_failures:int,
+	 *   rate_limit_hits:int,
+	 *   status_code_distribution:array<int,int>,
+	 *   time_window:int
+	 * }
+	 */
 	private function getEmptyStats(): array
 	{
 		return [
@@ -507,7 +533,7 @@ class Monitor
 		$cutoff = time() - ($this->config['retention_days'] * 86400);
         
 		// Clean up metrics
-		$files = glob($this->metricsDir . '/metrics_*.log');
+	$files = glob($this->metricsDir . '/metrics_*.log') ?: [];
 		foreach ($files as $file) {
 			if (filemtime($file) < $cutoff) {
 				if (unlink($file)) {
@@ -517,7 +543,7 @@ class Monitor
 		}
         
 		// Clean up alerts
-		$files = glob($this->alertsDir . '/alerts_*.log');
+	$files = glob($this->alertsDir . '/alerts_*.log') ?: [];
 		foreach ($files as $file) {
 			if (filemtime($file) < $cutoff) {
 				if (unlink($file)) {
@@ -538,12 +564,16 @@ class Monitor
 			return $this->exportPrometheus($stats, $health);
 		}
         
-		return json_encode([
+		return (string) json_encode([
 			'health' => $health,
 			'stats' => $stats,
 		], JSON_PRETTY_PRINT);
 	}
     
+	/**
+	 * @param array<string,mixed> $stats
+	 * @param array<string,mixed> $health
+	 */
 	private function exportPrometheus(array $stats, array $health): string
 	{
 		$lines = [];

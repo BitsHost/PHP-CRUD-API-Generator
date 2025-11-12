@@ -14,18 +14,18 @@ class Rbac
 	private array $roles;
 
 	/**
-	 * @var array<string, list<string>> $userRoles
+	 * Tracks whether userRoles were provided (for future enhancements)
 	 */
-	private array $userRoles;
+	private bool $hasUserRoles = false;
 
 	/**
 	 * @param array<string, array<string, list<string>>> $roles
-	 * @param array<string, list<string>> $userRoles
+	 * @param array<string, list<string>|string> $userRoles Map username => role(s); kept for future use
 	 */
 	public function __construct(array $roles, array $userRoles)
 	{
 		$this->roles = $roles;
-		$this->userRoles = $userRoles;
+		$this->hasUserRoles = !empty($userRoles);
 	}
 
 	public function isAllowed(string $role, string $table, string $action): bool

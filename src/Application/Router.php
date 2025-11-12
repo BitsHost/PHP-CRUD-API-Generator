@@ -55,9 +55,11 @@ class Router
 
         $this->apiConfig = ApiConfig::fromFile(__DIR__ . '/../../config/api.php');
         $this->authEnabled = $this->apiConfig->isAuthEnabled();
+        // Normalize userRoles to array<string, list<string>>
+        $userRolesMap = array_map(fn($r) => [$r], $this->apiConfig->getUserRoles());
         $this->rbac = new Rbac(
             $this->apiConfig->getRoles(),
-            $this->apiConfig->getUserRoles()
+            $userRolesMap
         );
         $this->rbacGuard = new RbacGuard($this->rbac);
 

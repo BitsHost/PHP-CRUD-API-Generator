@@ -6,6 +6,10 @@ namespace App\Application;
 /**
  * HookManager (Canonical Location)
  *
- * Moved from App\HookManager. Original file now acts as a BC stub.
+ * Canonical implementation. A BC stub exists at App\\HookManager extending
+ * this class; do not extend the stub from here to avoid circular references.
  */
-class HookManager extends \App\HookManager {}
+class HookManager
+{
+	// Intentionally minimal for now. Add hook registration/dispatch if needed.
+}

@@ -14,6 +14,9 @@ use App\Cache\CacheInterface;
  */
 class RedisCache implements CacheInterface
 {
+    /**
+     * @param array<string,mixed> $config
+     */
     public function __construct(private array $config = [])
     {
         // TODO: Implement Redis connection using ext-redis or Predis
@@ -56,8 +59,21 @@ class RedisCache implements CacheInterface
     }
 
     /** @inheritDoc */
+    /**
+     * @return array<string,mixed>
+     */
     public function getStats(): array
     {
         throw new \RuntimeException('RedisCache not implemented yet');
+    }
+
+    /**
+     * Expose config for introspection (prevents only-written warning)
+     *
+     * @return array<string,mixed>
+     */
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

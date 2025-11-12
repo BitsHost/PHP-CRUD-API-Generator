@@ -21,6 +21,9 @@ class CorsMiddleware
     private bool $allowCredentials;
     private int $maxAge;
 
+    /**
+     * @param array<string,mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->enabled = $config['enabled'] ?? true;

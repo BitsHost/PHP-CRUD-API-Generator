@@ -35,7 +35,7 @@ class ApiConfig
     private bool $authEnabled;
     /** @var string */
     private string $authMethod;
-    /** @var list<string> */
+    /** @var array<int,string> */
     private array $apiKeys;
     /** @var string */
     private string $apiKeyRole;
@@ -70,12 +70,17 @@ class ApiConfig
      * 
      * @param array $config Configuration array from config/api.php (or defaults)
      */
+    /**
+     * @param array<string,mixed> $config Configuration array from config/api.php (or defaults)
+     */
     public function __construct(array $config = [])
     {
         // Authentication settings
         $this->authEnabled = $config['auth_enabled'] ?? true;
         $this->authMethod = $config['auth_method'] ?? 'jwt';
-        $this->apiKeys = $config['api_keys'] ?? ['changeme123'];
+    $rawKeys = $config['api_keys'] ?? ['changeme123'];
+    $keys = is_array($rawKeys) ? array_values(array_map('strval', $rawKeys)) : [strval($rawKeys)];
+    $this->apiKeys = $keys;
         $this->apiKeyRole = $config['api_key_role'] ?? 'admin';
         $this->basicUsers = $config['basic_users'] ?? [
             'admin' => 'secret',
@@ -184,7 +189,7 @@ class ApiConfig
      * Get valid API keys
      */
     /**
-     * @return list<string>
+     * @return array<int,string>
      */
     public function getApiKeys(): array
     {
@@ -310,7 +315,7 @@ class ApiConfig
      */
     public function isMonitoringEnabled(): bool
     {
-        return $this->monitoringConfig['enabled'] ?? false;
+        return (bool) $this->monitoringConfig['enabled'];
     }
 
     /**

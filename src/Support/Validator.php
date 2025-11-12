@@ -32,7 +32,7 @@ class Validator
         return min($pageSizeInt, $max);
     }
 
-    public static function validateId($id): bool
+    public static function validateId(int|string $id): bool
     {
         if (is_numeric($id)) {
             return filter_var($id, FILTER_VALIDATE_INT) !== false;

@@ -54,6 +54,9 @@ class Authenticator
 	 *                      - jwt_issuer: JWT issuer claim (optional)
 	 *                      - jwt_audience: JWT audience claim (optional)
 	 */
+	/**
+	 * @param array<string,mixed> $config Authentication configuration
+	 */
 	public function __construct(array $config, ?\PDO $pdo = null)
 	{
 		$this->config = $config;
@@ -184,8 +187,7 @@ class Authenticator
 	private function getHeaders(): array
 	{
 		if (function_exists('getallheaders')) {
-			$all = getallheaders();
-			return is_array($all) ? $all : [];
+			return getallheaders();
 		}
 		// Fallback
 		$headers = [];

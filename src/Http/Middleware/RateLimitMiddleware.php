@@ -33,7 +33,7 @@ class RateLimitMiddleware
      */
     public function checkAndRespond(string $identifier): bool
     {
-        if (!$this->rateLimiter->checkLimit($identifier)) {
+    if (!$this->rateLimiter->checkLimit($identifier)) {
             // Log the rate limit hit
             $this->logger->logRateLimit(
                 $identifier,
@@ -49,9 +49,8 @@ class RateLimitMiddleware
                 ]);
             }
 
-            // Send 429 with headers
+            // Send 429 with headers (never returns)
             $this->rateLimiter->sendRateLimitResponse($identifier);
-            return false;
         }
 
         // Add rate limit headers for allowed requests

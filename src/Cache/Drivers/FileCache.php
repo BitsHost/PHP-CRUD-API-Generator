@@ -65,7 +65,7 @@ class FileCache implements CacheInterface
      * Creates cache directory if it doesn't exist.
      * Sets appropriate permissions for files and directories.
      * 
-     * @param array $config Cache configuration
+     * @param array<string,mixed> $config Cache configuration
      * 
      * @throws \RuntimeException If cache directory cannot be created
      * 
@@ -258,6 +258,9 @@ class FileCache implements CacheInterface
     /**
      * {@inheritdoc}
      */
+    /**
+     * @return array<string,mixed>
+     */
     public function getStats(): array
     {
         $files = $this->glob_recursive($this->cachePath . '/*' . self::CACHE_EXTENSION);
@@ -335,6 +338,9 @@ class FileCache implements CacheInterface
      * @param string $pattern Glob pattern
      * @return array Array of matching file paths
      */
+    /**
+     * @return array<int,string>
+     */
     private function glob_recursive(string $pattern): array
     {
         $files = glob($pattern) ?: [];
@@ -359,7 +365,7 @@ class FileCache implements CacheInterface
     private function formatBytes(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $factor = floor((strlen((string)$bytes) - 1) / 3);
+        $factor = (int) floor((strlen((string)$bytes) - 1) / 3);
         
         return sprintf("%.2f %s", $bytes / pow(1024, $factor), $units[$factor] ?? 'B');
     }
@@ -375,6 +381,9 @@ class FileCache implements CacheInterface
      * @example
      * $stats = $cache->getDriver()->cleanup();
      * // ['deleted' => 42, 'freed_bytes' => 1024000]
+     */
+    /**
+     * @return array{deleted_files:int,freed_bytes:int,freed_bytes_human:string}
      */
     public function cleanup(): array
     {
