@@ -31,19 +31,33 @@ namespace App\Config;
  */
 class ApiConfig
 {
+    /** @var bool */
     private bool $authEnabled;
+    /** @var string */
     private string $authMethod;
+    /** @var list<string> */
     private array $apiKeys;
+    /** @var string */
     private string $apiKeyRole;
+    /** @var array<string,string> */
     private array $basicUsers;
+    /** @var bool */
     private bool $useDatabaseAuth;
+    /** @var string */
     private string $jwtSecret;
+    /** @var int */
     private int $jwtExpiration;
+    /** @var string */
     private string $jwtAlgorithm;
+    /** @var array<string,array{tables:list<string>,actions:list<string>}> */
     private array $roles;
+    /** @var array<string,string> */
     private array $userRoles;
+    /** @var array{enabled:bool,requests_per_minute:int,requests_per_hour:int,requests_per_day:int} */
     private array $rateLimitConfig;
+    /** @var array{enabled:bool,log_requests:bool,log_responses:bool,log_errors:bool} */
     private array $loggingConfig;
+    /** @var array{enabled:bool} */
     private array $monitoringConfig;
 
     /**
@@ -169,6 +183,9 @@ class ApiConfig
     /**
      * Get valid API keys
      */
+    /**
+     * @return list<string>
+     */
     public function getApiKeys(): array
     {
         return $this->apiKeys;
@@ -184,6 +201,9 @@ class ApiConfig
 
     /**
      * Get basic auth users
+     */
+    /**
+     * @return array<string,string>
      */
     public function getBasicUsers(): array
     {
@@ -225,6 +245,9 @@ class ApiConfig
     /**
      * Get all roles configuration
      */
+    /**
+     * @return array<string,array{tables:list<string>,actions:list<string>}>
+     */
     public function getRoles(): array
     {
         return $this->roles;
@@ -232,6 +255,9 @@ class ApiConfig
 
     /**
      * Get user role mappings
+     */
+    /**
+     * @return array<string,string>
      */
     public function getUserRoles(): array
     {
@@ -249,6 +275,9 @@ class ApiConfig
     /**
      * Get rate limit configuration
      */
+    /**
+     * @return array{enabled:bool,requests_per_minute:int,requests_per_hour:int,requests_per_day:int}
+     */
     public function getRateLimitConfig(): array
     {
         return $this->rateLimitConfig;
@@ -257,6 +286,9 @@ class ApiConfig
     /**
      * Get logging configuration
      */
+    /**
+     * @return array{enabled:bool,log_requests:bool,log_responses:bool,log_errors:bool}
+     */
     public function getLoggingConfig(): array
     {
         return $this->loggingConfig;
@@ -264,6 +296,9 @@ class ApiConfig
 
     /**
      * Get monitoring configuration
+     */
+    /**
+     * @return array{enabled:bool}
      */
     public function getMonitoringConfig(): array
     {
@@ -280,6 +315,9 @@ class ApiConfig
 
     /**
      * Convert to array (for backward compatibility)
+     */
+    /**
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {

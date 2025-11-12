@@ -27,6 +27,9 @@ class RateLimitMiddleware
      * Perform rate limit check and respond if exceeded.
      * Returns false if request should terminate (429 already sent),
      * otherwise true and ensures headers are emitted.
+    *
+    * @param string $identifier
+    * @return bool
      */
     public function checkAndRespond(string $identifier): bool
     {
@@ -53,7 +56,7 @@ class RateLimitMiddleware
 
         // Add rate limit headers for allowed requests
         foreach ($this->rateLimiter->getHeaders($identifier) as $name => $value) {
-            header($name . ': ' . $value);
+            header((string)$name . ': ' . (string)$value);
         }
         return true;
     }

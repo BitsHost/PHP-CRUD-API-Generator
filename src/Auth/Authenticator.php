@@ -24,7 +24,7 @@ class Authenticator
 	/**
 	 * Authentication configuration
 	 *
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	public array $config;
 
@@ -38,7 +38,7 @@ class Authenticator
 	/**
 	 * Currently authenticated user data
 	 *
-	 * @var array|null
+	 * @var array{ id?: int|string, username?: string, email?: string, role?: string }|null
 	 */
 	private ?array $currentUser = null;
 
@@ -144,6 +144,11 @@ class Authenticator
 	/**
 	 * Create a JWT token with custom payload
 	 */
+	/**
+	 * Create a JWT token with custom payload
+	 *
+	 * @param array<string,mixed> $payload
+	 */
 	public function createJwt(array $payload, int $expireSeconds = 3600): string
 	{
 		$now = time();
@@ -173,18 +178,21 @@ class Authenticator
 
 	/**
 	 * Get HTTP request headers
+	 *
+	 * @return array<string,string>
 	 */
 	private function getHeaders(): array
 	{
 		if (function_exists('getallheaders')) {
-			return getallheaders();
+			$all = getallheaders();
+			return is_array($all) ? $all : [];
 		}
 		// Fallback
 		$headers = [];
 		foreach ($_SERVER as $name => $value) {
 			if (str_starts_with($name, 'HTTP_')) {
 				$header = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-				$headers[$header] = $value;
+				$headers[$header] = (string)$value;
 			}
 		}
 		return $headers;

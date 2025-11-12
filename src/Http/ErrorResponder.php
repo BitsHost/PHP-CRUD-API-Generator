@@ -23,7 +23,8 @@ class ErrorResponder
      * Handle an exception: log, record metrics, and send JSON error response.
      * Returns the payload and status for callers that also need to log response.
      *
-     * @return array{0: array, 1: int}
+     * @param array<string,mixed> $context
+     * @return array{0: array{error: string}, 1: int}
      */
     public function fromException(Throwable $e, array $context = [], int $status = 500): array
     {
