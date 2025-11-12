@@ -1,7 +1,7 @@
 <?php
 namespace App\Security;
 
-use App\Rbac;
+use App\Security\Rbac;
 use App\Http\Response;
 
 /**

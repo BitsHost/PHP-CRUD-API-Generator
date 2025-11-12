@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Middleware;
 
-use App\RateLimiter;
-use App\RequestLogger;
-use App\Monitor;
+use App\Security\RateLimiter;
+use App\Observability\RequestLogger;
+use App\Observability\Monitor;
 
 /**
  * RateLimitMiddleware centralizes rate limiting checks and responses.
