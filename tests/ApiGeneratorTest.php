@@ -51,7 +51,7 @@ class ApiGeneratorTest extends TestCase
     {
         $row = $this->api->create($this->table, ['name' => 'Charlie']);
         $deleted = $this->api->delete($this->table, $row['id']);
-        $this->assertTrue($deleted);
+        $this->assertTrue($deleted['success'] ?? false);
     }
 
     public function testList(): void

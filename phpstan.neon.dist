@@ -3,7 +3,5 @@ parameters:
   paths:
     - src
     - tests
-  ignoreErrors:
-    - '#Cannot call method (.*) on mixed#'
-  reportUnmatchedIgnoredErrors: true
+  reportUnmatchedIgnoredErrors: false
   tmpDir: .phpstan

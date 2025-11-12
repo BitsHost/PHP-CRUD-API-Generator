@@ -169,6 +169,19 @@ class RequestLoggerTest extends TestCase
 
     public function testLogStatistics(): void
     {
+        // Add some request entries to ensure total_requests > 0
+        $this->logger->logRequest(
+            ['method' => 'GET', 'action' => 'list', 'table' => 'users'],
+            ['status_code' => 200, 'size' => 10],
+            0.01
+        );
+        $this->logger->logQuickRequest('POST', 'create', 'products', 'user:seed');
+        $this->logger->logRequest(
+            ['method' => 'GET', 'action' => 'read', 'table' => 'users'],
+            ['status_code' => 404, 'size' => 0],
+            0.02
+        );
+
         // Create various log entries
         $this->logger->logAuth('jwt', true, 'user1');
         $this->logger->logAuth('basic', false, 'user2', 'Invalid');
@@ -177,7 +190,7 @@ class RequestLoggerTest extends TestCase
 
         $stats = $this->logger->getStats();
         
-        // Total should include INFO, WARNING, and ERROR level logs
+        // Total should count request entries
         $this->assertGreaterThanOrEqual(2, $stats['total_requests']);
         $this->assertGreaterThanOrEqual(1, $stats['errors']);
         $this->assertGreaterThanOrEqual(1, $stats['warnings']);
