@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, refactor-phase-2, feature/** ]
+  pull_request:
+    branches: [ main, refactor-phase-2 ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '8.0', '8.1', '8.2', '8.3' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, json, pdo, pdo_mysql
+          coverage: none
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Generate autoload
+        run: composer dump-autoload -o
+
+      - name: PHPStan
+        run: |
+          if [ -f phpstan.neon ] || [ -f phpstan.neon.dist ]; then \
+            vendor/bin/phpstan analyse --no-progress; \
+          else \
+            echo "Skipping PHPStan"; \
+          fi
+
+      - name: PHPCS
+        run: |
+          if [ -f phpcs.xml ] || [ -f phpcs.xml.dist ]; then \
+            vendor/bin/phpcs; \
+          else \
+            echo "Skipping PHPCS"; \
+          fi
+
+      - name: PHPUnit
+        run: |
+          if [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then \
+            vendor/bin/phpunit -c phpunit.xml; \
+          else \
+            echo "Skipping PHPUnit"; \
+          fi

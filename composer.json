@@ -25,7 +25,9 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.0"
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^2.1",
+    "squizlabs/php_codesniffer": "^4.0"
   },
   "support": {
     "issues": "https://github.com/BitsHost/php-crud-api-generator/issues",
