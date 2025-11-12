@@ -7,7 +7,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // \App\Cors::sendHeaders();
 
 use App\Database\Database as Database;
-use App\Router;
+use App\Application\Router;
 use App\Auth\Authenticator as Authenticator;
 
 // Load configs

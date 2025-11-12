@@ -3,6 +3,7 @@
 namespace App;
 
 use PDO;
+use App\Database\SchemaInspector;
 
 /**
  * API Generator Class

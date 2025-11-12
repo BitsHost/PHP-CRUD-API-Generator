@@ -602,35 +602,4 @@ Built by [BitHost](https://github.com/BitsHost). PRs/issues welcome!
 
 ---
 
-## 🧭 Namespace Mapping (Pre-v2 Migration)
-
-To ease migration to the new structured namespaces, legacy root classes remain as thin wrappers and are now deprecated. Update your imports to the canonical locations below:
-
-| Legacy (old) | New (canonical) |
-|--------------|-----------------|
-| `App\Database` | `App\Database\Database` |
-| `App\SchemaInspector` | `App\Database\SchemaInspector` |
-| `App\Authenticator` | `App\Auth\Authenticator` |
-| `App\RequestLogger` | `App\Observability\RequestLogger` |
-| `App\Monitor` | `App\Observability\Monitor` |
-| `App\Rbac` | `App\Security\Rbac` |
-| `App\RateLimiter` | `App\Security\RateLimiter` |
-| `App\OpenApiGenerator` | `App\Docs\OpenApiGenerator` |
-| `App\HookManager` | `App\Application\HookManager` |
-| `App\Response` | `App\Http\Response` |
-| `App\Cors` | `App\Http\Middleware\CorsMiddleware` |
-| `App\Validator` | `App\Support\Validator` |
-| `App\Controller\LoginController` | `App\Http\Controllers\LoginController` |
-
-### Deprecation Policy
-
-Legacy wrappers were removed in `2.0.0-dev`. For projects upgrading from `<2.0.0` use the table below and see [`MIGRATION.md`](MIGRATION.md).
-
-### How to Migrate
-
-1. Search your codebase for `use App\Xyz;` matching the left column.
-2. Replace with the new canonical namespace.
-3. Remove any now-unused aliases.
-4. Run tests / static analysis to confirm.
-
-For any questions or edge cases, open an issue. See [`MIGRATION.md`](MIGRATION.md) for automated upgrade options.
+ 

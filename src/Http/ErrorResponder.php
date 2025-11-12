@@ -2,8 +2,8 @@
 namespace App\Http;
 
 use Throwable;
-use App\RequestLogger;
-use App\Monitor;
+use App\Observability\RequestLogger;
+use App\Observability\Monitor;
 
 /**
  * ErrorResponder: centralizes exception-to-response mapping with logging.

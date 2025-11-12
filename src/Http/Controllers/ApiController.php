@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\SchemaInspector;
+use App\Database\SchemaInspector;
 use App\ApiGenerator;
 use App\Cache\CacheManager;
 use App\Security\RbacGuard;

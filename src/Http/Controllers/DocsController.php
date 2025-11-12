@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\SchemaInspector;
-use App\OpenApiGenerator;
+use App\Database\SchemaInspector;
+use App\Docs\OpenApiGenerator;
 
 class DocsController
 {

@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Authenticator;
-use App\Database; // BC stub will extend new App\Database\Database
-use App\RequestLogger; // BC stub will extend new App\Observability\RequestLogger
-use App\Monitor; // BC stub will extend new App\Observability\Monitor
+use App\Auth\Authenticator;
+use App\Database\Database; 
+use App\Observability\RequestLogger; 
+use App\Observability\Monitor; 
 
 /**
  * LoginController
