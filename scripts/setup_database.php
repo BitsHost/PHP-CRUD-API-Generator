@@ -7,7 +7,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
+use App\Database\Database as Database;
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 echo "  Setting up API User Management Tables\n";

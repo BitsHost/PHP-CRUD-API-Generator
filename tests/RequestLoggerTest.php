@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use App\RequestLogger;
+use App\Observability\RequestLogger;
 
 /**
  * Request Logger Tests

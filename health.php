@@ -14,7 +14,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use App\Monitor;
+use App\Observability\Monitor;
 
 // Load configuration
 $config = require __DIR__ . '/config/api.php';

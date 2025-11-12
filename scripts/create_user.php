@@ -14,7 +14,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
+use App\Database\Database as Database;
 
 // Check arguments
 if ($argc < 4) {

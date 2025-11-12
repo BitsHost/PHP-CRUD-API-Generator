@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use App\Database;
+use App\Database\Database as Database;
 use App\ApiGenerator;
-use App\SchemaInspector;
+use App\Database\SchemaInspector as SchemaInspector;
 
 class ApiGeneratorTest extends TestCase
 {
@@ -13,7 +13,7 @@ class ApiGeneratorTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $pdo = (new App\Database($dbConfig))->getPdo();
+    $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS test_table");
         $pdo->exec("CREATE TABLE test_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))");
     }
@@ -21,14 +21,14 @@ class ApiGeneratorTest extends TestCase
     public static function tearDownAfterClass(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $pdo = (new App\Database($dbConfig))->getPdo();
+    $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS test_table");
     }
 
     protected function setUp(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $this->db = new App\Database($dbConfig);
+    $this->db = new App\Database\Database($dbConfig);
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }
 

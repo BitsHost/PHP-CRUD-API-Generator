@@ -1,4 +1,5 @@
 {
+  "version": "2.0.0-dev",
   "name": "bitshost/php-crud-api-generator",
   "description": "Instant REST API for MySQL/MariaDB with JWT auth, rate limiting, monitoring, and zero code generation",
   "type": "library",

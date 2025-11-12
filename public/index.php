@@ -6,9 +6,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Add this line if admin React is enabled.
 // \App\Cors::sendHeaders();
 
-use App\Database;
+use App\Database\Database as Database;
 use App\Router;
-use App\Authenticator;
+use App\Auth\Authenticator as Authenticator;
 
 // Load configs
 $dbConfig = require __DIR__ . '/../config/db.php';

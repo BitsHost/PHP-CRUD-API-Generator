@@ -10,7 +10,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Monitor;
+use App\Observability\Monitor;
 
 echo "=========================================\n";
 echo "  API MONITORING SYSTEM DEMO\n";

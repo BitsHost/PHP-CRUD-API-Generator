@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use App\Database;
+use App\Database\Database as Database;
 use App\ApiGenerator;
 
 class AdvancedFilterTest extends TestCase
@@ -12,7 +12,7 @@ class AdvancedFilterTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $pdo = (new App\Database($dbConfig))->getPdo();
+    $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS filter_test_table");
         $pdo->exec("CREATE TABLE filter_test_table (
             id INT AUTO_INCREMENT PRIMARY KEY, 
@@ -35,14 +35,14 @@ class AdvancedFilterTest extends TestCase
     public static function tearDownAfterClass(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $pdo = (new App\Database($dbConfig))->getPdo();
+    $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS filter_test_table");
     }
 
     protected function setUp(): void
     {
         $dbConfig = require __DIR__ . '/../config/db.php';
-        $this->db = new App\Database($dbConfig);
+    $this->db = new App\Database\Database($dbConfig);
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use App\RateLimiter;
+use App\Security\RateLimiter;
 
 /**
  * Rate Limiter Tests

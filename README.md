@@ -602,7 +602,7 @@ Built by [BitHost](https://github.com/BitsHost). PRs/issues welcome!
 
 ---
 
-## 🧭 Namespace Mapping (Refactor Migration)
+## 🧭 Namespace Mapping (Pre-v2 Migration)
 
 To ease migration to the new structured namespaces, legacy root classes remain as thin wrappers and are now deprecated. Update your imports to the canonical locations below:
 
@@ -624,7 +624,7 @@ To ease migration to the new structured namespaces, legacy root classes remain a
 
 ### Deprecation Policy
 
-All legacy wrappers are annotated with `@deprecated` and will be removed in a future major release. They currently extend the new classes without adding logic, so upgrading is typically just an import change.
+Legacy wrappers were removed in `2.0.0-dev`. For projects upgrading from `<2.0.0` use the table below and see [`MIGRATION.md`](MIGRATION.md).
 
 ### How to Migrate
 
@@ -633,4 +633,4 @@ All legacy wrappers are annotated with `@deprecated` and will be removed in a fu
 3. Remove any now-unused aliases.
 4. Run tests / static analysis to confirm.
 
-This mapping section will remain until the wrappers are removed. For any questions or edge cases, open an issue.
+For any questions or edge cases, open an issue. See [`MIGRATION.md`](MIGRATION.md) for automated upgrade options.

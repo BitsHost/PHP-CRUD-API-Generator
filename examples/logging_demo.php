@@ -9,7 +9,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\RequestLogger;
+use App\Observability\RequestLogger;
 
 echo "==============================================\n";
 echo "  Request Logging Demo\n";
