@@ -28,7 +28,8 @@ class LoginController
     /**
      * Handle JWT login. Returns [payload, statusCode].
      * Mirrors previous Router logic, including DB auth fallback and events.
-     * @param array $query
+     *
+     * @param array<string,mixed> $query
      * @return array{0:mixed,1:int}
      */
     public function handle(array $query): array
@@ -38,7 +39,7 @@ class LoginController
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         if (stripos($contentType, 'application/json') !== false) {
             $jsonInput = file_get_contents('php://input');
-            $post = json_decode($jsonInput, true) ?? [];
+            $post = json_decode($jsonInput === false ? '' : $jsonInput, true) ?? [];
         }
         $user = $post['username'] ?? '';
         $pass = $post['password'] ?? '';
@@ -47,7 +48,7 @@ class LoginController
         $userRole = 'readonly';
 
         // Try database authentication first (if enabled)
-        if (!empty($this->auth->config['use_database_auth']) && $this->db) {
+        if (!empty($this->auth->config['use_database_auth'])) {
             $pdo = $this->db->getPdo();
             $stmt = $pdo->prepare(
                 "SELECT id, username, email, password_hash, role, active 

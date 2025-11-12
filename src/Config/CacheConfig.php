@@ -27,8 +27,11 @@ class CacheConfig
     private bool $enabled;
     private string $driver;
     private int $defaultTtl;
+    /** @var array<string,int> */
     private array $tableTtl;
+    /** @var array<int,string> */
     private array $excludeTables;
+    /** @var array<int,string> */
     private array $varyBy;
     private string $cachePath;
 
@@ -36,6 +39,17 @@ class CacheConfig
      * Initialize cache configuration
      * 
      * @param array $config Optional configuration array (for backward compatibility)
+     */
+    /**
+     * @param array{
+     *   enabled?: bool,
+     *   driver?: string,
+     *   ttl?: int,
+     *   table_ttl?: array<string,int>,
+     *   exclude_tables?: array<int,string>,
+     *   varyBy?: array<int,string>,
+     *   cache_path?: string
+     * } $config
      */
     public function __construct(array $config = [])
     {
@@ -119,6 +133,9 @@ class CacheConfig
     /**
      * Get varyBy parameters
      */
+    /**
+     * @return array<int,string>
+     */
     public function getVaryBy(): array
     {
         return $this->varyBy;
@@ -135,6 +152,9 @@ class CacheConfig
     /**
      * Get all table TTL configurations
      */
+    /**
+     * @return array<string,int>
+     */
     public function getAllTableTtl(): array
     {
         return $this->tableTtl;
@@ -143,6 +163,9 @@ class CacheConfig
     /**
      * Get excluded tables
      */
+    /**
+     * @return array<int,string>
+     */
     public function getExcludedTables(): array
     {
         return $this->excludeTables;
@@ -150,6 +173,9 @@ class CacheConfig
 
     /**
      * Convert to array (for backward compatibility)
+     */
+    /**
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {
@@ -209,7 +235,7 @@ class CacheConfig
      */
     public function excludeTable(string $table): void
     {
-        if (!in_array($table, $this->excludeTables)) {
+        if (!in_array($table, $this->excludeTables, true)) {
             $this->excludeTables[] = $table;
         }
     }

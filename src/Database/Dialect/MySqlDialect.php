@@ -14,17 +14,29 @@ class MySqlDialect implements DialectInterface
         return '`' . str_replace('`', '``', $ident) . '`';
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function listTables(PDO $pdo): array
     {
         $stmt = $pdo->query('SHOW TABLES');
+        if ($stmt === false) {
+            return [];
+        }
         return $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function listColumns(PDO $pdo, string $table): array
     {
         // Table name is quoted by caller when used in SQL text.
         $quoted = $this->quoteIdent($table);
         $stmt = $pdo->query("SHOW COLUMNS FROM $quoted");
+        if ($stmt === false) {
+            return [];
+        }
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 

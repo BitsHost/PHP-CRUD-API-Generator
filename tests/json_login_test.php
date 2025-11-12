@@ -5,9 +5,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database;
+use App\Application\Router;
+use App\Auth\Authenticator;
 
 echo "=== JSON vs Multipart Login Test ===\n\n";
 
@@ -31,7 +31,7 @@ $router = new Router($db, $auth);
 
 ob_start();
 $router->route($_GET);
-$response1 = ob_get_clean();
+$response1 = ob_get_clean() ?: '';
 $data1 = json_decode($response1, true);
 
 if (isset($data1['token'])) {
@@ -62,7 +62,7 @@ $router2 = new Router($db2, $auth2);
 
 ob_start();
 $router2->route($_GET);
-$response2 = ob_get_clean();
+$response2 = ob_get_clean() ?: '';
 $data2 = json_decode($response2, true);
 
 if (isset($data2['token'])) {

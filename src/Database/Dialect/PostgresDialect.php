@@ -14,6 +14,9 @@ class PostgresDialect implements DialectInterface
         return '"' . str_replace('"', '""', $identifier) . '"';
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function listTables(PDO $pdo): array
     {
         $sql = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname NOT IN ('pg_catalog','information_schema') ORDER BY tablename";
@@ -21,6 +24,9 @@ class PostgresDialect implements DialectInterface
         return $stmt ? $stmt->fetchAll(PDO::FETCH_COLUMN) : [];
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function listColumns(PDO $pdo, string $table): array
     {
         $sql = "SELECT column_name AS Field, data_type AS Type, is_nullable AS Null, column_default AS Default FROM information_schema.columns WHERE table_name = :t ORDER BY ordinal_position";

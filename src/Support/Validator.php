@@ -17,13 +17,13 @@ class Validator
         return preg_match('/^[a-zA-Z0-9_]+$/', $column) === 1;
     }
 
-    public static function validatePage($page): int
+    public static function validatePage(int|string $page): int
     {
         $pageInt = filter_var($page, FILTER_VALIDATE_INT);
         return ($pageInt !== false && $pageInt > 0) ? $pageInt : 1;
     }
 
-    public static function validatePageSize($pageSize, int $max = 100, int $default = 20): int
+    public static function validatePageSize(int|string $pageSize, int $max = 100, int $default = 20): int
     {
         $pageSizeInt = filter_var($pageSize, FILTER_VALIDATE_INT);
         if ($pageSizeInt === false || $pageSizeInt < 1) {
@@ -46,6 +46,9 @@ class Validator
         return in_array(strtolower($operator), $validOperators, true);
     }
 
+    /**
+     * @return array<int,string>
+     */
     public static function sanitizeFields(string $fields): array
     {
         $fieldList = array_map('trim', explode(',', $fields));

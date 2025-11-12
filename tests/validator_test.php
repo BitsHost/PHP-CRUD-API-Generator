@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../src/Support/QueryValidator.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 use App\Support\QueryValidator as QV;
 
 $cases = [

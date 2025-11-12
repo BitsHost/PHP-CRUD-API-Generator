@@ -12,9 +12,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database;
+use App\Application\Router;
+use App\Auth\Authenticator;
 
 echo "===================================\n";
 echo "JWT Authentication Test\n";
@@ -52,7 +52,7 @@ $_SERVER['REQUEST_METHOD'] = 'POST';
 ob_start();
 try {
     $router->route($_GET);
-    $loginResponse = ob_get_clean();
+    $loginResponse = ob_get_clean() ?: '';
 } catch (\Exception $e) {
     ob_end_clean();
     echo "✗ Login failed: " . $e->getMessage() . "\n";
@@ -94,7 +94,7 @@ try {
     $auth2 = new Authenticator($apiConfig, $db->getPdo());
     $router2 = new Router($db, $auth2);
     $router2->route($_GET);
-    $tablesResponse = ob_get_clean();
+    $tablesResponse = ob_get_clean() ?: '';
 } catch (\Exception $e) {
     ob_end_clean();
     echo "✗ Request failed: " . $e->getMessage() . "\n";
@@ -128,7 +128,7 @@ try {
     $auth3 = new Authenticator($apiConfig, $db->getPdo());
     $router3 = new Router($db, $auth3);
     $router3->route($_GET);
-    $unauthorizedResponse = ob_get_clean();
+    $unauthorizedResponse = ob_get_clean() ?: '';
 } catch (\Exception $e) {
     ob_end_clean();
     echo "✗ Unexpected error: " . $e->getMessage() . "\n";

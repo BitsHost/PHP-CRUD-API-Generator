@@ -25,6 +25,17 @@ class RequestLogger
 	private int $rotationSize; // bytes; 0=disabled
 	private int $maxFiles;     // keep last N files on cleanup (0=disabled)
 
+	/**
+	 * @param array{
+	 *   enabled?: bool,
+	 *   log_dir?: string,
+	 *   log_headers?: bool,
+	 *   log_body?: bool,
+	 *   max_body_length?: int,
+	 *   rotation_size?: int,
+	 *   max_files?: int
+	 * } $config
+	 */
 	public function __construct(array $config = [])
 	{
 		$config = array_merge([
@@ -50,6 +61,10 @@ class RequestLogger
 		}
 	}
 
+	/**
+	 * @param array<string,mixed> $request
+	 * @param array<string,mixed> $response
+	 */
 	public function logRequest(array $request, array $response, float $executionTime): bool
 	{
 		if (!$this->enabled) { return false; }
@@ -80,7 +95,7 @@ class RequestLogger
 		}
 		if ($this->logBody && !empty($request['body'])) {
 			$sanitized = $this->redactSensitive($request['body']);
-			$body = json_encode($sanitized);
+			$body = (string)json_encode($sanitized);
 			if (strlen($body) > $this->maxBodyLength) {
 				$body = substr($body, 0, $this->maxBodyLength) . '...';
 			}
@@ -93,7 +108,7 @@ class RequestLogger
 		return $ok;
 	}
 
-	public function logAuth(string $method, bool $success, $userOrIdentifier, ?string $message = null): bool
+	public function logAuth(string $method, bool $success, string $userOrIdentifier, ?string $message = null): bool
 	{
 		if (!$this->enabled) { return false; }
 		$icon = $success ? '✅ SUCCESS' : '❌ FAILED';
@@ -107,6 +122,9 @@ class RequestLogger
 		return $ok;
 	}
 
+	/**
+	 * @param array<string,mixed> $context
+	 */
 	public function logError(string $message, array $context = []): bool
 	{
 		if (!$this->enabled) { return false; }
@@ -136,6 +154,9 @@ class RequestLogger
 		], ['status_code' => 200, 'size' => 0], 0.0);
 	}
 
+	/**
+	 * @return array{total_requests:int,errors:int,warnings:int,auth_failures:int,rate_limits:int}
+	 */
 	public function getStats(): array
 	{
 		$file = $this->currentLogFile();
@@ -171,6 +192,10 @@ class RequestLogger
 		return $deleted;
 	}
 
+	/**
+	 * @param array<string,mixed> $body
+	 * @return array<string,mixed>
+	 */
 	private function redactSensitive(array $body): array
 	{
 		$sensitive = ['password', 'pass', 'api_key', 'apikey', 'token', 'secret'];

@@ -8,9 +8,20 @@ namespace App\Security;
  */
 class Rbac
 {
+	/**
+	 * @var array<string, array<string, list<string>>> $roles
+	 */
 	private array $roles;
+
+	/**
+	 * @var array<string, list<string>> $userRoles
+	 */
 	private array $userRoles;
 
+	/**
+	 * @param array<string, array<string, list<string>>> $roles
+	 * @param array<string, list<string>> $userRoles
+	 */
 	public function __construct(array $roles, array $userRoles)
 	{
 		$this->roles = $roles;

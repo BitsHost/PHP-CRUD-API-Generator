@@ -19,6 +19,10 @@ class OpenApiGenerator
 	 * Contract: Accepts table list and SchemaInspector, returns array spec
 	 * suitable for json_encode.
 	 */
+	/**
+	 * @param array<int,string> $tables
+	 * @return array<string,mixed>
+	 */
 	public static function generate(array $tables, SchemaInspector $inspector): array
 	{
 		$schemas = [];
@@ -77,7 +81,7 @@ class OpenApiGenerator
 					'required' => true,
 					'content' => [
 						'application/json' => [
-							'schema' => [' $ref' => $schemaRef]
+							'schema' => ['$ref' => $schemaRef]
 						]
 					]
 				],
@@ -86,7 +90,7 @@ class OpenApiGenerator
 						'description' => 'Created',
 						'content' => [
 							'application/json' => [
-								'schema' => [' $ref' => $schemaRef]
+								'schema' => ['$ref' => $schemaRef]
 							]
 						]
 					]
@@ -103,7 +107,7 @@ class OpenApiGenerator
 						'description' => 'OK',
 						'content' => [
 							'application/json' => [
-								'schema' => [' $ref' => $schemaRef]
+								'schema' => ['$ref' => $schemaRef]
 							]
 						]
 					],

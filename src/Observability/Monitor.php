@@ -8,10 +8,13 @@ namespace App\Observability;
  */
 class Monitor
 {
+	/** @var array<string,mixed> */
 	private array $config;
 	private string $metricsDir;
 	private string $alertsDir;
+	/** @var array<int,array<string,mixed>> */
 	private array $metrics = [];
+	/** @var array<int,array<string,mixed>> */
 	private array $alerts = [];
     
 	// Metric types
@@ -32,6 +35,9 @@ class Monitor
 	const DEFAULT_RATE_LIMIT_THRESHOLD = 90; // 90% of limit
 	const DEFAULT_AUTH_FAILURE_THRESHOLD = 10; // 10 failures per minute
 
+	/**
+	 * @param array<string,mixed> $config
+	 */
 	public function __construct(array $config = [])
 	{
 		$this->config = array_merge([
@@ -67,6 +73,9 @@ class Monitor
 		}
 	}
     
+	/**
+	 * @param array<string,mixed> $data
+	 */
 	public function recordMetric(string $type, array $data): bool
 	{
 		if (!$this->config['enabled']) {
@@ -87,6 +96,9 @@ class Monitor
 		return $this->writeMetric($metric);
 	}
     
+	/**
+	 * @param array<string,mixed> $request
+	 */
 	public function recordRequest(array $request): bool
 	{
 		return $this->recordMetric(self::METRIC_REQUEST, [
@@ -123,6 +135,9 @@ class Monitor
 		return $this->recordMetric(self::METRIC_RESPONSE, $data);
 	}
     
+	/**
+	 * @param array<string,mixed> $context
+	 */
 	public function recordError(string $message, array $context = []): bool
 	{
 		$data = [
@@ -139,6 +154,9 @@ class Monitor
 		return $this->recordMetric(self::METRIC_ERROR, $data);
 	}
     
+	/**
+	 * @param array<string,mixed> $data
+	 */
 	public function recordSecurityEvent(string $event, array $data = []): bool
 	{
 		$data['event'] = $event;
@@ -171,6 +189,9 @@ class Monitor
 		return $this->recordMetric(self::METRIC_SECURITY, $data);
 	}
     
+	/**
+	 * @return array<string,mixed>
+	 */
 	public function getHealthStatus(): array
 	{
 		$stats = $this->getStats();
@@ -222,6 +243,9 @@ class Monitor
 		];
 	}
     
+	/**
+	 * @return array<string,mixed>
+	 */
 	public function getStats(int $minutes = 60): array
 	{
 		$cutoff = time() - ($minutes * 60);
@@ -297,6 +321,9 @@ class Monitor
 		];
 	}
     
+	/**
+	 * @return array<string,mixed>
+	 */
 	private function getSystemMetrics(): array
 	{
 		$metrics = [
@@ -308,11 +335,13 @@ class Monitor
 		// CPU load (Unix/Linux only)
 		if (function_exists('sys_getloadavg')) {
 			$load = sys_getloadavg();
-			$metrics['cpu_load'] = [
-				'1min' => $load[0],
-				'5min' => $load[1],
-				'15min' => $load[2],
-			];
+			if ($load !== false && is_array($load) && count($load) >= 3) {
+				$metrics['cpu_load'] = [
+					'1min' => $load[0],
+					'5min' => $load[1],
+					'15min' => $load[2],
+				];
+			}
 		}
         
 		// Disk space
@@ -327,7 +356,7 @@ class Monitor
     
 	private function getUptime(): string
 	{
-		$files = glob($this->metricsDir . '/metrics_*.log');
+		$files = glob($this->metricsDir . '/metrics_*.log') ?: [];
 		if (empty($files)) {
 			return 'Unknown';
 		}
@@ -359,7 +388,7 @@ class Monitor
         
 		// Store alert
 		$this->alerts[] = $alert;
-		$this->writeAlert($alert);
+			$this->writeAlert($alert);
         
 		// Execute alert handlers
 		foreach ($this->config['alert_handlers'] as $handler) {
@@ -433,7 +462,7 @@ class Monitor
 	private function writeMetric(array $metric): bool
 	{
 		$file = $this->getMetricsFile(date('Y-m-d'));
-		$line = json_encode($metric) . PHP_EOL;
+			$line = (string)json_encode($metric) . PHP_EOL;
         
 		return file_put_contents($file, $line, FILE_APPEND | LOCK_EX) !== false;
 	}
@@ -441,7 +470,7 @@ class Monitor
 	private function writeAlert(array $alert): bool
 	{
 		$file = $this->getAlertsFile(date('Y-m-d'));
-		$line = json_encode($alert) . PHP_EOL;
+			$line = (string)json_encode($alert) . PHP_EOL;
         
 		return file_put_contents($file, $line, FILE_APPEND | LOCK_EX) !== false;
 	}

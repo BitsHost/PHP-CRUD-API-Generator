@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database;
+use App\Application\Router;
+use App\Auth\Authenticator;
 
 // Simulate POST request with form data
 $_GET = ['action' => 'login'];
@@ -20,6 +20,6 @@ $router = new Router($db, $auth);
 
 ob_start();
 $router->route($_GET);
-$response = ob_get_clean();
+$response = ob_get_clean() ?: '';
 
 echo $response;

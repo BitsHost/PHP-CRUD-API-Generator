@@ -3,7 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Database\Dialect\MySqlDialect;
 use App\Database\SchemaInspector;
-use App\Database;
+use App\Database\Database;
 
 echo "Dialect MySQL Test\n";
 

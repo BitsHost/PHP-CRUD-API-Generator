@@ -41,7 +41,7 @@ class RequestLoggerTest extends TestCase
     {
         // Clean up test log directory
         if (is_dir($this->testLogDir)) {
-            $files = glob($this->testLogDir . '/*');
+            $files = glob($this->testLogDir . '/*') ?: [];
             foreach ($files as $file) {
                 if (is_file($file)) {
                     unlink($file);
@@ -75,7 +75,7 @@ class RequestLoggerTest extends TestCase
         $this->assertFileExists($logFile);
 
         // Check log content
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         $this->assertStringContainsString('GET', $content);
         $this->assertStringContainsString('list', $content);
         $this->assertStringContainsString('users', $content);
@@ -98,7 +98,7 @@ class RequestLoggerTest extends TestCase
         $this->logger->logRequest($request, $response, 0.01);
 
         $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
 
         // Check that sensitive data is redacted
         $this->assertStringContainsString('***REDACTED***', $content);
@@ -113,13 +113,13 @@ class RequestLoggerTest extends TestCase
         $this->assertTrue($result);
 
         $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         $this->assertStringContainsString('AUTH ✅ SUCCESS', $content);
         $this->assertStringContainsString('jwt', $content);
 
         // Test failed auth
         $this->logger->logAuth('basic', false, 'baduser', 'Invalid credentials');
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         $this->assertStringContainsString('AUTH ❌ FAILED', $content);
         $this->assertStringContainsString('Invalid credentials', $content);
     }
@@ -217,7 +217,7 @@ class RequestLoggerTest extends TestCase
         }
 
         // Check if rotation occurred (multiple log files)
-        $files = glob($this->testLogDir . '/api_*.log');
+    $files = glob($this->testLogDir . '/api_*.log') ?: [];
         // Should have at least 2 files (original + rotated)
         $this->assertGreaterThanOrEqual(1, count($files));
     }
@@ -243,7 +243,7 @@ class RequestLoggerTest extends TestCase
         $this->assertEquals(2, $deleted); // Should delete 2 oldest files
 
         // Check remaining files
-        $files = glob($this->testLogDir . '/api_*.log');
+    $files = glob($this->testLogDir . '/api_*.log') ?: [];
         $this->assertCount(3, $files);
     }
 

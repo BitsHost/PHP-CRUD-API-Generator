@@ -32,7 +32,7 @@ class ApiGeneratorTest extends TestCase
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }
 
-    public function testCreateAndRead()
+    public function testCreateAndRead(): void
     {
         $row = $this->api->create($this->table, ['name' => 'Alice']);
         $this->assertEquals('Alice', $row['name']);
@@ -40,21 +40,21 @@ class ApiGeneratorTest extends TestCase
         $this->assertEquals('Alice', $read['name']);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $row = $this->api->create($this->table, ['name' => 'Bob']);
         $updated = $this->api->update($this->table, $row['id'], ['name' => 'Bobby']);
         $this->assertEquals('Bobby', $updated['name']);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $row = $this->api->create($this->table, ['name' => 'Charlie']);
         $deleted = $this->api->delete($this->table, $row['id']);
         $this->assertTrue($deleted);
     }
 
-    public function testList()
+    public function testList(): void
     {
         $this->api->create($this->table, ['name' => 'Daisy']);
         $list = $this->api->list($this->table);

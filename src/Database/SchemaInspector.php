@@ -19,11 +19,17 @@ class SchemaInspector
         $this->dialect = $dialect ?? new MySqlDialect();
     }
 
+    /**
+     * @return array<int,string>
+     */
     public function getTables(): array
     {
         return $this->dialect->listTables($this->pdo);
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function getColumns(string $table): array
     {
         return $this->dialect->listColumns($this->pdo, $table);

@@ -16,19 +16,19 @@ class QueryValidator
         return (bool)preg_match('/^[A-Za-z0-9_]+$/', $table);
     }
 
-    public static function id($id): bool
+    public static function id(int|string $id): bool
     {
         // Accept numeric string or int >= 0
         return (is_numeric($id) && (int)$id >= 0);
     }
 
-    public static function page($page): int
+    public static function page(int|string $page): int
     {
         $page = (int)$page;
         return $page > 0 ? $page : 1;
     }
 
-    public static function pageSize($size): int
+    public static function pageSize(int|string $size): int
     {
         $size = (int)$size;
         if ($size < 1) $size = 1;

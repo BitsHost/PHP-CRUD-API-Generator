@@ -46,7 +46,7 @@ class AdvancedFilterTest extends TestCase
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }
 
-    public function testFieldSelection()
+    public function testFieldSelection(): void
     {
         $result = $this->api->list($this->table, ['fields' => 'id,name']);
         $this->assertIsArray($result);
@@ -60,7 +60,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testFilterEquals()
+    public function testFilterEquals(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'name:eq:Alice']);
         $this->assertIsArray($result);
@@ -68,7 +68,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('Alice', $result['data'][0]['name']);
     }
 
-    public function testFilterGreaterThan()
+    public function testFilterGreaterThan(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'age:gt:28']);
         $this->assertIsArray($result);
@@ -78,7 +78,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testFilterLessThan()
+    public function testFilterLessThan(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'age:lt:25']);
         $this->assertIsArray($result);
@@ -86,7 +86,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('Charlie', $result['data'][0]['name']);
     }
 
-    public function testFilterLike()
+    public function testFilterLike(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'email:like:%@gmail.com']);
         $this->assertIsArray($result);
@@ -96,7 +96,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testFilterIn()
+    public function testFilterIn(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'name:in:Alice|Bob|Charlie']);
         $this->assertIsArray($result);
@@ -107,7 +107,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertContains('Charlie', $names);
     }
 
-    public function testFilterNotIn()
+    public function testFilterNotIn(): void
     {
         $result = $this->api->list($this->table, ['filter' => 'status:notin:inactive|pending']);
         $this->assertIsArray($result);
@@ -117,7 +117,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testMultipleFilters()
+    public function testMultipleFilters(): void
     {
         $result = $this->api->list($this->table, [
             'filter' => 'age:gte:25,status:eq:active'
@@ -130,7 +130,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testCombinedFieldsAndFilters()
+    public function testCombinedFieldsAndFilters(): void
     {
         $result = $this->api->list($this->table, [
             'fields' => 'name,age',
@@ -146,7 +146,7 @@ class AdvancedFilterTest extends TestCase
         }
     }
 
-    public function testBackwardCompatibility()
+    public function testBackwardCompatibility(): void
     {
         // Old format: col:value should still work
         $result = $this->api->list($this->table, ['filter' => 'name:Alice']);
@@ -155,7 +155,7 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals('Alice', $result['data'][0]['name']);
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $result = $this->api->count($this->table);
         $this->assertIsArray($result);
@@ -163,14 +163,14 @@ class AdvancedFilterTest extends TestCase
         $this->assertEquals(5, $result['count']); // We inserted 5 records
     }
 
-    public function testCountWithFilter()
+    public function testCountWithFilter(): void
     {
         $result = $this->api->count($this->table, ['filter' => 'status:eq:active']);
         $this->assertIsArray($result);
         $this->assertEquals(3, $result['count']); // Alice, Bob, Eve are active
     }
 
-    public function testCountWithMultipleFilters()
+    public function testCountWithMultipleFilters(): void
     {
         $result = $this->api->count($this->table, ['filter' => 'age:gte:25,status:eq:active']);
         $this->assertIsArray($result);

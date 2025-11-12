@@ -37,11 +37,12 @@ class RateLimiter
 	/**
 	 * Initialize the rate limiter
 	 *
-	 * @param array $config Configuration options:
-	 *   - enabled: bool Whether rate limiting is active (default: true)
-	 *   - max_requests: int Maximum requests per window (default: 100)
-	 *   - window_seconds: int Time window in seconds (default: 60)
-	 *   - storage_dir: string Directory for rate limit data (default: sys_get_temp_dir())
+	 * @param array{
+	 *   enabled?: bool,
+	 *   max_requests?: int,
+	 *   window_seconds?: int,
+	 *   storage_dir?: string
+	 * } $config Configuration options
 	 */
 	public function __construct(array $config = [])
 	{
@@ -149,7 +150,11 @@ class RateLimiter
 		return true;
 	}
 
-	/** Get rate limit headers for HTTP response */
+	/**
+	 * Get rate limit headers for HTTP response
+	 *
+	 * @return array<string,string>
+	 */
 	public function getHeaders(string $identifier): array
 	{
 		if (!$this->enabled) {
@@ -201,6 +206,9 @@ class RateLimiter
 		$deleted = 0;
 		$now = time();
 		$files = glob($this->storageDir . '/ratelimit_*.dat');
+		if ($files === false) {
+			$files = [];
+		}
 
 		foreach ($files as $file) {
 			if (is_file($file) && ($now - filemtime($file)) > $olderThanSeconds) {
@@ -217,7 +225,11 @@ class RateLimiter
 	// PRIVATE METHODS
 	// ==================================================================================
 
-	/** Get stored requests for an identifier */
+	/**
+	 * Get stored requests for an identifier
+	 *
+	 * @return array<int,int> Timestamps (unix time) of requests
+	 */
 	private function getRequests(string $identifier): array
 	{
 		$file = $this->getStorageFile($identifier);
@@ -232,10 +244,14 @@ class RateLimiter
 		}
 
 		$data = @unserialize($content);
-		return is_array($data) ? $data : [];
+		return is_array($data) ? array_values(array_filter($data, 'is_int')) : [];
 	}
 
-	/** Save requests for an identifier */
+	/**
+	 * Save requests for an identifier
+	 *
+	 * @param array<int,int> $requests
+	 */
 	private function saveRequests(string $identifier, array $requests): bool
 	{
 		$file = $this->getStorageFile($identifier);

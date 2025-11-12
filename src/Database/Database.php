@@ -12,6 +12,15 @@ class Database
 {
     private PDO $pdo;
 
+    /**
+     * @param array{
+     *  host:string,
+     *  dbname:string,
+     *  user:string,
+     *  pass:string,
+     *  charset?:string
+     * } $config
+     */
     public function __construct(array $config)
     {
         $dsn = sprintf(

@@ -7,6 +7,10 @@ namespace App\Http;
  */
 class Response
 {
+    /**
+     * @param mixed $payload
+     * @param array<string,string> $headers
+     */
     public static function json($payload, int $status = 200, array $headers = []): void
     {
         http_response_code($status);

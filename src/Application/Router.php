@@ -77,6 +77,9 @@ class Router
         $this->requestStartTime = microtime(true);
     }
 
+    /**
+     * @param array<string,mixed> $query
+     */
     public function route(array $query): void
     {
         if ($this->cors->handlePreflight()) {
@@ -122,7 +125,7 @@ class Router
                 if ($this->monitor) {
                     $this->monitor->recordSecurityEvent('auth_success', [
                         'method' => $this->auth->config['auth_method'] ?? 'unknown',
-                        'user' => $this->auth->getCurrentUser()['username'] ?? $identifier,
+                        'user' => $this->auth->getCurrentUser() ?? $identifier,
                     ]);
                 }
             }
@@ -144,9 +147,12 @@ class Router
                     break;
                 case Action::LIST:
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
-                    [$payload, $status, $headers] = $apiCtl->list($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query);
+                    $tuple = $apiCtl->list($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query);
+                    $payload = $tuple[0];
+                    $status = $tuple[1];
+                    $headers = $tuple[2] ?? [];
                     $this->logResponse($payload, $status, $query);
-                    Response::json($payload, $status, $headers ?? []);
+                    Response::json($payload, $status, $headers);
                     break;
                 case Action::COUNT:
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
@@ -168,7 +174,8 @@ class Router
                     }
                     $data = $_POST;
                     if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
-                        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                        $raw = file_get_contents('php://input');
+                        $data = json_decode($raw === false ? '' : $raw, true) ?? [];
                     }
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->create($this->auth->getCurrentUserRole(), $query['table'] ?? null, $data);
@@ -183,7 +190,8 @@ class Router
                     }
                     $data = $_POST;
                     if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
-                        $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                        $raw = file_get_contents('php://input');
+                        $data = json_decode($raw === false ? '' : $raw, true) ?? [];
                     }
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->update($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query['id'] ?? null, $data);
@@ -202,7 +210,8 @@ class Router
                         Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    $rows = json_decode(file_get_contents('php://input'), true) ?? [];
+                    $raw = file_get_contents('php://input');
+                    $rows = json_decode($raw === false ? '' : $raw, true) ?? [];
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->bulkCreate($this->auth->getCurrentUserRole(), $query['table'] ?? null, $rows);
                     $this->logResponse($payload, $status, $query);
@@ -214,7 +223,8 @@ class Router
                         Response::error('Method Not Allowed', 405);
                         break;
                     }
-                    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+                    $raw = file_get_contents('php://input');
+                    $data = json_decode($raw === false ? '' : $raw, true) ?? [];
                     $ids = $data['ids'] ?? [];
                     $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->bulkDelete($this->auth->getCurrentUserRole(), $query['table'] ?? null, $ids);
@@ -265,6 +275,9 @@ class Router
         return 'ip:' . $ip;
     }
 
+    /**
+     * @return array<string,string>
+     */
     private function getRequestHeaders(): array
     {
         if (function_exists('getallheaders')) {
@@ -280,9 +293,14 @@ class Router
         return $headers;
     }
 
+    /**
+     * @param mixed $responseBody
+     * @param array<string,mixed> $query
+     */
     private function logResponse($responseBody, int $statusCode, array $query): void
     {
         $executionTime = microtime(true) - $this->requestStartTime;
+        $rawBody = file_get_contents('php://input');
         $request = [
             'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
             'action' => $query['action'] ?? 'unknown',
@@ -291,12 +309,12 @@ class Router
             'user' => $this->auth->getCurrentUser(),
             'query' => $query,
             'headers' => $this->getRequestHeaders(),
-            'body' => $_POST ?: (json_decode(file_get_contents('php://input'), true) ?? [])
+            'body' => $_POST ?: (json_decode($rawBody === false ? '' : $rawBody, true) ?? [])
         ];
         $response = [
             'status_code' => $statusCode,
             'body' => $responseBody,
-            'size' => strlen(json_encode($responseBody))
+            'size' => strlen((string)json_encode($responseBody))
         ];
         $this->logger->logRequest($request, $response, $executionTime);
         if ($this->monitor) {

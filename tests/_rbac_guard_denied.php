@@ -1,9 +1,7 @@
 <?php
-require __DIR__ . '/../src/Rbac.php';
-require __DIR__ . '/../src/Http/Response.php';
-require __DIR__ . '/../src/Security/RbacGuard.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Rbac;
+use App\Security\Rbac;
 use App\Security\RbacGuard;
 
 $roles = [ 'viewer' => ['*' => ['read']] ];

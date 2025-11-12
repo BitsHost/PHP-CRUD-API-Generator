@@ -95,6 +95,10 @@ class ApiGenerator
      *     'limit' => 20
      * ]);
      */
+    /**
+     * @param array<string,mixed> $opts
+     * @return array{data:array<int,array<string,mixed>>,meta:array{total:int,page:int,page_size:int,pages:int}}
+     */
     public function list(string $table, array $opts = []): array
     {
     $columns = $this->inspector->getColumns($table);
@@ -288,7 +292,11 @@ class ApiGenerator
      *     echo $user['name'];
      * }
      */
-    public function read(string $table, $id): ?array
+    /**
+     * @param int|string $id
+     * @return array<string,mixed>|null
+     */
+    public function read(string $table, int|string $id): ?array
     {
         $pk = $this->inspector->getPrimaryKey($table);
         $stmt = $this->pdo->prepare(
@@ -321,6 +329,10 @@ class ApiGenerator
      * ]);
      * echo "Created user with ID: " . $newUser['id'];
      */
+    /**
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
     public function create(string $table, array $data): array
     {
         $cols = array_keys($data);
@@ -331,10 +343,10 @@ class ApiGenerator
             implode(',', array_map(fn($c) => $this->dialect->quoteIdent($c), $cols)),
             implode(',', $placeholders)
         );
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
-        $id = $this->pdo->lastInsertId();
-        return $this->read($table, $id);
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($data);
+    $id = (string)$this->pdo->lastInsertId();
+    return $this->read($table, $id);
     }
 
     /**
@@ -358,7 +370,12 @@ class ApiGenerator
      *     'updated_at' => date('Y-m-d H:i:s')
      * ]);
      */
-    public function update(string $table, $id, array $data): array
+    /**
+     * @param int|string $id
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>|array{error:string}
+     */
+    public function update(string $table, int|string $id, array $data): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
         $sets = [];
@@ -415,7 +432,11 @@ class ApiGenerator
      *     echo "User deleted successfully";
      * }
      */
-    public function delete(string $table, $id): array
+    /**
+     * @param int|string $id
+     * @return array{success:bool}|array{error:string}
+     */
+    public function delete(string $table, int|string $id): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
         $stmt = $this->pdo->prepare(
@@ -449,6 +470,10 @@ class ApiGenerator
      *     ['name' => 'Bob', 'email' => 'bob@example.com']
      * ]);
      * echo "Created " . $result['created'] . " users";
+     */
+    /**
+     * @param array<int,array<string,mixed>> $records
+     * @return array{success:bool,created:int,data:array<int,array<string,mixed>>}|array{error:string}
      */
     public function bulkCreate(string $table, array $records): array
     {
@@ -491,6 +516,10 @@ class ApiGenerator
      * // Delete multiple users
      * $result = $api->bulkDelete('users', [5, 10, 15, 20]);
      * echo "Deleted " . $result['deleted'] . " users";
+     */
+    /**
+     * @param array<int,int|string> $ids
+     * @return array{success:bool,deleted:int}|array{error:string}
      */
     public function bulkDelete(string $table, array $ids): array
     {
@@ -542,6 +571,10 @@ class ApiGenerator
      *     'filter' => 'status:eq:active,age:gt:18'
      * ]);
      * echo "Active adult users: " . $result['count'];
+     */
+    /**
+     * @param array<string,mixed> $opts
+     * @return array{count:int}
      */
     public function count(string $table, array $opts = []): array
     {
