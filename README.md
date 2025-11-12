@@ -599,3 +599,38 @@ MIT
 ## 🙌 Credits
 
 Built by [BitHost](https://github.com/BitsHost). PRs/issues welcome!
+
+---
+
+## 🧭 Namespace Mapping (Refactor Migration)
+
+To ease migration to the new structured namespaces, legacy root classes remain as thin wrappers and are now deprecated. Update your imports to the canonical locations below:
+
+| Legacy (old) | New (canonical) |
+|--------------|-----------------|
+| `App\Database` | `App\Database\Database` |
+| `App\SchemaInspector` | `App\Database\SchemaInspector` |
+| `App\Authenticator` | `App\Auth\Authenticator` |
+| `App\RequestLogger` | `App\Observability\RequestLogger` |
+| `App\Monitor` | `App\Observability\Monitor` |
+| `App\Rbac` | `App\Security\Rbac` |
+| `App\RateLimiter` | `App\Security\RateLimiter` |
+| `App\OpenApiGenerator` | `App\Docs\OpenApiGenerator` |
+| `App\HookManager` | `App\Application\HookManager` |
+| `App\Response` | `App\Http\Response` |
+| `App\Cors` | `App\Http\Middleware\CorsMiddleware` |
+| `App\Validator` | `App\Support\Validator` |
+| `App\Controller\LoginController` | `App\Http\Controllers\LoginController` |
+
+### Deprecation Policy
+
+All legacy wrappers are annotated with `@deprecated` and will be removed in a future major release. They currently extend the new classes without adding logic, so upgrading is typically just an import change.
+
+### How to Migrate
+
+1. Search your codebase for `use App\Xyz;` matching the left column.
+2. Replace with the new canonical namespace.
+3. Remove any now-unused aliases.
+4. Run tests / static analysis to confirm.
+
+This mapping section will remain until the wrappers are removed. For any questions or edge cases, open an issue.

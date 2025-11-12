@@ -28,6 +28,8 @@ namespace App;
  * @version 1.4.0
  * @link https://upmvc.com
  * 
+ * @deprecated Use \App\Http\Response instead. This wrapper will be removed in a future major release.
+ *
  * @example
  * // Success response (200 OK)
  * Response::success(['id' => 123, 'name' => 'John Doe']);
