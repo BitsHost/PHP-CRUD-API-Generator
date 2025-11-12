@@ -1,4 +1,14 @@
 <?php
+/**
+ * Redis-backed cache driver (stub implementation).
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 declare(strict_types=1);
 
 namespace App\Cache\Drivers;

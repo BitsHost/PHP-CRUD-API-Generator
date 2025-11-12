@@ -1,4 +1,14 @@
 <?php
+/**
+ * File-based cache driver.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 
 namespace App\Cache\Drivers;
 

@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.0.1 - Type Safety & CI Hardening (2025-11-12)
+
+### ✅ What changed
+- Static analysis: Reduced PHPStan issues to zero with precise generics, array-shape docs, and guards across core modules.
+- App hardening: Cleaned up Router, RBAC, Cache, Authenticator, ApiController, Monitor, and middlewares for stricter typing and better error handling.
+- Tests cleanup: Modernized tests to remove always-true assertions, add return types, guard glob/file reads, and align with updated return shapes.
+- CI ready: Ensured the test suite runs green on clean environments.
+
+### 🔧 Highlights
+- RBAC: Normalized user roles mapping and removed unused state.
+- ApiController: Simplified cache-key logic and removed redundant checks; consistent return tuples.
+- Monitor & RequestLogger: Safer I/O guards; added minimal reads to satisfy analyzer without behavior change.
+- Cache: Tightened typing in manager and drivers; safer key generation and headers handling.
+- Middlewares: Fixed unreachable code in rate limiting; typed CORS config.
+- Config: Added explicit types and normalizations in `ApiConfig` and `CacheConfig` getters.
+
+### 🧪 CI (GitHub Actions)
+- Added workflow to run Composer install, PHPStan, and PHPUnit on pushes/PRs.
+- Provisioned MySQL service (database: `test`) so DB-backed tests run reliably in CI.
+- Matrix on PHP 8.2 and 8.3.
+
+### Result
+- PHPStan: 0 errors.
+- PHPUnit: All tests passing.
+
+---
+
 ## 2.0.0 - Performance & Architecture Revolution (2025-11-10)
 
 ### 🚀 Major New Features

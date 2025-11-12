@@ -1,4 +1,14 @@
 <?php
+/**
+ * API Controller providing CRUD endpoints and schema discovery.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 namespace App\Http\Controllers;
 
 use App\Database\SchemaInspector;

@@ -1,4 +1,14 @@
 <?php
+/**
+ * API Monitoring subsystem for health, metrics, and alerts.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 declare(strict_types=1);
 
 namespace App\Observability;
