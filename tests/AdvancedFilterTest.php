@@ -48,8 +48,7 @@ class AdvancedFilterTest extends TestCase
 
     public function testFieldSelection(): void
     {
-        $result = $this->api->list($this->table, ['fields' => 'id,name']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['fields' => 'id,name']);
         $this->assertArrayHasKey('data', $result);
         if (!empty($result['data'])) {
             $firstRow = $result['data'][0];
@@ -62,16 +61,14 @@ class AdvancedFilterTest extends TestCase
 
     public function testFilterEquals(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'name:eq:Alice']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'name:eq:Alice']);
         $this->assertEquals(1, count($result['data']));
         $this->assertEquals('Alice', $result['data'][0]['name']);
     }
 
     public function testFilterGreaterThan(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'age:gt:28']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'age:gt:28']);
         $this->assertGreaterThanOrEqual(2, count($result['data'])); // Bob (30) and David (35)
         foreach ($result['data'] as $row) {
             $this->assertGreaterThan(28, $row['age']);
@@ -80,16 +77,14 @@ class AdvancedFilterTest extends TestCase
 
     public function testFilterLessThan(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'age:lt:25']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'age:lt:25']);
         $this->assertEquals(1, count($result['data'])); // Charlie (20)
         $this->assertEquals('Charlie', $result['data'][0]['name']);
     }
 
     public function testFilterLike(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'email:like:%@gmail.com']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'email:like:%@gmail.com']);
         $this->assertEquals(3, count($result['data'])); // Bob, Charlie, Eve
         foreach ($result['data'] as $row) {
             $this->assertStringContainsString('@gmail.com', $row['email']);
@@ -98,8 +93,7 @@ class AdvancedFilterTest extends TestCase
 
     public function testFilterIn(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'name:in:Alice|Bob|Charlie']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'name:in:Alice|Bob|Charlie']);
         $this->assertEquals(3, count($result['data']));
         $names = array_column($result['data'], 'name');
         $this->assertContains('Alice', $names);
@@ -109,8 +103,7 @@ class AdvancedFilterTest extends TestCase
 
     public function testFilterNotIn(): void
     {
-        $result = $this->api->list($this->table, ['filter' => 'status:notin:inactive|pending']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'status:notin:inactive|pending']);
         $this->assertEquals(3, count($result['data'])); // Alice, Bob, Eve (all active)
         foreach ($result['data'] as $row) {
             $this->assertEquals('active', $row['status']);
@@ -122,7 +115,6 @@ class AdvancedFilterTest extends TestCase
         $result = $this->api->list($this->table, [
             'filter' => 'age:gte:25,status:eq:active'
         ]);
-        $this->assertIsArray($result);
         $this->assertGreaterThanOrEqual(2, count($result['data'])); // Alice (25), Bob (30), Eve (28)
         foreach ($result['data'] as $row) {
             $this->assertGreaterThanOrEqual(25, $row['age']);
@@ -137,7 +129,6 @@ class AdvancedFilterTest extends TestCase
             'filter' => 'age:gt:20',
             'sort' => 'age'
         ]);
-        $this->assertIsArray($result);
         $this->assertGreaterThan(0, count($result['data']));
         foreach ($result['data'] as $row) {
             $this->assertArrayHasKey('name', $row);
@@ -149,31 +140,27 @@ class AdvancedFilterTest extends TestCase
     public function testBackwardCompatibility(): void
     {
         // Old format: col:value should still work
-        $result = $this->api->list($this->table, ['filter' => 'name:Alice']);
-        $this->assertIsArray($result);
+    $result = $this->api->list($this->table, ['filter' => 'name:Alice']);
         $this->assertEquals(1, count($result['data']));
         $this->assertEquals('Alice', $result['data'][0]['name']);
     }
 
     public function testCount(): void
     {
-        $result = $this->api->count($this->table);
-        $this->assertIsArray($result);
+    $result = $this->api->count($this->table);
         $this->assertArrayHasKey('count', $result);
         $this->assertEquals(5, $result['count']); // We inserted 5 records
     }
 
     public function testCountWithFilter(): void
     {
-        $result = $this->api->count($this->table, ['filter' => 'status:eq:active']);
-        $this->assertIsArray($result);
+    $result = $this->api->count($this->table, ['filter' => 'status:eq:active']);
         $this->assertEquals(3, $result['count']); // Alice, Bob, Eve are active
     }
 
     public function testCountWithMultipleFilters(): void
     {
-        $result = $this->api->count($this->table, ['filter' => 'age:gte:25,status:eq:active']);
-        $this->assertIsArray($result);
+    $result = $this->api->count($this->table, ['filter' => 'age:gte:25,status:eq:active']);
         $this->assertGreaterThanOrEqual(2, $result['count']); // At least Alice (25) and Bob (30)
     }
 }

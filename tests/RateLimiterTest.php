@@ -36,7 +36,7 @@ class RateLimiterTest extends TestCase
     {
         // Clean up test storage directory
         if (is_dir($this->testStorageDir)) {
-            $files = glob($this->testStorageDir . '/*');
+            $files = glob($this->testStorageDir . '/*') ?: [];
             foreach ($files as $file) {
                 if (is_file($file)) {
                     unlink($file);
@@ -218,7 +218,7 @@ class RateLimiterTest extends TestCase
         $this->limiter->checkLimit($identifier2);
 
         // Initially should have 2 files
-        $filesBefore = glob($this->testStorageDir . '/ratelimit_*.dat');
+    $filesBefore = glob($this->testStorageDir . '/ratelimit_*.dat') ?: [];
         $this->assertCount(2, $filesBefore);
 
         // Wait a moment to ensure files have different timestamps
@@ -229,7 +229,7 @@ class RateLimiterTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $deleted);
 
         // Should have no files after cleanup (or very few if timing is tight)
-        $filesAfter = glob($this->testStorageDir . '/ratelimit_*.dat');
+    $filesAfter = glob($this->testStorageDir . '/ratelimit_*.dat') ?: [];
         $this->assertLessThanOrEqual(0, count($filesAfter));
     }
 }

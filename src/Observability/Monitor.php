@@ -240,6 +240,10 @@ class Monitor
 			'system_metrics' => $systemMetrics,
 			'issues' => $issues,
 			'recent_alerts' => $recentAlerts,
+			'in_memory' => [
+				'metrics_count' => count($this->metrics),
+				'alerts_count' => count($this->alerts),
+			],
 		];
 	}
     
@@ -335,7 +339,7 @@ class Monitor
 		// CPU load (Unix/Linux only)
 		if (function_exists('sys_getloadavg')) {
 			$load = sys_getloadavg();
-			if ($load !== false && is_array($load) && count($load) >= 3) {
+			if ($load !== false) {
 				$metrics['cpu_load'] = [
 					'1min' => $load[0],
 					'5min' => $load[1],

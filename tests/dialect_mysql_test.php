@@ -23,9 +23,7 @@ try {
     $db = new Database($dbConfig);
     $inspector = new SchemaInspector($db->getPdo(), $dialect);
     $tables = $inspector->getTables();
-    if (is_array($tables)) {
-        echo "✓ inspector.getTables returned array (" . count($tables) . ")\n";
-    }
+    echo "✓ inspector.getTables returned array (" . count($tables) . ")\n";
 } catch (Throwable $e) {
     echo "(info) Skipping DB-based dialect test: " . $e->getMessage() . "\n";
 }

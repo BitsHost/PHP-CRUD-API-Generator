@@ -28,8 +28,6 @@ class ApiController
      */
     public function columns(?string $role, ?string $table): array
     {
-        // no-op assignments to satisfy simplistic analyzers expecting local initialization
-        $role = $role; $table = $table;
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
         }
@@ -89,8 +87,6 @@ class ApiController
      */
     public function count(?string $role, ?string $table, array $query): array
     {
-        // no-op assignments to satisfy simplistic analyzers expecting local initialization
-        $role = $role; $table = $table; $query = $query;
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
         }

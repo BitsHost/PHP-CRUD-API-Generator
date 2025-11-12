@@ -58,6 +58,6 @@ class ApiGeneratorTest extends TestCase
     {
         $this->api->create($this->table, ['name' => 'Daisy']);
         $list = $this->api->list($this->table);
-        $this->assertIsArray($list);
+        $this->assertArrayHasKey('data', $list);
     }
 }

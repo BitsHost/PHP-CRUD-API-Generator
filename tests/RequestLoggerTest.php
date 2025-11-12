@@ -51,7 +51,7 @@ class RequestLoggerTest extends TestCase
         }
     }
 
-    public function testBasicRequestLogging()
+    public function testBasicRequestLogging(): void
     {
         $request = [
             'method' => 'GET',
@@ -81,7 +81,7 @@ class RequestLoggerTest extends TestCase
         $this->assertStringContainsString('users', $content);
     }
 
-    public function testSensitiveDataRedaction()
+    public function testSensitiveDataRedaction(): void
     {
         $request = [
             'method' => 'POST',
@@ -106,7 +106,7 @@ class RequestLoggerTest extends TestCase
         $this->assertStringNotContainsString('abc123', $content);
     }
 
-    public function testAuthenticationLogging()
+    public function testAuthenticationLogging(): void
     {
         // Test successful auth
         $result = $this->logger->logAuth('jwt', true, 'testuser');
@@ -124,20 +124,20 @@ class RequestLoggerTest extends TestCase
         $this->assertStringContainsString('Invalid credentials', $content);
     }
 
-    public function testRateLimitLogging()
+    public function testRateLimitLogging(): void
     {
         $result = $this->logger->logRateLimit('user:test', 100, 100);
         $this->assertTrue($result);
 
         $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         
         $this->assertStringContainsString('RATE LIMIT EXCEEDED', $content);
         $this->assertStringContainsString('user:test', $content);
         $this->assertStringContainsString('100/100', $content);
     }
 
-    public function testErrorLogging()
+    public function testErrorLogging(): void
     {
         $result = $this->logger->logError('Database connection failed', [
             'host' => 'localhost',
@@ -147,19 +147,19 @@ class RequestLoggerTest extends TestCase
         $this->assertTrue($result);
 
         $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         
         $this->assertStringContainsString('ERROR', $content);
         $this->assertStringContainsString('Database connection failed', $content);
     }
 
-    public function testQuickRequestLogging()
+    public function testQuickRequestLogging(): void
     {
         $result = $this->logger->logQuickRequest('POST', 'create', 'products', 'user:admin');
         $this->assertTrue($result);
 
         $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $content = file_get_contents($logFile) ?: '';
         
         $this->assertStringContainsString('POST', $content);
         $this->assertStringContainsString('create', $content);
@@ -167,7 +167,7 @@ class RequestLoggerTest extends TestCase
         $this->assertStringContainsString('user:admin', $content);
     }
 
-    public function testLogStatistics()
+    public function testLogStatistics(): void
     {
         // Create various log entries
         $this->logger->logAuth('jwt', true, 'user1');
@@ -185,7 +185,7 @@ class RequestLoggerTest extends TestCase
         $this->assertGreaterThanOrEqual(1, $stats['rate_limits']);
     }
 
-    public function testDisabledLogging()
+    public function testDisabledLogging(): void
     {
         $logger = new RequestLogger(['enabled' => false]);
 
@@ -198,7 +198,7 @@ class RequestLoggerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testLogRotation()
+    public function testLogRotation(): void
     {
         // Create a small rotation size for testing
         $logger = new RequestLogger([
@@ -222,7 +222,7 @@ class RequestLoggerTest extends TestCase
         $this->assertGreaterThanOrEqual(1, count($files));
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         // Create multiple log files
         for ($i = 0; $i < 5; $i++) {
@@ -247,7 +247,7 @@ class RequestLoggerTest extends TestCase
         $this->assertCount(3, $files);
     }
 
-    public function testLogLevels()
+    public function testLogLevels(): void
     {
         $request = ['method' => 'GET', 'action' => 'test'];
         
@@ -268,11 +268,11 @@ class RequestLoggerTest extends TestCase
             );
         }
 
-        $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
-        $content = file_get_contents($logFile);
+    $logFile = $this->testLogDir . '/api_' . date('Y-m-d') . '.log';
+    $content = file_get_contents($logFile) ?: '';
 
-        $this->assertStringContainsString('INFO', $content);
-        $this->assertStringContainsString('WARNING', $content);
-        $this->assertStringContainsString('ERROR', $content);
+    $this->assertStringContainsString('INFO', $content);
+    $this->assertStringContainsString('WARNING', $content);
+    $this->assertStringContainsString('ERROR', $content);
     }
 }

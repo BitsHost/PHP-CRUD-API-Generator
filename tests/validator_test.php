@@ -17,7 +17,18 @@ $ok = true;
 foreach ($cases as $i => $c) {
     $fn = $c['fn'];
     $in = $c['in'];
-    $got = QV::$fn($in);
+    switch ($fn) {
+        case 'sort':
+        case 'table':
+            $got = QV::$fn((string)$in);
+            break;
+        case 'page':
+        case 'pageSize':
+            $got = QV::$fn((int)$in);
+            break;
+        default:
+            $got = QV::$fn($in);
+    }
     if ($got !== $c['exp']) {
         fwrite(STDERR, "Case #$i failed: $fn($in) => ".var_export($got,true)." expected ".var_export($c['exp'],true)."\n");
         $ok = false;
