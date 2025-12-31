@@ -5,9 +5,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database;
+use App\Application\Router;
+use App\Auth\Authenticator;
 
 echo "=== JWT Login Debug ===\n\n";
 

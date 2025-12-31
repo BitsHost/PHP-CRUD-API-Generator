@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use App\RateLimiter;
+use App\Security\RateLimiter;
 
 /**
  * Rate Limiter Tests
@@ -36,7 +36,7 @@ class RateLimiterTest extends TestCase
     {
         // Clean up test storage directory
         if (is_dir($this->testStorageDir)) {
-            $files = glob($this->testStorageDir . '/*');
+            $files = glob($this->testStorageDir . '/*') ?: [];
             foreach ($files as $file) {
                 if (is_file($file)) {
                     unlink($file);
@@ -46,7 +46,7 @@ class RateLimiterTest extends TestCase
         }
     }
 
-    public function testBasicRateLimiting()
+    public function testBasicRateLimiting(): void
     {
         $identifier = 'test_user_1';
 
@@ -65,7 +65,7 @@ class RateLimiterTest extends TestCase
         );
     }
 
-    public function testRequestCount()
+    public function testRequestCount(): void
     {
         $identifier = 'test_user_2';
 
@@ -78,7 +78,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(3, $this->limiter->getRequestCount($identifier));
     }
 
-    public function testRemainingRequests()
+    public function testRemainingRequests(): void
     {
         $identifier = 'test_user_3';
 
@@ -91,7 +91,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(3, $this->limiter->getRemainingRequests($identifier));
     }
 
-    public function testRateLimitReset()
+    public function testRateLimitReset(): void
     {
         $identifier = 'test_user_4';
 
@@ -110,7 +110,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue($this->limiter->checkLimit($identifier));
     }
 
-    public function testWindowExpiration()
+    public function testWindowExpiration(): void
     {
         $identifier = 'test_user_5';
 
@@ -129,7 +129,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue($this->limiter->checkLimit($identifier));
     }
 
-    public function testHeaders()
+    public function testHeaders(): void
     {
         $identifier = 'test_user_6';
 
@@ -146,7 +146,7 @@ class RateLimiterTest extends TestCase
         $this->assertArrayHasKey('X-RateLimit-Reset', $headers);
     }
 
-    public function testDisabledRateLimiting()
+    public function testDisabledRateLimiting(): void
     {
         $limiter = new RateLimiter([
             'enabled' => false,
@@ -165,7 +165,7 @@ class RateLimiterTest extends TestCase
         $this->assertEquals(0, $limiter->getRequestCount($identifier));
     }
 
-    public function testCustomLimits()
+    public function testCustomLimits(): void
     {
         $identifier = 'test_user_8';
 
@@ -178,7 +178,7 @@ class RateLimiterTest extends TestCase
         $this->assertFalse($this->limiter->checkLimit($identifier, 3));
     }
 
-    public function testMultipleIdentifiers()
+    public function testMultipleIdentifiers(): void
     {
         $user1 = 'test_user_9';
         $user2 = 'test_user_10';
@@ -195,7 +195,7 @@ class RateLimiterTest extends TestCase
         $this->assertTrue($this->limiter->checkLimit($user2));
     }
 
-    public function testResetTime()
+    public function testResetTime(): void
     {
         $identifier = 'test_user_11';
 
@@ -208,7 +208,7 @@ class RateLimiterTest extends TestCase
         $this->assertLessThanOrEqual(2, $resetTime);
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $identifier1 = 'test_user_12';
         $identifier2 = 'test_user_13';
@@ -218,7 +218,7 @@ class RateLimiterTest extends TestCase
         $this->limiter->checkLimit($identifier2);
 
         // Initially should have 2 files
-        $filesBefore = glob($this->testStorageDir . '/ratelimit_*.dat');
+    $filesBefore = glob($this->testStorageDir . '/ratelimit_*.dat') ?: [];
         $this->assertCount(2, $filesBefore);
 
         // Wait a moment to ensure files have different timestamps
@@ -229,7 +229,7 @@ class RateLimiterTest extends TestCase
         $this->assertGreaterThanOrEqual(2, $deleted);
 
         // Should have no files after cleanup (or very few if timing is tight)
-        $filesAfter = glob($this->testStorageDir . '/ratelimit_*.dat');
+    $filesAfter = glob($this->testStorageDir . '/ratelimit_*.dat') ?: [];
         $this->assertLessThanOrEqual(0, count($filesAfter));
     }
 }

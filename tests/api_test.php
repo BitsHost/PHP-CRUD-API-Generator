@@ -8,9 +8,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database;
+use App\Application\Router;
+use App\Auth\Authenticator;
 
 echo "===================================\n";
 echo "API Router Test (Config Classes)\n";
@@ -48,7 +48,7 @@ try {
     // Capture output
     ob_start();
     $router->route($_GET);
-    $output = ob_get_clean();
+    $output = ob_get_clean() ?: '';
     
     // Decode JSON response
     $response = json_decode($output, true);

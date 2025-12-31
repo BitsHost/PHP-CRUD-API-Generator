@@ -432,9 +432,36 @@ The `list` action endpoint now supports advanced query parameters:
 
 ---
 
-### 📝 OpenAPI Path Example
+### 📝 OpenAPI Documentation (Swagger)
 
-For `/index.php?action=list&table={table}`:
+**Your API automatically generates OpenAPI 3.0 documentation!**
+
+#### Get the OpenAPI Specification (JSON)
+
+```bash
+# Access the auto-generated OpenAPI spec
+curl http://localhost:8000/index.php?action=openapi
+
+# Or visit in browser:
+http://localhost:8000/index.php?action=openapi
+```
+
+#### View Interactive Documentation (Swagger UI)
+
+**Option 1: Online Swagger Editor** (Quick & Easy)
+1. Copy JSON from: `http://localhost:8000/index.php?action=openapi`
+2. Paste into: https://editor.swagger.io/
+3. See beautiful interactive documentation!
+
+**Option 2: Use dashboard.html** (Recommended)
+Your project includes `dashboard.html` which has API documentation built-in:
+```
+http://localhost:8000/dashboard.html
+```
+
+#### Example OpenAPI Path Structure
+
+This is what the specification includes for `/index.php?action=list&table={table}`:
 
 ```yaml
 get:
@@ -485,6 +512,8 @@ get:
                   page_size: { type: integer }
                   pages: { type: integer }
 ```
+
+**Note:** The YAML above is just an example of the structure. The actual API returns JSON format.
 
 ## 🛡️ Security Notes
 
@@ -599,3 +628,7 @@ MIT
 ## 🙌 Credits
 
 Built by [BitHost](https://github.com/BitsHost). PRs/issues welcome!
+
+---
+
+ 

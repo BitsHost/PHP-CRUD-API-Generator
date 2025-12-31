@@ -10,7 +10,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\RateLimiter;
+use App\Security\RateLimiter;
 
 echo "==============================================\n";
 echo "  Rate Limiting Demo\n";

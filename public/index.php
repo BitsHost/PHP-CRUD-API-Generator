@@ -1,4 +1,15 @@
 <?php
+/**
+ * Application entrypoint (bootstrap) for the PHP-CRUD-API-Generator.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -6,9 +17,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // Add this line if admin React is enabled.
 // \App\Cors::sendHeaders();
 
-use App\Database;
-use App\Router;
-use App\Authenticator;
+use App\Database\Database as Database;
+use App\Application\Router;
+use App\Auth\Authenticator as Authenticator;
 
 // Load configs
 $dbConfig = require __DIR__ . '/../config/db.php';

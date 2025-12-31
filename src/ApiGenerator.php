@@ -1,8 +1,19 @@
 <?php
+/**
+ * Database-backed CRUD API generator.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 
 namespace App;
 
 use PDO;
+use App\Database\SchemaInspector;
 
 /**
  * API Generator Class
@@ -39,16 +50,18 @@ class ApiGenerator
      * @var SchemaInspector
      */
     private SchemaInspector $inspector;
+    private \App\Database\Dialect\DialectInterface $dialect;
 
     /**
      * Initialize API Generator
      * 
      * @param PDO $pdo PDO database connection instance
      */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, ?\App\Database\Dialect\DialectInterface $dialect = null)
     {
         $this->pdo = $pdo;
-        $this->inspector = new SchemaInspector($pdo);
+        $this->inspector = new SchemaInspector($pdo, $dialect);
+        $this->dialect = $dialect ?? new \App\Database\Dialect\MySqlDialect();
     }
 
     /**
@@ -92,9 +105,13 @@ class ApiGenerator
      *     'limit' => 20
      * ]);
      */
+    /**
+     * @param array<string,mixed> $opts
+     * @return array{data:array<int,array<string,mixed>>,meta:array{total:int,page:int,page_size:int,pages:int}}
+     */
     public function list(string $table, array $opts = []): array
     {
-        $columns = $this->inspector->getColumns($table);
+    $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
 
         // --- Field Selection ---
@@ -103,7 +120,7 @@ class ApiGenerator
             $requestedFields = array_map('trim', explode(',', $opts['fields']));
             $validFields = array_filter($requestedFields, fn($f) => in_array($f, $colNames, true));
             if (!empty($validFields)) {
-                $selectedFields = implode(', ', array_map(fn($f) => "`$f`", $validFields));
+                $selectedFields = implode(', ', array_map(fn($f) => $this->dialect->quoteIdent($f), $validFields));
             }
         }
 
@@ -123,12 +140,12 @@ class ApiGenerator
                     if (in_array($col, $colNames, true)) {
                         if (str_contains($val, '%')) {
                             $paramKey = "{$col}_{$paramCounter}";
-                            $where[] = "`$col` LIKE :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " LIKE :$paramKey";
                             $params[$paramKey] = $val;
                             $paramCounter++;
                         } else {
                             $paramKey = "{$col}_{$paramCounter}";
-                            $where[] = "`$col` = :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " = :$paramKey";
                             $params[$paramKey] = $val;
                             $paramCounter++;
                         }
@@ -142,34 +159,34 @@ class ApiGenerator
                     
                     switch ($operator) {
                         case 'eq':
-                            $where[] = "`$col` = :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " = :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'neq':
                         case 'ne':
-                            $where[] = "`$col` != :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " != :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'gt':
-                            $where[] = "`$col` > :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " > :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'gte':
                         case 'ge':
-                            $where[] = "`$col` >= :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " >= :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'lt':
-                            $where[] = "`$col` < :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " < :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'lte':
                         case 'le':
-                            $where[] = "`$col` <= :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " <= :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'like':
-                            $where[] = "`$col` LIKE :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " LIKE :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'in':
@@ -181,7 +198,7 @@ class ApiGenerator
                                 $placeholders[] = ":$inParamKey";
                                 $params[$inParamKey] = $v;
                             }
-                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            $where[] = $this->dialect->quoteIdent($col) . " IN (" . implode(',', $placeholders) . ")";
                             break;
                         case 'notin':
                         case 'nin':
@@ -193,13 +210,13 @@ class ApiGenerator
                                 $placeholders[] = ":$inParamKey";
                                 $params[$inParamKey] = $v;
                             }
-                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            $where[] = $this->dialect->quoteIdent($col) . " NOT IN (" . implode(',', $placeholders) . ")";
                             break;
                         case 'null':
-                            $where[] = "`$col` IS NULL";
+                            $where[] = $this->dialect->quoteIdent($col) . " IS NULL";
                             break;
                         case 'notnull':
-                            $where[] = "`$col` IS NOT NULL";
+                            $where[] = $this->dialect->quoteIdent($col) . " IS NOT NULL";
                             break;
                     }
                     $paramCounter++;
@@ -220,7 +237,7 @@ class ApiGenerator
                     $col = substr($sort, 1);
                 }
                 if (in_array($col, $colNames, true)) {
-                    $orders[] = "`$col` $direction";
+                    $orders[] = $this->dialect->quoteIdent($col) . " $direction";
                 }
             }
             if ($orders) {
@@ -234,7 +251,7 @@ class ApiGenerator
         $offset = ($page - 1) * $pageSize;
         $limit = "LIMIT $pageSize OFFSET $offset";
 
-        $sql = "SELECT $selectedFields FROM `$table`";
+        $sql = 'SELECT ' . $selectedFields . ' FROM ' . $this->dialect->quoteIdent($table);
         if ($where) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
@@ -248,7 +265,9 @@ class ApiGenerator
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Optionally: include pagination meta info
-        $countStmt = $this->pdo->prepare("SELECT COUNT(*) FROM `$table`" . ($where ? ' WHERE ' . implode(' AND ', $where) : ''));
+        $countStmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM ' . $this->dialect->quoteIdent($table) . ($where ? ' WHERE ' . implode(' AND ', $where) : '')
+        );
         $countStmt->execute($params);
         $total = (int)$countStmt->fetchColumn();
 
@@ -283,10 +302,16 @@ class ApiGenerator
      *     echo $user['name'];
      * }
      */
-    public function read(string $table, $id): ?array
+    /**
+     * @param int|string $id
+     * @return array<string,mixed>|null
+     */
+    public function read(string $table, int|string $id): ?array
     {
         $pk = $this->inspector->getPrimaryKey($table);
-        $stmt = $this->pdo->prepare("SELECT * FROM `$table` WHERE `$pk` = :id");
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' = :id'
+        );
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row === false ? null : $row;
@@ -314,20 +339,24 @@ class ApiGenerator
      * ]);
      * echo "Created user with ID: " . $newUser['id'];
      */
+    /**
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
     public function create(string $table, array $data): array
     {
         $cols = array_keys($data);
         $placeholders = array_map(fn($col) => ":$col", $cols);
         $sql = sprintf(
-            "INSERT INTO `%s` (%s) VALUES (%s)",
-            $table,
-            implode(',', array_map(fn($c) => "`$c`", $cols)),
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $this->dialect->quoteIdent($table),
+            implode(',', array_map(fn($c) => $this->dialect->quoteIdent($c), $cols)),
             implode(',', $placeholders)
         );
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
-        $id = $this->pdo->lastInsertId();
-        return $this->read($table, $id);
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($data);
+    $id = (string)$this->pdo->lastInsertId();
+    return $this->read($table, $id);
     }
 
     /**
@@ -351,21 +380,27 @@ class ApiGenerator
      *     'updated_at' => date('Y-m-d H:i:s')
      * ]);
      */
-    public function update(string $table, $id, array $data): array
+    /**
+     * @param int|string $id
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>|array{error:string}
+     */
+    public function update(string $table, int|string $id, array $data): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
         $sets = [];
         foreach ($data as $col => $val) {
-            $sets[] = "`$col` = :$col";
+            $sets[] = $this->dialect->quoteIdent($col) . " = :$col";
         }
         // Handle no fields to update
         if (empty($sets)) {
             return ["error" => "No fields to update. Send at least one column."];
         }
         $sql = sprintf(
-            "UPDATE `%s` SET %s WHERE `$pk` = :id",
-            $table,
+            'UPDATE %s SET %s WHERE %s = :id',
+            $this->dialect->quoteIdent($table),
             implode(', ', $sets)
+            , $this->dialect->quoteIdent($pk)
         );
         $stmt = $this->pdo->prepare($sql);
         $data['id'] = $id;
@@ -407,10 +442,16 @@ class ApiGenerator
      *     echo "User deleted successfully";
      * }
      */
-    public function delete(string $table, $id): array
+    /**
+     * @param int|string $id
+     * @return array{success:bool}|array{error:string}
+     */
+    public function delete(string $table, int|string $id): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
-        $stmt = $this->pdo->prepare("DELETE FROM `$table` WHERE `$pk` = :id");
+        $stmt = $this->pdo->prepare(
+            'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' = :id'
+        );
         $stmt->execute(['id' => $id]);
         if ($stmt->rowCount() === 0) {
             return ['error' => "Item with id $id not found in $table."];
@@ -439,6 +480,10 @@ class ApiGenerator
      *     ['name' => 'Bob', 'email' => 'bob@example.com']
      * ]);
      * echo "Created " . $result['created'] . " users";
+     */
+    /**
+     * @param array<int,array<string,mixed>> $records
+     * @return array{success:bool,created:int,data:array<int,array<string,mixed>>}|array{error:string}
      */
     public function bulkCreate(string $table, array $records): array
     {
@@ -482,6 +527,10 @@ class ApiGenerator
      * $result = $api->bulkDelete('users', [5, 10, 15, 20]);
      * echo "Deleted " . $result['deleted'] . " users";
      */
+    /**
+     * @param array<int,int|string> $ids
+     * @return array{success:bool,deleted:int}|array{error:string}
+     */
     public function bulkDelete(string $table, array $ids): array
     {
         if (empty($ids)) {
@@ -498,7 +547,7 @@ class ApiGenerator
             $params[$key] = $id;
         }
 
-        $sql = "DELETE FROM `$table` WHERE `$pk` IN (" . implode(',', $placeholders) . ")";
+        $sql = 'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' IN (' . implode(',', $placeholders) . ')';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         
@@ -533,9 +582,13 @@ class ApiGenerator
      * ]);
      * echo "Active adult users: " . $result['count'];
      */
+    /**
+     * @param array<string,mixed> $opts
+     * @return array{count:int}
+     */
     public function count(string $table, array $opts = []): array
     {
-        $columns = $this->inspector->getColumns($table);
+    $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
 
         // --- Filtering (same as list method) ---
@@ -552,12 +605,12 @@ class ApiGenerator
                     if (in_array($col, $colNames, true)) {
                         if (str_contains($val, '%')) {
                             $paramKey = "{$col}_{$paramCounter}";
-                            $where[] = "`$col` LIKE :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " LIKE :$paramKey";
                             $params[$paramKey] = $val;
                             $paramCounter++;
                         } else {
                             $paramKey = "{$col}_{$paramCounter}";
-                            $where[] = "`$col` = :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " = :$paramKey";
                             $params[$paramKey] = $val;
                             $paramCounter++;
                         }
@@ -570,34 +623,34 @@ class ApiGenerator
                     
                     switch ($operator) {
                         case 'eq':
-                            $where[] = "`$col` = :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " = :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'neq':
                         case 'ne':
-                            $where[] = "`$col` != :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " != :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'gt':
-                            $where[] = "`$col` > :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " > :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'gte':
                         case 'ge':
-                            $where[] = "`$col` >= :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " >= :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'lt':
-                            $where[] = "`$col` < :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " < :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'lte':
                         case 'le':
-                            $where[] = "`$col` <= :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " <= :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'like':
-                            $where[] = "`$col` LIKE :$paramKey";
+                            $where[] = $this->dialect->quoteIdent($col) . " LIKE :$paramKey";
                             $params[$paramKey] = $val;
                             break;
                         case 'in':
@@ -608,7 +661,7 @@ class ApiGenerator
                                 $placeholders[] = ":$inParamKey";
                                 $params[$inParamKey] = $v;
                             }
-                            $where[] = "`$col` IN (" . implode(',', $placeholders) . ")";
+                            $where[] = $this->dialect->quoteIdent($col) . " IN (" . implode(',', $placeholders) . ")";
                             break;
                         case 'notin':
                         case 'nin':
@@ -619,13 +672,13 @@ class ApiGenerator
                                 $placeholders[] = ":$inParamKey";
                                 $params[$inParamKey] = $v;
                             }
-                            $where[] = "`$col` NOT IN (" . implode(',', $placeholders) . ")";
+                            $where[] = $this->dialect->quoteIdent($col) . " NOT IN (" . implode(',', $placeholders) . ")";
                             break;
                         case 'null':
-                            $where[] = "`$col` IS NULL";
+                            $where[] = $this->dialect->quoteIdent($col) . " IS NULL";
                             break;
                         case 'notnull':
-                            $where[] = "`$col` IS NOT NULL";
+                            $where[] = $this->dialect->quoteIdent($col) . " IS NOT NULL";
                             break;
                     }
                     $paramCounter++;
@@ -633,7 +686,7 @@ class ApiGenerator
             }
         }
 
-        $sql = "SELECT COUNT(*) FROM `$table`";
+        $sql = 'SELECT COUNT(*) FROM ' . $this->dialect->quoteIdent($table);
         if ($where) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }

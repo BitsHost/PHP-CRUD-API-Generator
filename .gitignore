@@ -30,3 +30,7 @@ private-vault/**
 .DS_Store
 .idea/
 /tests/output/
+
+# Tool caches (do not commit)
+/.phpstan/
+/.phpunit.cache/

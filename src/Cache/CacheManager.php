@@ -1,4 +1,14 @@
 <?php
+/**
+ * Cache Manager orchestrating cache keys, TTLs, and drivers.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 
 namespace App\Cache;
 
@@ -36,14 +46,14 @@ class CacheManager
     /**
      * Cache configuration
      * 
-     * @var array
+     * @var array<string,mixed>
      */
     private array $config;
 
     /**
      * Cache statistics for current request
      * 
-     * @var array
+     * @var array{hits:int,misses:int,writes:int,invalidations:int}
      */
     private array $stats = [
         'hits' => 0,
@@ -58,7 +68,7 @@ class CacheManager
      * Creates appropriate cache driver based on configuration.
      * Falls back to file cache if configured driver is unavailable.
      * 
-     * @param array $config Cache configuration from config/cache.php
+    * @param array<string,mixed> $config Cache configuration from config/cache.php
      * 
      * @example
      * $cache = new CacheManager([
@@ -180,6 +190,9 @@ class CacheManager
      * ]);
      * // Returns: "api:table:users:params:a3f5c8d9e2..."
      */
+    /**
+     * @param array<string,mixed> $params
+     */
     public function generateKey(string $table, array $params): string
     {
         // Sort params for consistent keys
@@ -189,7 +202,7 @@ class CacheManager
         $baseKey = sprintf(
             'api:table:%s:params:%s',
             $table,
-            md5(json_encode($params))
+            md5((string) json_encode($params))
         );
 
         // Add user variation if configured
@@ -396,6 +409,9 @@ class CacheManager
      * //   ...
      * // ]
      */
+    /**
+     * @return array<string,mixed>
+     */
     public function getStats(): array
     {
         $driverStats = $this->driver->getStats();
@@ -434,7 +450,7 @@ class CacheManager
     private function getApiKeyFromRequest(): ?string
     {
         // Check header
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
+        $headers = function_exists('getallheaders') ? (getallheaders() ?: []) : [];
         $apiKey = $headers['X-API-Key'] ?? $headers['X-Api-Key'] ?? null;
 
         // Check query parameter

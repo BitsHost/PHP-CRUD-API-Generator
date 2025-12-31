@@ -1,4 +1,14 @@
 <?php
+/**
+ * Cache driver interface definition.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 
 namespace App\Cache;
 
@@ -96,7 +106,7 @@ interface CacheInterface
      * Returns driver-specific statistics about cache usage.
      * Useful for monitoring and debugging.
      * 
-     * @return array Statistics array
+     * @return array<string,mixed> Statistics array
      * 
      * @example
      * $stats = $cache->getStats();

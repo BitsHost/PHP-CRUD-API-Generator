@@ -11,19 +11,19 @@ echo "===================================\n\n";
 $passed = 0;
 $failed = 0;
 
+require_once __DIR__ . '/../vendor/autoload.php';
+// Preload configs so variables are always defined
+$apiConfig = \App\Config\ApiConfig::fromFile(__DIR__ . '/../config/api.php');
+$cacheConfig = \App\Config\CacheConfig::fromFile(__DIR__ . '/../config/cache.php');
+
 // Test 1: Config Classes
 echo "Test 1: Config Classes Loading\n";
 echo "------------------------\n";
 try {
-    require_once __DIR__ . '/../vendor/autoload.php';
-    
-    $apiConfig = \App\Config\ApiConfig::fromFile(__DIR__ . '/../config/api.php');
-    $cacheConfig = \App\Config\CacheConfig::fromFile(__DIR__ . '/../config/cache.php');
-    
-    echo "  ApiConfig loaded: " . ($apiConfig ? "✓" : "✗") . "\n";
+    echo "  ApiConfig loaded ✓\n";
     echo "  Auth method: " . $apiConfig->getAuthMethod() . "\n";
     echo "  Auth enabled: " . ($apiConfig->isAuthEnabled() ? "yes" : "no") . "\n";
-    echo "  CacheConfig loaded: " . ($cacheConfig ? "✓" : "✗") . "\n";
+    echo "  CacheConfig loaded ✓\n";
     echo "  Cache enabled: " . ($cacheConfig->isEnabled() ? "yes" : "no") . "\n";
     echo "  Cache driver: " . $cacheConfig->getDriver() . "\n";
     $passed++;
@@ -39,7 +39,7 @@ echo "Test 2: Database Connection\n";
 echo "------------------------\n";
 try {
     $dbConfig = require __DIR__ . '/../config/db.php';
-    $db = new \App\Database($dbConfig);
+    $db = new \App\Database\Database($dbConfig);
     $pdo = $db->getPdo();
     
     echo "  Database connected: ✓\n";
@@ -65,7 +65,7 @@ try {
     // Test write/read
     $testKey = 'test:' . time();
     $testData = ['test' => 'data', 'time' => time()];
-    $cache->set($testKey, $testData, 60);
+    $cache->set($testKey, $testData, null);
     $retrieved = $cache->get($testKey);
     
     if ($retrieved === $testData) {
@@ -86,14 +86,14 @@ echo "\n";
 echo "Test 4: Authenticator\n";
 echo "------------------------\n";
 try {
-    $auth = new \App\Authenticator($apiConfig->toArray(), $db->getPdo());
+    $auth = new \App\Auth\Authenticator($apiConfig->toArray(), $db->getPdo());
     echo "  Authenticator created: ✓\n";
     
     // Test Basic Auth with config file users
     $_SERVER['PHP_AUTH_USER'] = 'admin';
     $_SERVER['PHP_AUTH_PW'] = 'secret';
     
-    $result = $auth->authenticate('basic');
+    $result = $auth->authenticate();
     if ($result) {
         echo "  Basic auth test: ✓ (admin/secret)\n";
         $passed++;
@@ -112,7 +112,7 @@ echo "\n";
 echo "Test 5: Router Initialization\n";
 echo "------------------------\n";
 try {
-    $router = new \App\Router($db, $auth);
+    $router = new \App\Application\Router($db, new \App\Auth\Authenticator($apiConfig->toArray(), $db->getPdo()));
     echo "  Router created: ✓\n";
     $passed++;
 } catch (Exception $e) {

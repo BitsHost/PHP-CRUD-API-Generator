@@ -1,4 +1,14 @@
 <?php
+/**
+ * Type-safe API configuration wrapper.
+ *
+ * @package   PHP-CRUD-API-Generator
+ * @author    BitsHost
+ * @copyright 2025 BitsHost
+ * @license   MIT License
+ * @link      https://bitshost.biz/
+ * @created   2025-11-12
+ */
 
 namespace App\Config;
 
@@ -31,19 +41,33 @@ namespace App\Config;
  */
 class ApiConfig
 {
+    /** @var bool */
     private bool $authEnabled;
+    /** @var string */
     private string $authMethod;
+    /** @var array<int,string> */
     private array $apiKeys;
+    /** @var string */
     private string $apiKeyRole;
+    /** @var array<string,string> */
     private array $basicUsers;
+    /** @var bool */
     private bool $useDatabaseAuth;
+    /** @var string */
     private string $jwtSecret;
+    /** @var int */
     private int $jwtExpiration;
+    /** @var string */
     private string $jwtAlgorithm;
+    /** @var array<string,array{tables:list<string>,actions:list<string>}> */
     private array $roles;
+    /** @var array<string,string> */
     private array $userRoles;
+    /** @var array{enabled:bool,requests_per_minute:int,requests_per_hour:int,requests_per_day:int} */
     private array $rateLimitConfig;
+    /** @var array{enabled:bool,log_requests:bool,log_responses:bool,log_errors:bool} */
     private array $loggingConfig;
+    /** @var array{enabled:bool} */
     private array $monitoringConfig;
 
     /**
@@ -56,12 +80,17 @@ class ApiConfig
      * 
      * @param array $config Configuration array from config/api.php (or defaults)
      */
+    /**
+     * @param array<string,mixed> $config Configuration array from config/api.php (or defaults)
+     */
     public function __construct(array $config = [])
     {
         // Authentication settings
         $this->authEnabled = $config['auth_enabled'] ?? true;
         $this->authMethod = $config['auth_method'] ?? 'jwt';
-        $this->apiKeys = $config['api_keys'] ?? ['changeme123'];
+    $rawKeys = $config['api_keys'] ?? ['changeme123'];
+    $keys = is_array($rawKeys) ? array_values(array_map('strval', $rawKeys)) : [strval($rawKeys)];
+    $this->apiKeys = $keys;
         $this->apiKeyRole = $config['api_key_role'] ?? 'admin';
         $this->basicUsers = $config['basic_users'] ?? [
             'admin' => 'secret',
@@ -169,6 +198,9 @@ class ApiConfig
     /**
      * Get valid API keys
      */
+    /**
+     * @return array<int,string>
+     */
     public function getApiKeys(): array
     {
         return $this->apiKeys;
@@ -184,6 +216,9 @@ class ApiConfig
 
     /**
      * Get basic auth users
+     */
+    /**
+     * @return array<string,string>
      */
     public function getBasicUsers(): array
     {
@@ -225,6 +260,9 @@ class ApiConfig
     /**
      * Get all roles configuration
      */
+    /**
+     * @return array<string,array{tables:list<string>,actions:list<string>}>
+     */
     public function getRoles(): array
     {
         return $this->roles;
@@ -232,6 +270,9 @@ class ApiConfig
 
     /**
      * Get user role mappings
+     */
+    /**
+     * @return array<string,string>
      */
     public function getUserRoles(): array
     {
@@ -249,6 +290,9 @@ class ApiConfig
     /**
      * Get rate limit configuration
      */
+    /**
+     * @return array{enabled:bool,requests_per_minute:int,requests_per_hour:int,requests_per_day:int}
+     */
     public function getRateLimitConfig(): array
     {
         return $this->rateLimitConfig;
@@ -257,6 +301,9 @@ class ApiConfig
     /**
      * Get logging configuration
      */
+    /**
+     * @return array{enabled:bool,log_requests:bool,log_responses:bool,log_errors:bool}
+     */
     public function getLoggingConfig(): array
     {
         return $this->loggingConfig;
@@ -264,6 +311,9 @@ class ApiConfig
 
     /**
      * Get monitoring configuration
+     */
+    /**
+     * @return array{enabled:bool}
      */
     public function getMonitoringConfig(): array
     {
@@ -275,11 +325,14 @@ class ApiConfig
      */
     public function isMonitoringEnabled(): bool
     {
-        return $this->monitoringConfig['enabled'] ?? false;
+        return (bool) $this->monitoringConfig['enabled'];
     }
 
     /**
      * Convert to array (for backward compatibility)
+     */
+    /**
+     * @return array<string,mixed>
      */
     public function toArray(): array
     {
