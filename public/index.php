@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Load optional .env file before configs (non-breaking; env vars override PHP defaults)
+\App\Config\Env::load(__DIR__ . '/../.env');
+
 // Add this line if admin React is enabled.
 // \App\Cors::sendHeaders();
 
