@@ -184,8 +184,10 @@ With `debug = false`:
 Before deploying to production, verify:
 
 - [ ] Dashboard and health endpoint are protected (IP whitelist or Basic Auth)
+- [ ] Sensitive folders (`config`, `src`, `storage`, `logs`, `vendor`, `private-vault`, `sql`, `tests`) are not web-accessible (web root points to `public/` **or** per-folder `.htaccess` uses `Require all denied`)
 - [ ] Authentication is enabled (`authentication.enabled = true`)
 - [ ] Strong API keys generated (not defaults or examples)
+- [ ] Secrets (DB credentials, JWT secret, API keys, Basic passwords) are not committed in Git and are configured via environment variables / `.env` or secure config files
 - [ ] Rate limiting is enabled
 - [ ] Request logging is enabled
 - [ ] Debug mode is disabled (`debug = false`)

@@ -47,12 +47,14 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 **🛡️ [SECURE YOUR DASHBOARD NOW →](docs/DASHBOARD_SECURITY.md)** - Complete protection guide
 
-**Quick Fix (5 minutes):** Add IP whitelist to `.htaccess`:
+**Quick Fix (5 minutes):** Add IP whitelist to `.htaccess` (Apache 2.4+):
 ```apache
 <Files "dashboard.html">
-    Order Deny,Allow
-    Deny from all
-    Allow from YOUR.IP.ADDRESS  # Replace with your IP
+  # Allow only localhost by default
+  Require ip 127.0.0.1 ::1
+
+  # To allow your public IP, add an extra line like:
+  # Require ip YOUR.PUBLIC.IP.ADDRESS
 </Files>
 ```
 
@@ -185,6 +187,19 @@ return [
     ],
 ];
 ```
+
+### Environment variables (.env)
+
+For easier secret management and 12-factor style deployments, the project also supports a root-level `.env` file.
+
+- Copy `.env.example` to `.env` and adjust values for your environment.
+- The following keys override values from `config/db.php` and `config/api.php` when defined:
+  - `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`, `DB_CHARSET`
+  - `API_AUTH_METHOD`
+  - `API_KEYS` (comma-separated list)
+  - `BASIC_ADMIN_PASSWORD`, `BASIC_USER_PASSWORD`
+  - `JWT_SECRET`, `JWT_EXPIRATION`, `JWT_ISSUER`, `JWT_AUDIENCE`
+- The public entrypoint loads `.env` before configs, and `.htaccess` protects `.env` from direct web access.
 
 ---
 

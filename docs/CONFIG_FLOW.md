@@ -84,6 +84,8 @@ return [
 ];
 ```
 
+> 💡 **Environment overrides:** For deployments that use environment variables or a `.env` file, some sensitive values from `config/api.php` can be overridden at runtime (for example: `API_AUTH_METHOD`, `API_KEYS`, `BASIC_ADMIN_PASSWORD`, `BASIC_USER_PASSWORD`, `JWT_SECRET`, `JWT_EXPIRATION`, `JWT_ISSUER`, `JWT_AUDIENCE`). This keeps the configuration flow the same while allowing secrets to live outside of versioned PHP config files.
+
 ### Step 2: Router Loads Config via Config Class
 
 **File:** `src/Router.php`
