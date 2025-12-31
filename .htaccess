@@ -1,0 +1,61 @@
+# PHP CRUD API Generator - Root Security Configuration
+# Disable directory listing for this project
+Options -Indexes
+#
+# Goal:
+# - Protect sensitive files in the project root (.env, configs, vault, etc.)
+# - Restrict dashboard and health endpoints to trusted IPs only
+#
+# 📖 Full security guide: docs/DASHBOARD_SECURITY.md
+
+# ----------------------------------------------------------------------
+# 1) Protect .env and other dotfiles in project root
+# ----------------------------------------------------------------------
+
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^\.(git|svn|hg|env)">
+    Require all denied
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# 2) Protect Admin Dashboard (root/dashboard.html)
+# ----------------------------------------------------------------------
+
+<Files "dashboard.html">
+    # Apache 2.4+ syntax: only allow localhost by default
+    Require ip 127.0.0.1 ::1
+    # To allow additional IPs in production, add lines like:
+    # Require ip YOUR.PUBLIC.IP.HERE
+</Files>
+
+# ----------------------------------------------------------------------
+# 3) Protect Health Endpoint (root/health.php)
+# ----------------------------------------------------------------------
+
+<Files "health.php">
+    # Apache 2.4+ syntax: only allow localhost by default
+    Require ip 127.0.0.1 ::1
+    # To allow monitoring servers in production, add lines like:
+    # Require ip 198.51.100.10
+</Files>
+
+# Optional: Add HTTP Basic Authentication
+# Uncomment and configure if you want password protection
+#
+# <Files "dashboard.html">
+#     AuthType Basic
+#     AuthName "Admin Dashboard"
+#     AuthUserFile /path/to/.htpasswd
+#     Require valid-user
+# </Files>
+#
+# Create password file with:
+# htpasswd -c .htpasswd admin
+
+# Optional: Redirect HTTP to HTTPS (recommended for production)
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]

@@ -1,0 +1,2 @@
+# Deny direct web access to tests
+Require all denied
