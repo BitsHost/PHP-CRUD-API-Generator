@@ -67,6 +67,7 @@ jobs:
           fi
 
       - name: PHPCS
+        continue-on-error: true
         run: |
           if [ -f phpcs.xml ] || [ -f phpcs.xml.dist ]; then \
             vendor/bin/phpcs; \

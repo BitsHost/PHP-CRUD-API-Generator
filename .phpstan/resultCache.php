@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 return [
-	'lastFullAnalysisTime' => 1764181193,
+	'lastFullAnalysisTime' => 1767374423,
 	'meta' => array (
   'cacheVersion' => 'v12-linesToIgnore',
   'phpstanVersion' => '2.1.32',
@@ -13,26 +13,10 @@ return [
   'analysedPaths' => 
   array (
     0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src',
+    1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests',
   ),
   'scannedFiles' => 
   array (
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => '6541c2f4b05b79eb043d03a16074e0022d8d113d',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 'fe1b8c7e1765d67e8c02e60bc6320c9c8487bf93',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => '25d4c7d38a3af0c3c75d241fd12f6563b937ecd8',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php' => 'a6a5ee83d1a001587021d149c0762701d5033394',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php' => 'a0adef2273bcd3d2bf86a39ba7d537e1b60ffcca',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php' => '2f44f1a8a6c6c27f2fee8e97db9b9ec01b67de9a',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\cache_test.php' => '43aaf99b5f8cc3fe6cc45e2d0d557279af6a0f7c',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php' => 'af40a3c21a95c923fdf5e7ba5c46363bfe01e4bf',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php' => '7c501bd5b839a7666dfc8d6164b811604bca0e9c',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\error_responder_test.php' => '7a507b8bf90d9eb635cf804285fcc89052d038d7',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php' => 'cca555dd69065228e3ba920eb4f27c49d2851150',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php' => 'ee08192d3b8b50f16d74ff574ecf3fedc015a081',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php' => '2c4dddf17917b22bd3b4286e057b9e43d0c29473',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php' => '2ef844524a397ef71baaef7be217f9150d319d23',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php' => '4bc858405294a34a8dee7c6a98d77f0af06b4fe1',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php' => '7cf8b5c3324ac25d625e157976b1c03209885c56',
-    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\validator_test.php' => 'a1cc31feab8036cc6d95ad5c958c670f05b45296',
   ),
   'composerLocks' => 
   array (
@@ -699,6 +683,17 @@ return [
       ),
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\Env.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'putenv',
+        1 => 59,
+      ),
+    ),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Database.php' => 
   array (
     'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
@@ -911,6 +906,177 @@ return [
       ),
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'sleep',
+        1 => 126,
+      ),
+      1 => 
+      array (
+        0 => 'sleep',
+        1 => 225,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Observability\\RequestLogger',
+        ),
+        1 => 'logRequest',
+        2 => 225,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'ob_start',
+        1 => 49,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\cache_test.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'sleep',
+        1 => 163,
+      ),
+    ),
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Cache\\CacheManager',
+        ),
+        1 => 'set',
+        2 => 90,
+      ),
+      1 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Cache\\CacheManager',
+        ),
+        1 => 'set',
+        2 => 98,
+      ),
+      2 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Cache\\CacheManager',
+        ),
+        1 => 'invalidateTable',
+        2 => 125,
+      ),
+      3 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Cache\\CacheManager',
+        ),
+        1 => 'clear',
+        2 => 144,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'ob_start',
+        1 => 40,
+      ),
+      1 => 
+      array (
+        0 => 'print_r',
+        1 => 50,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'ob_start',
+        1 => 32,
+      ),
+      1 => 
+      array (
+        0 => 'ob_start',
+        1 => 63,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'ob_start',
+        1 => 52,
+      ),
+      1 => 
+      array (
+        0 => 'ob_start',
+        1 => 91,
+      ),
+      2 => 
+      array (
+        0 => 'ob_start',
+        1 => 126,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'ob_start',
+        1 => 21,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Cache\\CacheManager',
+        ),
+        1 => 'set',
+        2 => 68,
+      ),
+    ),
+  ),
 ); },
 	'dependencies' => array (
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php' => 
@@ -920,6 +1086,8 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\HookManager.php' => 
@@ -935,6 +1103,12 @@ return [
     'fileHash' => '9b568d0235623d36ab9b6b73630873fb0c0df6a6',
     'dependentFiles' => 
     array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Auth\\Authenticator.php' => 
@@ -944,6 +1118,12 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php',
+      7 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheInterface.php' => 
@@ -954,6 +1134,7 @@ return [
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheManager.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\Drivers\\FileCache.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\Drivers\\RedisCache.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\cache_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheManager.php' => 
@@ -963,6 +1144,8 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\cache_test.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\Drivers\\FileCache.php' => 
@@ -986,6 +1169,7 @@ return [
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\CacheConfig.php' => 
@@ -994,6 +1178,14 @@ return [
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\Env.php' => 
+  array (
+    'fileHash' => '007bc22224685c98905e6becafa20c2d0e4dd5ef',
+    'dependentFiles' => 
+    array (
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Database.php' => 
@@ -1003,6 +1195,15 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
+      7 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php',
+      8 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php',
+      9 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php',
+      10 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Dialect\\DialectInterface.php' => 
@@ -1014,6 +1215,7 @@ return [
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Dialect\\MySqlDialect.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Dialect\\PostgresDialect.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\SchemaInspector.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Dialect\\MySqlDialect.php' => 
@@ -1023,6 +1225,7 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\SchemaInspector.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\Dialect\\PostgresDialect.php' => 
@@ -1042,6 +1245,7 @@ return [
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php' => 
@@ -1097,6 +1301,7 @@ return [
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\error_responder_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Middleware\\CorsMiddleware.php' => 
@@ -1113,6 +1318,7 @@ return [
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Response.php' => 
@@ -1134,6 +1340,8 @@ return [
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\ErrorResponder.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Middleware\\RateLimitMiddleware.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\error_responder_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Observability\\RequestLogger.php' => 
@@ -1145,6 +1353,9 @@ return [
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\ErrorResponder.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Middleware\\RateLimitMiddleware.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\error_responder_test.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RateLimiter.php' => 
@@ -1154,6 +1365,8 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Middleware\\RateLimitMiddleware.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\Rbac.php' => 
@@ -1163,6 +1376,8 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php' => 
@@ -1172,6 +1387,8 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
@@ -1180,11 +1397,131 @@ return [
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\validator_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\Validator.php' => 
   array (
     'fileHash' => 'e4b75f1e312327f9d6545cb0ffa30b826c4265a3',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => 
+  array (
+    'fileHash' => '6541c2f4b05b79eb043d03a16074e0022d8d113d',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 
+  array (
+    'fileHash' => 'fe1b8c7e1765d67e8c02e60bc6320c9c8487bf93',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
+  array (
+    'fileHash' => '25d4c7d38a3af0c3c75d241fd12f6563b937ecd8',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php' => 
+  array (
+    'fileHash' => 'a6a5ee83d1a001587021d149c0762701d5033394',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php' => 
+  array (
+    'fileHash' => 'a0adef2273bcd3d2bf86a39ba7d537e1b60ffcca',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php' => 
+  array (
+    'fileHash' => '2f44f1a8a6c6c27f2fee8e97db9b9ec01b67de9a',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\cache_test.php' => 
+  array (
+    'fileHash' => '43aaf99b5f8cc3fe6cc45e2d0d557279af6a0f7c',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php' => 
+  array (
+    'fileHash' => 'af40a3c21a95c923fdf5e7ba5c46363bfe01e4bf',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php' => 
+  array (
+    'fileHash' => '7c501bd5b839a7666dfc8d6164b811604bca0e9c',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\error_responder_test.php' => 
+  array (
+    'fileHash' => '7a507b8bf90d9eb635cf804285fcc89052d038d7',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php' => 
+  array (
+    'fileHash' => 'cca555dd69065228e3ba920eb4f27c49d2851150',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php' => 
+  array (
+    'fileHash' => 'ee08192d3b8b50f16d74ff574ecf3fedc015a081',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php' => 
+  array (
+    'fileHash' => '2c4dddf17917b22bd3b4286e057b9e43d0c29473',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ratelimit_middleware_test.php' => 
+  array (
+    'fileHash' => '2ef844524a397ef71baaef7be217f9150d319d23',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php' => 
+  array (
+    'fileHash' => '4bc858405294a34a8dee7c6a98d77f0af06b4fe1',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php' => 
+  array (
+    'fileHash' => '7cf8b5c3324ac25d625e157976b1c03209885c56',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\validator_test.php' => 
+  array (
+    'fileHash' => 'a1cc31feab8036cc6d95ad5c958c670f05b45296',
     'dependentFiles' => 
     array (
     ),
@@ -6022,6 +6359,88 @@ return [
             0 => 
             \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
                'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\Env.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Config\\Env',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Lightweight .env loader for PHP-CRUD-API-Generator.
+ *
+ * This avoids adding external dependencies while still allowing
+ * configuration via environment variables or a project-level .env file.
+ */',
+         'namespace' => 'App\\Config',
+         'uses' => 
+        array (
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => false,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'load',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * Load key=value pairs from a .env-style file into getenv()/$_ENV/$_SERVER.
+     */',
+             'namespace' => 'App\\Config',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'path',
                'type' => 'string',
                'byRef' => false,
                'variadic' => false,
@@ -11414,6 +11833,1037 @@ return [
               array (
               ),
             )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'AdvancedFilterTest',
+       'phpDoc' => NULL,
+       'abstract' => false,
+       'final' => false,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUpBeforeClass',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'tearDownAfterClass',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUp',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFieldSelection',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterEquals',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterGreaterThan',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterLessThan',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterLike',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        8 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterIn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        9 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testFilterNotIn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        10 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testMultipleFilters',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        11 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCombinedFieldsAndFilters',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        12 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testBackwardCompatibility',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        13 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCount',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        14 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCountWithFilter',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        15 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCountWithMultipleFilters',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'ApiGeneratorTest',
+       'phpDoc' => NULL,
+       'abstract' => false,
+       'final' => false,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUpBeforeClass',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'tearDownAfterClass',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUp',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCreateAndRead',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testUpdate',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDelete',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testList',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'RateLimiterTest',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Rate Limiter Tests
+ * 
+ * Tests the rate limiting functionality including:
+ * - Basic rate limiting
+ * - Request counting
+ * - Reset functionality
+ * - Header generation
+ * - Cleanup operations
+ */',
+         'namespace' => NULL,
+         'uses' => 
+        array (
+          'testcase' => 'PHPUnit\\Framework\\TestCase',
+          'ratelimiter' => 'App\\Security\\RateLimiter',
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => false,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUp',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'tearDown',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testBasicRateLimiting',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testRequestCount',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testRemainingRequests',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testRateLimitReset',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testWindowExpiration',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testHeaders',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        8 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDisabledRateLimiting',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        9 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCustomLimits',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        10 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testMultipleIdentifiers',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        11 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testResetTime',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        12 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCleanup',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'RequestLoggerTest',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Request Logger Tests
+ * 
+ * Tests the request logging functionality including:
+ * - Request/response logging
+ * - Log levels
+ * - Sensitive data redaction
+ * - Authentication logging
+ * - Rate limit logging
+ * - Log rotation
+ * - Statistics
+ * - Cleanup
+ */',
+         'namespace' => NULL,
+         'uses' => 
+        array (
+          'testcase' => 'PHPUnit\\Framework\\TestCase',
+          'requestlogger' => 'App\\Observability\\RequestLogger',
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => false,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setUp',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'tearDown',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => false,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testBasicRequestLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testSensitiveDataRedaction',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testAuthenticationLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testRateLimitLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testErrorLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testQuickRequestLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        8 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testLogStatistics',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        9 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDisabledLogging',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        10 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testLogRotation',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        11 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testCleanup',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        12 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testLogLevels',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
           ),
            'attributes' => 
           array (

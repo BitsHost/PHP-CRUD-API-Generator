@@ -677,5 +677,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
       ),
     ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\Env.php' => 
+    array (
+      0 => '007bc22224685c98905e6becafa20c2d0e4dd5ef',
+      1 => 
+      array (
+        0 => 'app\\config\\env',
+      ),
+      2 => 
+      array (
+        0 => 'app\\config\\load',
+      ),
+      3 => 
+      array (
+      ),
+    ),
   ),
 ));
