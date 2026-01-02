@@ -11,7 +11,11 @@ class AdvancedFilterTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS filter_test_table");
         $pdo->exec("CREATE TABLE filter_test_table (
@@ -34,14 +38,22 @@ class AdvancedFilterTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS filter_test_table");
     }
 
     protected function setUp(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $this->db = new App\Database\Database($dbConfig);
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }

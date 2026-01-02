@@ -12,7 +12,11 @@ class ApiGeneratorTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS test_table");
         $pdo->exec("CREATE TABLE test_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))");
@@ -20,14 +24,22 @@ class ApiGeneratorTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $pdo = (new App\Database\Database($dbConfig))->getPdo();
         $pdo->exec("DROP TABLE IF EXISTS test_table");
     }
 
     protected function setUp(): void
     {
-        $dbConfig = require __DIR__ . '/../config/db.php';
+        $configFile = __DIR__ . '/../config/db.php';
+        if (!file_exists($configFile)) {
+            $configFile = __DIR__ . '/../config/dbexample.php';
+        }
+        $dbConfig = require $configFile;
     $this->db = new App\Database\Database($dbConfig);
         $this->api = new App\ApiGenerator($this->db->getPdo());
     }
