@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 return [
-	'lastFullAnalysisTime' => 1767374423,
+	'lastFullAnalysisTime' => 1767984006,
 	'meta' => array (
   'cacheVersion' => 'v12-linesToIgnore',
   'phpstanVersion' => '2.1.32',
@@ -1409,14 +1409,14 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => 
   array (
-    'fileHash' => '6541c2f4b05b79eb043d03a16074e0022d8d113d',
+    'fileHash' => '8586822ae649d56a33fe3305132e9f8dd7f4cc4a',
     'dependentFiles' => 
     array (
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 
   array (
-    'fileHash' => 'fe1b8c7e1765d67e8c02e60bc6320c9c8487bf93',
+    'fileHash' => 'ef7de6a6a77a3a92a65c4e1b4c27857830d96bec',
     'dependentFiles' => 
     array (
     ),

@@ -7,7 +7,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
   array (
     'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => 
     array (
-      0 => '6541c2f4b05b79eb043d03a16074e0022d8d113d',
+      0 => '8586822ae649d56a33fe3305132e9f8dd7f4cc4a',
       1 => 
       array (
         0 => 'advancedfiltertest',
@@ -37,7 +37,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 
     array (
-      0 => 'fe1b8c7e1765d67e8c02e60bc6320c9c8487bf93',
+      0 => 'ef7de6a6a77a3a92a65c4e1b4c27857830d96bec',
       1 => 
       array (
         0 => 'apigeneratortest',
