@@ -13,16 +13,15 @@ declare(strict_types=1);
 
 namespace App\Application;
 
-// Re-export the existing Router logic moved from root namespace.
-// NOTE: This is a direct copy; adjust namespaces for dependencies.
-
 use App\Cache\CacheManager;
 use App\Config\ApiConfig;
 use App\Config\CacheConfig;
+use App\Config\ConfigPaths;
 use App\Http\Action;
 use App\Http\Response;
 use App\Http\Middleware\RateLimitMiddleware;
 use App\Security\RbacGuard;
+use App\Security\TablePolicy;
 use App\Http\Middleware\CorsMiddleware;
 use App\Http\ErrorResponder;
 use App\Http\Controllers\ApiController;
@@ -45,6 +44,7 @@ class Router
     public Authenticator $auth;
     private Rbac $rbac;
     private RbacGuard $rbacGuard;
+    private TablePolicy $tablePolicy;
     private RateLimitMiddleware $rateLimitMiddleware;
     private RequestLogger $logger;
     private ?Monitor $monitor = null;
@@ -55,7 +55,7 @@ class Router
     private CorsMiddleware $cors;
     private ErrorResponder $errors;
 
-    public function __construct(Database $db, Authenticator $auth)
+    public function __construct(Database $db, Authenticator $auth, ?string $configDir = null)
     {
         $pdo = $db->getPdo();
         $this->db = $db;
@@ -63,8 +63,9 @@ class Router
         $this->api = new ApiGenerator($pdo);
         $this->auth = $auth;
 
-        $this->apiConfig = ApiConfig::fromFile(__DIR__ . '/../../config/api.php');
+        $this->apiConfig = ApiConfig::fromFile(ConfigPaths::api($configDir));
         $this->authEnabled = $this->apiConfig->isAuthEnabled();
+        $this->tablePolicy = $this->apiConfig->getTablePolicy();
         // Normalize userRoles to array<string, list<string>>
         $userRolesMap = array_map(fn($r) => [$r], $this->apiConfig->getUserRoles());
         $this->rbac = new Rbac(
@@ -82,7 +83,7 @@ class Router
         if ($this->apiConfig->isMonitoringEnabled()) {
             $this->monitor = new Monitor($this->apiConfig->getMonitoringConfig());
         }
-        $cacheConfig = CacheConfig::fromFile(__DIR__ . '/../../config/cache.php');
+        $cacheConfig = CacheConfig::fromFile(ConfigPaths::cache($configDir));
         if ($cacheConfig->isEnabled()) {
             $this->cache = new CacheManager($cacheConfig->toArray());
         }
@@ -144,21 +145,19 @@ class Router
         }
 
         try {
+            $apiCtl = $this->apiController();
             switch ($query['action'] ?? '') {
                 case Action::TABLES:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
-                    [$payload, $status] = $apiCtl->tables();
+                    [$payload, $status] = $apiCtl->tables($this->auth->getCurrentUserRole());
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::COLUMNS:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->columns($this->auth->getCurrentUserRole(), $query['table'] ?? null);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::LIST:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     $tuple = $apiCtl->list($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query);
                     $payload = $tuple[0];
                     $status = $tuple[1];
@@ -167,78 +166,58 @@ class Router
                     Response::json($payload, $status, $headers);
                     break;
                 case Action::COUNT:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->count($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::READ:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->read($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query['id'] ?? null);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::CREATE:
-                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
-                        Response::error('Method Not Allowed', 405);
+                    if (!$this->requirePost($query)) {
                         break;
                     }
-                    $data = $_POST;
-                    if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
-                        $raw = file_get_contents('php://input');
-                        $data = json_decode($raw === false ? '' : $raw, true) ?? [];
-                    }
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
+                    $data = $this->readBody();
                     [$payload, $status] = $apiCtl->create($this->auth->getCurrentUserRole(), $query['table'] ?? null, $data);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::UPDATE:
-                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
-                        Response::error('Method Not Allowed', 405);
+                    if (!$this->requirePost($query)) {
                         break;
                     }
-                    $data = $_POST;
-                    if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
-                        $raw = file_get_contents('php://input');
-                        $data = json_decode($raw === false ? '' : $raw, true) ?? [];
-                    }
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
+                    $data = $this->readBody();
                     [$payload, $status] = $apiCtl->update($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query['id'] ?? null, $data);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::DELETE:
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
+                    if (!$this->requirePost($query)) {
+                        break;
+                    }
                     [$payload, $status] = $apiCtl->delete($this->auth->getCurrentUserRole(), $query['table'] ?? null, $query['id'] ?? null);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::BULK_CREATE:
-                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
-                        Response::error('Method Not Allowed', 405);
+                    if (!$this->requirePost($query)) {
                         break;
                     }
                     $raw = file_get_contents('php://input');
                     $rows = json_decode($raw === false ? '' : $raw, true) ?? [];
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->bulkCreate($this->auth->getCurrentUserRole(), $query['table'] ?? null, $rows);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
                     break;
                 case Action::BULK_DELETE:
-                    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
-                        Response::error('Method Not Allowed', 405);
+                    if (!$this->requirePost($query)) {
                         break;
                     }
                     $raw = file_get_contents('php://input');
                     $data = json_decode($raw === false ? '' : $raw, true) ?? [];
                     $ids = $data['ids'] ?? [];
-                    $apiCtl = new ApiController($this->inspector, $this->api, $this->cache, $this->rbacGuard, $this->authEnabled);
                     [$payload, $status] = $apiCtl->bulkDelete($this->auth->getCurrentUserRole(), $query['table'] ?? null, $ids);
                     $this->logResponse($payload, $status, $query);
                     Response::json($payload, $status);
@@ -262,6 +241,45 @@ class Router
             ], 500);
             $this->logResponse($payload, $status, $query);
         }
+    }
+
+    private function apiController(): ApiController
+    {
+        return new ApiController(
+            $this->inspector,
+            $this->api,
+            $this->cache,
+            $this->rbacGuard,
+            $this->authEnabled,
+            $this->tablePolicy,
+            $this->rbac
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $query
+     */
+    private function requirePost(array $query): bool
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            return true;
+        }
+        $this->logResponse(['error' => 'Method Not Allowed'], 405, $query);
+        Response::error('Method Not Allowed', 405);
+        return false;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function readBody(): array
+    {
+        $data = $_POST;
+        if (empty($data) && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === 0) {
+            $raw = file_get_contents('php://input');
+            $data = json_decode($raw === false ? '' : $raw, true) ?? [];
+        }
+        return is_array($data) ? $data : [];
     }
 
     private function getRateLimitIdentifier(): string

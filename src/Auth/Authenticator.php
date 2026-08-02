@@ -20,10 +20,10 @@ use Firebase\JWT\Key;
  * API Authenticator (canonical)
  *
  * Provides multiple authentication methods for securing API access.
- * Supports API keys, Basic Auth, JWT tokens, and OAuth (placeholder).
+ * Supports API keys, Basic Auth, and JWT tokens (OAuth reserved / not implemented).
  *
  * Features:
- * - Multiple authentication methods (API Key, Basic Auth, JWT, OAuth)
+ * - Multiple authentication methods (API Key, Basic Auth, JWT)
  * - JWT token generation and validation
  * - Role-based access via JWT claims
  * - Configurable authentication requirements
@@ -83,7 +83,7 @@ class Authenticator
 	 * - apikey: Checks X-API-Key header or api_key query parameter
 	 * - basic: HTTP Basic Authentication with username/password
 	 * - jwt: Bearer token validation with JWT
-	 * - oauth: OAuth bearer token (placeholder implementation)
+	 * - oauth: Reserved / not implemented (always fails closed)
 	 */
 	public function authenticate(): bool
 	{
@@ -126,14 +126,8 @@ class Authenticator
 				return false;
 
 			case 'oauth':
-				// Placeholder for OAuth token validation
-				$headers = $this->getHeaders();
-				$authHeader = $headers['Authorization'] ?? '';
-				if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-					$token = $matches[1];
-					// TODO: Validate $token with OAuth provider
-					return false;
-				}
+				// Not implemented — reserved for a future provider integration.
+				// Always deny so misconfiguration cannot accidentally open the API.
 				return false;
 
 			default:

@@ -218,6 +218,16 @@ class ApiGenerator
                         case 'notnull':
                             $where[] = $this->dialect->quoteIdent($col) . " IS NOT NULL";
                             break;
+                        case 'between':
+                            // col:between:min|max
+                            $values = explode('|', $val);
+                            if (count($values) === 2) {
+                                $where[] = $this->dialect->quoteIdent($col)
+                                    . " BETWEEN :{$paramKey}_a AND :{$paramKey}_b";
+                                $params["{$paramKey}_a"] = $values[0];
+                                $params["{$paramKey}_b"] = $values[1];
+                            }
+                            break;
                     }
                     $paramCounter++;
                 }
@@ -679,6 +689,16 @@ class ApiGenerator
                             break;
                         case 'notnull':
                             $where[] = $this->dialect->quoteIdent($col) . " IS NOT NULL";
+                            break;
+                        case 'between':
+                            // col:between:min|max
+                            $values = explode('|', $val);
+                            if (count($values) === 2) {
+                                $where[] = $this->dialect->quoteIdent($col)
+                                    . " BETWEEN :{$paramKey}_a AND :{$paramKey}_b";
+                                $params["{$paramKey}_a"] = $values[0];
+                                $params["{$paramKey}_b"] = $values[1];
+                            }
                             break;
                     }
                     $paramCounter++;

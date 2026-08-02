@@ -1,7 +1,7 @@
 # PHP CRUD API Generator
 
 Expose your MySQL/MariaDB database as a secure, flexible, and instant REST-like API.  
-Features optional authentication (API key, Basic Auth, JWT, OAuth-ready),  
+Features optional authentication (API key, Basic Auth, JWT; OAuth planned),  
 OpenAPI (Swagger) docs, and zero code generation.
 
 ---
@@ -12,11 +12,12 @@ OpenAPI (Swagger) docs, and zero code generation.
 - Full CRUD endpoints for any table
 - **Bulk operations** - Create or delete multiple records efficiently
 - Configurable authentication (API Key, Basic Auth, JWT, or none)
+- **Table exposure policy** - Allowlist / denylist so the whole schema is not auto-public
 - **Rate limiting** - Prevent API abuse with configurable request limits
 - **Request logging** - Comprehensive logging for debugging and monitoring
 - **Advanced query features:**
   - **Field selection** - Choose specific columns to return
-  - **Advanced filtering** - Support for multiple comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull)
+  - **Advanced filtering** - Support for multiple comparison operators (eq, neq, gt, gte, lt, lte, like, in, notin, null, notnull, between)
   - **Sorting** - Multi-column sorting with ascending/descending order
   - **Pagination** - Efficient pagination with metadata
 - **Input validation** - Comprehensive validation to prevent SQL injection and invalid inputs
@@ -64,43 +65,33 @@ OpenAPI (Swagger) docs, and zero code generation.
 
 ### Option 1: Install as Library (Recommended) ⚡
 
-**Just 4 simple steps:**
+**Recommended install flow:**
 
 ```bash
 # 1. Install via Composer
 composer require bitshost/php-crud-api-generator
 
-# 2. Copy 3 files to your project root
-copy vendor/bitshost/php-crud-api-generator/public/index.php index.php
-copy vendor/bitshost/php-crud-api-generator/dashboard.html dashboard.html
-copy vendor/bitshost/php-crud-api-generator/health.php health.php
+# 2. Copy entrypoint + optional admin files
+copy vendor\bitshost\php-crud-api-generator\public\index.php index.php
+copy vendor\bitshost\php-crud-api-generator\dashboard.html dashboard.html
+copy vendor\bitshost\php-crud-api-generator\health.php health.php
 
-# 3. 🔒 SECURE admin files (IMPORTANT!)
-# Add this to .htaccess in your project root:
-echo '<Files "dashboard.html">' >> .htaccess
-echo '    Order Deny,Allow' >> .htaccess
-echo '    Deny from all' >> .htaccess
-echo '    Allow from 127.0.0.1' >> .htaccess
-echo '</Files>' >> .htaccess
+# 3. Install configs into YOUR project (do not edit vendor/)
+php vendor\bitshost\php-crud-api-generator\scripts\install-config.php .
 
-# 4. Edit index.php - Change 2 lines (point config paths to vendor)
-# On line ~51, change:
-#   $dbConfig = require __DIR__ . '/../config/db.php';
-#   $apiConfig = require __DIR__ . '/../config/api.php';
-# To:
-#   $dbConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/db.php';
-#   $apiConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/api.php';
+# 4. Secure admin files — see docs/DASHBOARD_SECURITY.md
 
-# 5. Configure & run
-notepad vendor/bitshost/php-crud-api-generator/config/db.php
-notepad vendor/bitshost/php-crud-api-generator/config/api.php
+# 5. Edit project config, run doctor, start server
+notepad config\db.php
+notepad config\api.php
+php vendor\bitshost\php-crud-api-generator\scripts\doctor.php
 php -S localhost:8000
 ```
 
-**That's it!** Total modifications: **2 lines of code** 🚀
+Configs load from `./config` (or `PHPCRUD_CONFIG_DIR`). You should not need to edit files under `vendor/`.
 
-**📖 [5-Minute Quick Start Guide →](docs/QUICK_START.md)**
-**🔒 [Secure Your Dashboard →](docs/DASHBOARD_SECURITY.md)** ← **DO THIS BEFORE PRODUCTION!**
+**[5-Minute Quick Start Guide](docs/QUICK_START.md)**  
+**[Secure Your Dashboard](docs/DASHBOARD_SECURITY.md)** — do this before production.
 
 ### Option 2: Standalone Project (Even Simpler!)
 
@@ -110,39 +101,36 @@ Download complete ready-to-use project:
 composer create-project bitshost/php-crud-api-generator my-api
 cd my-api
 
-# Configure
-cp config/db.example.php config/db.php
-cp config/api.example.php config/api.php
+php scripts/install-config.php .
 notepad config/db.php
 notepad config/api.php
+php scripts/doctor.php
 
-# Run
-php -S localhost:8000
+php -S localhost:8000 -t public
 ```
 
-**That's it!** Everything in one folder, ready to run. **0 lines to modify** 🚀
+Config lives in your project `config/` folder.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-### If installed as library (via composer require):
-
-Edit config files in vendor directory:
+### Project config (recommended for library and standalone)
 
 ```bash
-notepad vendor/bitshost/php-crud-api-generator/config/db.php
-notepad vendor/bitshost/php-crud-api-generator/config/api.php
+php scripts/install-config.php .
+# creates ./config/api.php, db.php, cache.php from examples (skips existing files)
+
+notepad config/db.php
+notepad config/api.php
+php scripts/doctor.php
 ```
 
-### If standalone project (via composer create-project):
+Optional: set `PHPCRUD_CONFIG_DIR` to an absolute config directory.
 
-Copy and edit config files:
+### Legacy note
 
-```bash
-cp config/db.example.php config/db.php
-cp config/api.example.php config/api.php
-```
+Older docs told library users to edit `vendor/.../config`. That is no longer required — use `scripts/install-config.php` and keep config in the project.
 
 ---
 
@@ -245,7 +233,7 @@ Configure in `config/api.php`:
 - **JWT:** `'auth_method' => 'jwt'` (Recommended for production)  
   1. POST to `/index.php?action=login` with credentials
   2. Use returned token as `Authorization: Bearer <token>`
-- **OAuth (future):** `'auth_method' => 'oauth'`  
+- **OAuth:** `'auth_method' => 'oauth'` — **not implemented** (always denies). Use jwt/basic/apikey.
 
 📖 **[Complete Authentication Guide →](docs/AUTHENTICATION.md)** - Detailed examples with Postman, HTTPie, cURL (JSON, Form Data, Multipart)
 

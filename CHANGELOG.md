@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.1.0 - Hardening & install DX (2026-08-02)
+
+### Security / trust
+- `action=delete` now requires **POST** (same as create/update/bulk).
+- `action=tables` respects RBAC visibility (list/read) and returns 403 when auth is on without a role.
+- New `allowed_tables` / `denied_tables` policy (deny defaults include `api_users`, `api_key_usage`).
+- Safer defaults: API key role defaults to `readonly`; example keys no longer imply admin.
+- OAuth auth method explicitly documented/treated as unimplemented (always deny).
+- Implemented documented `between` filter operator.
+- Dependencies: `firebase/php-jwt` ^7.0 and `phpunit/phpunit` ^10.5.62 (Composer advisory-safe for CI).
+
+### Install DX
+- `App\Config\ConfigPaths` resolves `./config` or `PHPCRUD_CONFIG_DIR` (no vendor edits required).
+- `scripts/install-config.php` copies example configs into the project.
+- `scripts/doctor.php` warns about weak secrets, open schema, oauth/redis stubs, dashboard exposure.
+- README install flow updated accordingly.
+
+### Tests
+- Added `tests/HardeningTest.php` for table policy, RBAC filtering, and controller guards.
+
 ## 2.0.1 - Type Safety & CI Hardening (2025-11-12)
 
 ### ✅ What changed

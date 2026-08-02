@@ -26,7 +26,7 @@ return [
     // - 'apikey' = API Key authentication (X-API-Key header or ?api_key= query param)
     // - 'basic'  = HTTP Basic Auth (username:password, good for development)
     // - 'jwt'    = JSON Web Tokens (login once, use token, best for production)
-    // - 'oauth'  = OAuth tokens (placeholder, not fully implemented)
+    // - 'oauth'  = Not implemented yet (reserved; do not enable)
     // 
     // IMPORTANT: Use exact values above (e.g., 'apikey' NOT 'api_key')
     // See docs/AUTHENTICATION.md for complete guide
@@ -35,14 +35,11 @@ return [
     // ------------------------------------------
     // API KEY AUTHENTICATION SETTINGS
     // ------------------------------------------
-    // Array of valid API keys (use long random strings in production)
-    // Usage: curl -H "X-API-Key: changeme123" http://localhost:8000?action=tables
-    // Or:    http://localhost:8000?action=tables&api_key=changeme123
-    'api_keys' => ['changeme123'],
+    // DEV ONLY — replace before shared/production use.
+    'api_keys' => ['dev-change-me'],
     
-    // Default role assigned to ALL API key users (since keys don't have individual roles)
-    // Options: 'admin', 'editor', 'readonly', or any custom role defined below
-    'api_key_role' => 'admin',
+    // Prefer least privilege for machine clients
+    'api_key_role' => 'readonly',
     
     // ------------------------------------------
     // BASIC AUTHENTICATION SETTINGS
@@ -124,6 +121,13 @@ return [
             // Example: function($alert) { mail('admin@example.com', 'Alert', $alert['message']); }
         ],
     ],
+
+    // ========================================
+    // TABLE EXPOSURE POLICY
+    // ========================================
+    // Empty allowlist = all tables except denied. Non-empty = whitelist only.
+    'allowed_tables' => [],
+    'denied_tables' => ['api_users', 'api_key_usage'],
 
     // ========================================
     // RBAC (Role-Based Access Control) SETTINGS
