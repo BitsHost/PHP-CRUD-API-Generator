@@ -70,7 +70,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\theseer\\tokenizer\\src\\TokenCollection.php' => 
     array (
-      0 => 'f50292c8fae48d972b5cad5d871bfe7d783cf876',
+      0 => '7bdadf81e5e4526ef85de2a1ef6742eae926a6d1',
       1 => 
       array (
         0 => 'theseer\\tokenizer\\tokencollection',
@@ -78,16 +78,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       2 => 
       array (
         0 => 'theseer\\tokenizer\\addtoken',
-        1 => 'theseer\\tokenizer\\current',
-        2 => 'theseer\\tokenizer\\key',
-        3 => 'theseer\\tokenizer\\next',
-        4 => 'theseer\\tokenizer\\valid',
-        5 => 'theseer\\tokenizer\\rewind',
-        6 => 'theseer\\tokenizer\\count',
-        7 => 'theseer\\tokenizer\\offsetexists',
-        8 => 'theseer\\tokenizer\\offsetget',
-        9 => 'theseer\\tokenizer\\offsetset',
-        10 => 'theseer\\tokenizer\\offsetunset',
+        1 => 'theseer\\tokenizer\\getiterator',
+        2 => 'theseer\\tokenizer\\count',
+        3 => 'theseer\\tokenizer\\offsetexists',
+        4 => 'theseer\\tokenizer\\offsetget',
+        5 => 'theseer\\tokenizer\\offsetset',
+        6 => 'theseer\\tokenizer\\offsetunset',
       ),
       3 => 
       array (
@@ -109,7 +105,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\theseer\\tokenizer\\src\\Tokenizer.php' => 
     array (
-      0 => 'c917fe54262f1eff4e50e00a4cb3c436dffa88d8',
+      0 => '3e525c5b33efe63c3bb6633ecaf835987891c1ae',
       1 => 
       array (
         0 => 'theseer\\tokenizer\\tokenizer',
@@ -125,7 +121,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\theseer\\tokenizer\\src\\XMLSerializer.php' => 
     array (
-      0 => 'c244e71221bcdc26b37e6007934d8d5a12c96e67',
+      0 => '62d2debc62c795a4036c61fe302e05798ba6f9b9',
       1 => 
       array (
         0 => 'theseer\\tokenizer\\xmlserializer',
@@ -135,7 +131,6 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         0 => 'theseer\\tokenizer\\__construct',
         1 => 'theseer\\tokenizer\\todom',
         2 => 'theseer\\tokenizer\\toxml',
-        3 => 'theseer\\tokenizer\\addtoken',
       ),
       3 => 
       array (

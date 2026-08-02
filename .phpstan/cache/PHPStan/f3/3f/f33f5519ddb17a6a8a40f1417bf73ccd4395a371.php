@@ -230,7 +230,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\sebastian\\comparator\\src\\ScalarComparator.php' => 
     array (
-      0 => '24c889b06ba8a4f52785de1a2ece3b31134dc450',
+      0 => '26c8aec2a1465a8d971bd3737679613e4b359a1f',
       1 => 
       array (
         0 => 'sebastianbergmann\\comparator\\scalarcomparator',
