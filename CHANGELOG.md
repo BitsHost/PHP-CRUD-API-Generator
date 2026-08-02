@@ -9,6 +9,7 @@
 - Safer defaults: API key role defaults to `readonly`; example keys no longer imply admin.
 - OAuth auth method explicitly documented/treated as unimplemented (always deny).
 - Implemented documented `between` filter operator.
+- Dependencies: `firebase/php-jwt` ^7.0 and `phpunit/phpunit` ^10.5.62 (Composer advisory-safe for CI).
 
 ### Install DX
 - `App\Config\ConfigPaths` resolves `./config` or `PHPCRUD_CONFIG_DIR` (no vendor edits required).
