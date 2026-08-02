@@ -1,8 +1,12 @@
 # Client-Side Joins Guide
 
-This guide shows you how to work with related data using the PHP-CRUD-API-Generator. Instead of complex server-side joins, you fetch the data you need and combine it on the client side - giving you complete control and flexibility.
+This guide shows how to work with related data using PHP-CRUD-API-Generator.
 
-## 📋 Table of Contents
+**Product rule:** the API is a data plane (CRUD / bulk / filters). Joins, graphs, and workflows are composed **outside** — typically in JavaScript — not via GraphQL or mandatory server-side joins.
+
+Use `index.php` (or your copied entrypoint) as the base URL in examples below.
+
+## Table of Contents
 
 - [Why Client-Side?](#why-client-side)
 - [Basic Examples](#basic-examples)
@@ -54,14 +58,14 @@ posts (id, user_id, title, content)
 
 ```javascript
 // 1. Get user
-const user = await fetch('/api.php?action=read&table=users&id=123')
+const user = await fetch('/index.php?action=read&table=users&id=123')
   .then(r => r.json());
 
 console.log(user);
 // { id: 123, name: "John Doe", email: "john@example.com" }
 
 // 2. Get user's posts
-const posts = await fetch('/api.php?action=list&table=posts&filter=user_id:123')
+const posts = await fetch('/index.php?action=list&table=posts&filter=user_id:123')
   .then(r => r.json());
 
 console.log(posts.data);
@@ -104,16 +108,16 @@ products (id, name, sku, description)
 ```javascript
 async function getOrderWithDetails(orderId) {
   // 1. Get order
-  const order = await fetch(`/api.php?action=read&table=orders&id=${orderId}`)
+  const order = await fetch(`/index.php?action=read&table=orders&id=${orderId}`)
     .then(r => r.json());
 
   // 2. Get order items
-  const items = await fetch(`/api.php?action=list&table=order_items&filter=order_id:${orderId}`)
+  const items = await fetch(`/index.php?action=list&table=order_items&filter=order_id:${orderId}`)
     .then(r => r.json());
 
   // 3. Get all products in one request (using IN operator)
   const productIds = items.data.map(item => item.product_id).join('|');
-  const products = await fetch(`/api.php?action=list&table=products&filter=id:in:${productIds}`)
+  const products = await fetch(`/index.php?action=list&table=products&filter=id:in:${productIds}`)
     .then(r => r.json());
 
   // 4. Create product lookup
@@ -167,8 +171,8 @@ users (id, name, avatar)
 async function getPostWithComments(postId) {
   // Parallel fetching for speed!
   const [post, comments] = await Promise.all([
-    fetch(`/api.php?action=read&table=posts&id=${postId}`).then(r => r.json()),
-    fetch(`/api.php?action=list&table=comments&filter=post_id:${postId}`).then(r => r.json())
+    fetch(`/index.php?action=read&table=posts&id=${postId}`).then(r => r.json()),
+    fetch(`/index.php?action=list&table=comments&filter=post_id:${postId}`).then(r => r.json())
   ]);
 
   // Get all unique user IDs
@@ -179,7 +183,7 @@ async function getPostWithComments(postId) {
 
   // Fetch all users in one request
   const users = await fetch(
-    `/api.php?action=list&table=users&filter=id:in:${[...userIds].join('|')}&fields=id,name,avatar`
+    `/index.php?action=list&table=users&filter=id:in:${[...userIds].join('|')}&fields=id,name,avatar`
   ).then(r => r.json());
 
   // Create user lookup
@@ -227,14 +231,14 @@ Instead of N queries, use one query with the IN operator:
 ```javascript
 // ❌ BAD: N queries (slow)
 for (const postId of postIds) {
-  const comments = await fetch(`/api.php?action=list&table=comments&filter=post_id:${postId}`);
+  const comments = await fetch(`/index.php?action=list&table=comments&filter=post_id:${postId}`);
   // Process comments...
 }
 
 // ✅ GOOD: 1 query (fast)
 const postIdsString = postIds.join('|');  // "1|2|3|4|5"
 const allComments = await fetch(
-  `/api.php?action=list&table=comments&filter=post_id:in:${postIdsString}`
+  `/index.php?action=list&table=comments&filter=post_id:in:${postIdsString}`
 ).then(r => r.json());
 
 // Group by post_id on client
@@ -256,10 +260,10 @@ Fetch multiple independent resources simultaneously:
 ```javascript
 // ✅ GOOD: All requests happen at once
 const [user, posts, followers, likes] = await Promise.all([
-  fetch('/api.php?action=read&table=users&id=123').then(r => r.json()),
-  fetch('/api.php?action=list&table=posts&filter=user_id:123').then(r => r.json()),
-  fetch('/api.php?action=list&table=followers&filter=following_id:123').then(r => r.json()),
-  fetch('/api.php?action=list&table=likes&filter=user_id:123').then(r => r.json())
+  fetch('/index.php?action=read&table=users&id=123').then(r => r.json()),
+  fetch('/index.php?action=list&table=posts&filter=user_id:123').then(r => r.json()),
+  fetch('/index.php?action=list&table=followers&filter=following_id:123').then(r => r.json()),
+  fetch('/index.php?action=list&table=likes&filter=user_id:123').then(r => r.json())
 ]);
 
 const profile = {
@@ -279,7 +283,7 @@ Create a data access layer that encapsulates the join logic:
 ```javascript
 // api/repositories/UserRepository.js
 class UserRepository {
-  constructor(apiBase = '/api.php') {
+  constructor(apiBase = '/index.php') {
     this.apiBase = apiBase;
   }
 
@@ -427,9 +431,9 @@ function UserProfile({ userId }) {
       try {
         // Parallel fetch
         const [user, posts, followers] = await Promise.all([
-          fetch(`/api.php?action=read&table=users&id=${userId}`).then(r => r.json()),
-          fetch(`/api.php?action=list&table=posts&filter=user_id:${userId}&sort=-created_at&page_size=5`).then(r => r.json()),
-          fetch(`/api.php?action=count&table=followers&filter=following_id:${userId}`).then(r => r.json())
+          fetch(`/index.php?action=read&table=users&id=${userId}`).then(r => r.json()),
+          fetch(`/index.php?action=list&table=posts&filter=user_id:${userId}&sort=-created_at&page_size=5`).then(r => r.json()),
+          fetch(`/index.php?action=count&table=followers&filter=following_id:${userId}`).then(r => r.json())
         ]);
 
         setData({
@@ -476,10 +480,10 @@ Only fetch the fields you need:
 
 ```javascript
 // ❌ Fetch everything (wasteful)
-const users = await fetch('/api.php?action=list&table=users');
+const users = await fetch('/index.php?action=list&table=users');
 
 // ✅ Only fetch needed fields (efficient)
-const users = await fetch('/api.php?action=list&table=users&fields=id,name,avatar');
+const users = await fetch('/index.php?action=list&table=users&fields=id,name,avatar');
 ```
 
 ---
@@ -503,7 +507,7 @@ class CachedApiClient {
     }
 
     console.log('Cache miss:', cacheKey);
-    const data = await fetch(`/api.php?action=read&table=users&id=${userId}`)
+    const data = await fetch(`/index.php?action=read&table=users&id=${userId}`)
       .then(r => r.json());
 
     this.cache.set(cacheKey, {
@@ -548,7 +552,7 @@ async function getAllUserPosts(userId) {
 
   while (hasMore) {
     const response = await fetch(
-      `/api.php?action=list&table=posts&filter=user_id:${userId}&page=${page}&page_size=100`
+      `/index.php?action=list&table=posts&filter=user_id:${userId}&page=${page}&page_size=100`
     ).then(r => r.json());
 
     posts.push(...response.data);
@@ -567,11 +571,11 @@ async function getAllUserPosts(userId) {
 
 ```javascript
 // ❌ Fetch all data just to count (wasteful)
-const posts = await fetch('/api.php?action=list&table=posts&filter=user_id:123');
+const posts = await fetch('/index.php?action=list&table=posts&filter=user_id:123');
 const postCount = posts.data.length;
 
 // ✅ Use count endpoint (efficient)
-const count = await fetch('/api.php?action=count&table=posts&filter=user_id:123')
+const count = await fetch('/index.php?action=count&table=posts&filter=user_id:123')
   .then(r => r.json());
 const postCount = count.count;
 ```
@@ -606,7 +610,7 @@ Here's a complete example of a blog system with users, posts, and comments:
 ```javascript
 // BlogAPI.js - Complete data access layer
 class BlogAPI {
-  constructor(baseUrl = '/api.php') {
+  constructor(baseUrl = '/index.php') {
     this.baseUrl = baseUrl;
   }
 

@@ -373,3 +373,38 @@ The new **PSR-4 Config classes** provide:
 - ♻️ **Backward compatible** - Works with existing config files
 
 **This is the correct way to handle configuration in modern PHP applications.**
+
+---
+
+## Config path resolution (v2.1+)
+
+Use project-local config. Do not edit `vendor/`.
+
+Lookup order (`App\Config\ConfigPaths`):
+
+1. Explicit directory passed to the router / helpers
+2. `PHPCRUD_CONFIG_DIR` environment variable
+3. `./config` when it contains `api.php`
+4. Package `config/` directory
+
+```bash
+php scripts/install-config.php .   # copy examples → ./config
+php scripts/doctor.php             # warn on weak / open settings
+```
+
+---
+
+## Table exposure policy (v2.1+)
+
+In `config/api.php`:
+
+```php
+'allowed_tables' => [], // empty = all except denied; non-empty = whitelist
+'denied_tables' => ['api_users', 'api_key_usage'],
+```
+
+Or via env: `API_ALLOWED_TABLES`, `API_DENIED_TABLES` (comma-separated).
+
+Denied tables are blocked even for admin. `action=tables` also respects RBAC visibility.
+
+See [UPGRADE_2.1.md](UPGRADE_2.1.md).

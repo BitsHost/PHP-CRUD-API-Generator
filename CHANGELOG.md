@@ -20,6 +20,11 @@
 ### Tests
 - Added `tests/HardeningTest.php` for table policy, RBAC filtering, and controller guards.
 
+### Docs
+- README rewritten for developers: design model (data plane + client JS), install without vendor edits, POST delete, table policy, honest OAuth status.
+- Added `docs/UPGRADE_2.1.md`; refreshed `docs/QUICK_START.md` and `docs/README.md`.
+- Client-side joins examples use `index.php`; logging doc link restored.
+
 ## 2.0.1 - Type Safety & CI Hardening (2025-11-12)
 
 ### ✅ What changed
