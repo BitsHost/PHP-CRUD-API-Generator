@@ -1,104 +1,92 @@
-# Quick Start - bitshost/php-crud-api-generator
+# Quick Start (v2.1+)
 
-**Get started in 5 minutes!**
+Get a working API in a few minutes. **Do not edit files under `vendor/`.**
 
 ---
 
-## Step 1: Install
+## Library install (recommended)
 
 ```bash
 composer require bitshost/php-crud-api-generator
-```
 
----
-
-## Step 2: Copy 3 files to project root
-
-```bash
+# Entrypoint (+ optional ops UI)
 copy vendor\bitshost\php-crud-api-generator\public\index.php index.php
 copy vendor\bitshost\php-crud-api-generator\dashboard.html dashboard.html
 copy vendor\bitshost\php-crud-api-generator\health.php health.php
-```
 
----
+# Project-local configs (skips files that already exist)
+php vendor\bitshost\php-crud-api-generator\scripts\install-config.php .
 
-## Step 3: Edit index.php (2 lines)
+# Edit YOUR project config
+notepad config\db.php
+notepad config\api.php
 
-Change config paths to point to vendor:
+# Sanity check
+php vendor\bitshost\php-crud-api-generator\scripts\doctor.php
 
-```php
-// Change this:
-$dbConfig = require __DIR__ . '/config/db.php';
-$apiConfig = require __DIR__ . '/config/api.php';
-
-// To this:
-$dbConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/db.php';
-$apiConfig = require __DIR__ . '/vendor/bitshost/php-crud-api-generator/config/api.php';
-```
-
----
-
-## Step 4: Configure (in vendor directory)
-
-```bash
-notepad vendor\bitshost\php-crud-api-generator\config\db.php
-notepad vendor\bitshost\php-crud-api-generator\config\api.php
-```
-
-**db.php:**
-```php
-return [
-    'host' => 'localhost',
-    'dbname' => 'your_database',
-    'user' => 'root',
-    'pass' => '',
-    'charset' => 'utf8mb4'
-];
-```
-
-**api.php - Generate JWT secret:**
-```bash
-php -r "echo bin2hex(random_bytes(32));"
-```
-
-Paste result into api.php:
-```php
-'jwt_secret' => 'YOUR_64_CHAR_SECRET_HERE',
-```
-
----
-
-## Step 5: Run!
-
-```bash
 php -S localhost:8000
 ```
 
+Linux/macOS: use `cp` instead of `copy`.
+
 ---
 
-## Test
+## Standalone project
 
 ```bash
-# Login
-curl -X POST -d "username=admin&password=password123" http://localhost:8000/?action=login
+composer create-project bitshost/php-crud-api-generator my-api
+cd my-api
 
-# View dashboard
-http://localhost:8000/dashboard.html
+php scripts/install-config.php .
+# edit config/db.php and config/api.php
+php scripts/doctor.php
+
+php -S localhost:8000 -t public
 ```
 
 ---
 
-## Summary
+## Minimal config checklist
 
-**3 files copied:**
-- index.php (2 lines modified)
-- dashboard.html (0 modifications)
-- health.php (0 modifications)
+In `config/db.php`: host, dbname, user, pass.
 
-**2 files edited:**
-- vendor/.../config/db.php
-- vendor/.../config/api.php
+In `config/api.php` (production):
 
-**Total code changes: 2 lines!** 🎉
+- `auth_enabled` => `true`
+- strong `jwt_secret` / `api_keys`
+- set `allowed_tables` to an explicit list of business tables
+- keep `denied_tables` for system tables (`api_users`, …)
+- protect `dashboard.html` / `health.php` — see [DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)
 
-That's it! Your API is ready. All configs stay in vendor directory - clean and simple!
+---
+
+## Smoke test
+
+```bash
+# With Basic auth (default example method may vary — check your api.php)
+curl -u admin:secret "http://localhost:8000/index.php?action=tables"
+
+# List rows
+curl -u admin:secret "http://localhost:8000/index.php?action=list&table=users"
+
+# Delete must be POST
+curl -u admin:secret -X POST "http://localhost:8000/index.php?action=delete&table=users&id=1"
+```
+
+---
+
+## Design model (important)
+
+This API is a **data plane**: CRUD + bulk + filters on tables.
+
+Related data / business workflows are composed **outside** (JavaScript, mobile app, upMVC).  
+See [CLIENT_SIDE_JOINS.md](CLIENT_SIDE_JOINS.md).
+
+---
+
+## Next reading
+
+- [UPGRADE_2.1.md](UPGRADE_2.1.md) — if you used ≤2.0.1
+- [AUTHENTICATION.md](AUTHENTICATION.md)
+- [CONFIGURATION.md](CONFIGURATION.md)
+- Main [README](../README.md)
