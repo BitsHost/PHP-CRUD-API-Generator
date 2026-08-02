@@ -42,7 +42,7 @@ class Validator
 
     public static function validateOperator(string $operator): bool
     {
-        $validOperators = ['eq', 'neq', 'ne', 'gt', 'gte', 'ge', 'lt', 'lte', 'le', 'like', 'in', 'notin', 'nin', 'null', 'notnull'];
+        $validOperators = ['eq', 'neq', 'ne', 'gt', 'gte', 'ge', 'lt', 'lte', 'le', 'like', 'in', 'notin', 'nin', 'null', 'notnull', 'between'];
         return in_array(strtolower($operator), $validOperators, true);
     }
 

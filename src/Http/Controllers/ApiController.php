@@ -14,7 +14,9 @@ namespace App\Http\Controllers;
 use App\Database\SchemaInspector;
 use App\ApiGenerator;
 use App\Cache\CacheManager;
+use App\Security\Rbac;
 use App\Security\RbacGuard;
+use App\Security\TablePolicy;
 use App\Support\QueryValidator as QV;
 
 class ApiController
@@ -24,14 +26,30 @@ class ApiController
         private ApiGenerator $api,
         private ?CacheManager $cache,
         private RbacGuard $rbacGuard,
-        private bool $authEnabled
+        private bool $authEnabled,
+        private TablePolicy $tablePolicy,
+        private ?Rbac $rbac = null
     ) {}
 
     // ==================== Schema endpoints ====================
     /**
-     * @return array{0:array<int,string>,1:int}
+     * @return array{0:list<string>|array{error:string},1:int}
      */
-    public function tables(): array { return [$this->inspector->getTables(), 200]; }
+    public function tables(?string $role = null): array
+    {
+        $tables = $this->tablePolicy->filter(array_values($this->inspector->getTables()));
+
+        if ($this->authEnabled) {
+            if ($role === null || $role === '') {
+                return [['error' => 'Forbidden: No role assigned'], 403];
+            }
+            if ($this->rbac !== null) {
+                $tables = $this->rbac->filterVisibleTables($role, $tables);
+            }
+        }
+
+        return [$tables, 200];
+    }
 
     /**
      * @return array{0:array<int,array<string,mixed>>|array{error:string},1:int}
@@ -40,6 +58,9 @@ class ApiController
     {
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'read');
         return [$this->inspector->getColumns($table), 200];
@@ -52,9 +73,11 @@ class ApiController
      */
     public function list(?string $role, ?string $table, array $query): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'list');
         $opts = [
@@ -100,6 +123,9 @@ class ApiController
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
         }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
+        }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'list');
         $opts = [ 'filter' => $query['filter'] ?? null ];
         return [$this->api->count($table, $opts), 200];
@@ -111,9 +137,11 @@ class ApiController
      */
     public function read(?string $role, ?string $table, $id): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         if (!QV::id($id)) {
             return [["error" => "Invalid id parameter"], 400];
@@ -128,9 +156,11 @@ class ApiController
      */
     public function create(?string $role, ?string $table, array $data): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid or missing table parameter"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'create');
         $result = $this->api->create($table, $data);
@@ -145,9 +175,11 @@ class ApiController
      */
     public function update(?string $role, ?string $table, $id, array $data): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid or missing table parameter"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         if (!QV::id($id)) {
             return [["error" => "Invalid or missing id parameter"], 400];
@@ -164,9 +196,11 @@ class ApiController
      */
     public function delete(?string $role, ?string $table, $id): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid table name"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         if (!QV::id($id)) {
             return [["error" => "Invalid id parameter"], 400];
@@ -183,9 +217,11 @@ class ApiController
      */
     public function bulkCreate(?string $role, ?string $table, array $rows): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid or missing table parameter"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'create');
         if (empty($rows)) {
@@ -202,9 +238,11 @@ class ApiController
      */
     public function bulkDelete(?string $role, ?string $table, array $ids): array
     {
-        
         if (!$table || !QV::table($table)) {
             return [["error" => "Invalid or missing table parameter"], 400];
+        }
+        if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'delete');
         if (empty($ids)) {
@@ -213,5 +251,16 @@ class ApiController
         $result = $this->api->bulkDelete($table, $ids);
         if ($this->cache) { $this->cache->invalidateTable($table); }
         return [$result, 200];
+    }
+
+    /**
+     * @return array{0:array{error:string},1:int}|null
+     */
+    private function denyIfTableBlocked(string $table): ?array
+    {
+        if (!$this->tablePolicy->isAllowed($table)) {
+            return [['error' => "Forbidden: table '$table' is not exposed by API policy"], 403];
+        }
+        return null;
     }
 }

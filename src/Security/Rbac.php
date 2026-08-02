@@ -55,4 +55,19 @@ class Rbac
 		}
 		return false;
 	}
+
+	/**
+	 * Keep tables the role can at least list or read.
+	 *
+	 * @param list<string> $tables
+	 * @return list<string>
+	 */
+	public function filterVisibleTables(string $role, array $tables): array
+	{
+		return array_values(array_filter(
+			$tables,
+			fn(string $table) => $this->isAllowed($role, $table, 'list')
+				|| $this->isAllowed($role, $table, 'read')
+		));
+	}
 }

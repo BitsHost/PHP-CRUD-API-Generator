@@ -59,7 +59,7 @@ class ApiConfig
     private int $jwtExpiration;
     /** @var string */
     private string $jwtAlgorithm;
-    /** @var array<string,array{tables:list<string>,actions:list<string>}> */
+    /** @var array<string, array<string, list<string>>> */
     private array $roles;
     /** @var array<string,string> */
     private array $userRoles;
@@ -69,6 +69,10 @@ class ApiConfig
     private array $loggingConfig;
     /** @var array{enabled:bool} */
     private array $monitoringConfig;
+    /** @var list<string> */
+    private array $allowedTables;
+    /** @var list<string> */
+    private array $deniedTables;
 
     /**
      * Initialize API configuration
@@ -88,10 +92,11 @@ class ApiConfig
         // Authentication settings
         $this->authEnabled = $config['auth_enabled'] ?? true;
         $this->authMethod = $config['auth_method'] ?? 'jwt';
-    $rawKeys = $config['api_keys'] ?? ['changeme123'];
-    $keys = is_array($rawKeys) ? array_values(array_map('strval', $rawKeys)) : [strval($rawKeys)];
-    $this->apiKeys = $keys;
-        $this->apiKeyRole = $config['api_key_role'] ?? 'admin';
+        $rawKeys = $config['api_keys'] ?? [];
+        $keys = is_array($rawKeys) ? array_values(array_map('strval', $rawKeys)) : [strval($rawKeys)];
+        $this->apiKeys = $keys;
+        // Prefer least privilege when unset — never default API keys to admin
+        $this->apiKeyRole = $config['api_key_role'] ?? 'readonly';
         $this->basicUsers = $config['basic_users'] ?? [
             'admin' => 'secret',
             'user' => 'userpass',
@@ -103,19 +108,16 @@ class ApiConfig
         $this->jwtExpiration = $config['jwt_expiration'] ?? 3600;
         $this->jwtAlgorithm = $config['jwt_algorithm'] ?? 'HS256';
 
-        // RBAC settings
+        // RBAC settings (table => actions map; '*' wildcard supported)
         $this->roles = $config['roles'] ?? [
             'admin' => [
-                'tables' => ['*'],
-                'actions' => ['*'],
+                '*' => ['list', 'read', 'create', 'update', 'delete'],
             ],
             'editor' => [
-                'tables' => ['*'],
-                'actions' => ['list', 'read', 'create', 'update', 'count'],
+                '*' => ['list', 'read', 'create', 'update', 'count'],
             ],
             'readonly' => [
-                'tables' => ['*'],
-                'actions' => ['list', 'read', 'count'],
+                '*' => ['list', 'read', 'count'],
             ],
         ];
 
@@ -123,6 +125,16 @@ class ApiConfig
             'admin' => 'admin',
             'user' => 'readonly',
         ];
+
+        // Table exposure policy
+        $allowed = $config['allowed_tables'] ?? [];
+        $denied = $config['denied_tables'] ?? ['api_users', 'api_key_usage'];
+        $this->allowedTables = is_array($allowed)
+            ? array_values(array_filter(array_map('strval', $allowed), static fn($t) => $t !== ''))
+            : [];
+        $this->deniedTables = is_array($denied)
+            ? array_values(array_filter(array_map('strval', $denied), static fn($t) => $t !== ''))
+            : [];
 
         // Rate limiting
         $this->rateLimitConfig = $config['rate_limit'] ?? [
@@ -261,11 +273,32 @@ class ApiConfig
      * Get all roles configuration
      */
     /**
-     * @return array<string,array{tables:list<string>,actions:list<string>}>
+     * @return array<string, array<string, list<string>>>
      */
     public function getRoles(): array
     {
         return $this->roles;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getAllowedTables(): array
+    {
+        return $this->allowedTables;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getDeniedTables(): array
+    {
+        return $this->deniedTables;
+    }
+
+    public function getTablePolicy(): \App\Security\TablePolicy
+    {
+        return new \App\Security\TablePolicy($this->allowedTables, $this->deniedTables);
     }
 
     /**
@@ -348,6 +381,8 @@ class ApiConfig
             'jwt_algorithm' => $this->jwtAlgorithm,
             'roles' => $this->roles,
             'user_roles' => $this->userRoles,
+            'allowed_tables' => $this->allowedTables,
+            'denied_tables' => $this->deniedTables,
             'rate_limit' => $this->rateLimitConfig,
             'logging' => $this->loggingConfig,
             'monitoring' => $this->monitoringConfig,
