@@ -1,7 +1,7 @@
 <?php declare(strict_types = 1);
 
 return [
-	'lastFullAnalysisTime' => 1767984006,
+	'lastFullAnalysisTime' => 1785665540,
 	'meta' => array (
   'cacheVersion' => 'v12-linesToIgnore',
   'phpstanVersion' => '2.1.32',
@@ -20,7 +20,7 @@ return [
   ),
   'composerLocks' => 
   array (
-    'D:/GitHub/PHP-CRUD-API-Generator/composer.lock' => '1cb0e589b594eba6a52043f0e54e6de69f9ba0c9',
+    'D:/GitHub/PHP-CRUD-API-Generator/composer.lock' => 'c0e76454d4009d2e363bfa4e8529b8621b59b99b',
   ),
   'composerInstalled' => 
   array (
@@ -30,9 +30,9 @@ return [
       array (
         'firebase/php-jwt' => 
         array (
-          'pretty_version' => 'v6.11.1',
-          'version' => '6.11.1.0',
-          'reference' => 'd1e91ecf8c598d073d0995afa8cd5c75c6e19e66',
+          'pretty_version' => 'v7.1.0',
+          'version' => '7.1.0.0',
+          'reference' => 'b374a5d1a4f1f67fadc2165cdb284645945e2fc0',
           'type' => 'library',
           'install_path' => 'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\composer/../firebase/php-jwt',
           'aliases' => 
@@ -54,9 +54,9 @@ return [
         ),
         'nikic/php-parser' => 
         array (
-          'pretty_version' => 'v5.6.1',
-          'version' => '5.6.1.0',
-          'reference' => 'f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2',
+          'pretty_version' => 'v5.8.0',
+          'version' => '5.8.0.0',
+          'reference' => '044a6a392ff8ad0d61f14370a5fbbd0a0107152f',
           'type' => 'library',
           'install_path' => 'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\composer/../nikic/php-parser',
           'aliases' => 
@@ -162,9 +162,9 @@ return [
         ),
         'phpunit/phpunit' => 
         array (
-          'pretty_version' => '10.5.58',
-          'version' => '10.5.58.0',
-          'reference' => 'e24fb46da450d8e6a5788670513c1af1424f16ca',
+          'pretty_version' => '10.5.64',
+          'version' => '10.5.64.0',
+          'reference' => '0e8c1d19cea35ad97d4887f363d07c78e30fbf06',
           'type' => 'library',
           'install_path' => 'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\composer/../phpunit/phpunit',
           'aliases' => 
@@ -210,9 +210,9 @@ return [
         ),
         'sebastian/comparator' => 
         array (
-          'pretty_version' => '5.0.4',
-          'version' => '5.0.4.0',
-          'reference' => 'e8e53097718d2b53cfb2aa859b06a41abf58c62e',
+          'pretty_version' => '5.0.5',
+          'version' => '5.0.5.0',
+          'reference' => '55dfef806eb7dfeb6e7a6935601fef866f8ca48d',
           'type' => 'library',
           'install_path' => 'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\composer/../sebastian/comparator',
           'aliases' => 
@@ -366,9 +366,9 @@ return [
         ),
         'theseer/tokenizer' => 
         array (
-          'pretty_version' => '1.2.3',
-          'version' => '1.2.3.0',
-          'reference' => '737eda637ed5e28c3413cb1ebe8bb52cbf1ca7a2',
+          'pretty_version' => '1.3.1',
+          'version' => '1.3.1.0',
+          'reference' => 'b7489ce515e168639d17feec34b8847c326b0b3c',
           'type' => 'library',
           'install_path' => 'D:\\GitHub\\PHP-CRUD-API-Generator\\vendor\\composer/../theseer/tokenizer',
           'aliases' => 
@@ -425,7 +425,8 @@ return [
     34 => 'xml',
     35 => 'xmlreader',
     36 => 'xmlwriter',
-    37 => 'zlib',
+    37 => 'zip',
+    38 => 'zlib',
   ),
   'stubFiles' => 
   array (
@@ -454,12 +455,12 @@ return [
       0 => 
       array (
         0 => 'http_response_code',
-        1 => 150,
+        1 => 144,
       ),
       1 => 
       array (
         0 => 'http_response_code',
-        1 => 216,
+        1 => 210,
       ),
     ),
   ),
@@ -578,40 +579,52 @@ return [
       10 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getUserRoles',
+        1 => 'getAllowedTables',
         2 => 'App\\Config\\ApiConfig',
       ),
       11 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getUserRole',
+        1 => 'getDeniedTables',
         2 => 'App\\Config\\ApiConfig',
       ),
       12 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getRateLimitConfig',
+        1 => 'getUserRoles',
         2 => 'App\\Config\\ApiConfig',
       ),
       13 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getLoggingConfig',
+        1 => 'getUserRole',
         2 => 'App\\Config\\ApiConfig',
       ),
       14 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getMonitoringConfig',
+        1 => 'getRateLimitConfig',
         2 => 'App\\Config\\ApiConfig',
       ),
       15 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'isMonitoringEnabled',
+        1 => 'getLoggingConfig',
         2 => 'App\\Config\\ApiConfig',
       ),
       16 => 
+      array (
+        0 => 'App\\Config\\ApiConfig',
+        1 => 'getMonitoringConfig',
+        2 => 'App\\Config\\ApiConfig',
+      ),
+      17 => 
+      array (
+        0 => 'App\\Config\\ApiConfig',
+        1 => 'isMonitoringEnabled',
+        2 => 'App\\Config\\ApiConfig',
+      ),
+      18 => 
       array (
         0 => 'App\\Config\\ApiConfig',
         1 => 'toArray',
@@ -876,6 +889,30 @@ return [
       0 => 'App\\Security\\RbacGuard',
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TablePolicy.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'App\\Security\\TablePolicy',
+        1 => 'getAllowed',
+        2 => 'App\\Security\\TablePolicy',
+      ),
+      1 => 
+      array (
+        0 => 'App\\Security\\TablePolicy',
+        1 => 'getDenied',
+        2 => 'App\\Security\\TablePolicy',
+      ),
+      2 => 
+      array (
+        0 => 'App\\Security\\TablePolicy',
+        1 => 'hasAllowlist',
+        2 => 'App\\Security\\TablePolicy',
+      ),
+    ),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
   array (
     'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
@@ -903,6 +940,30 @@ return [
         0 => 'App\\Support\\Validator',
         1 => 'validatePage',
         2 => 'App\\Support\\Validator',
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 56,
+      ),
+      1 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 78,
       ),
     ),
   ),
@@ -1081,13 +1142,14 @@ return [
 	'dependencies' => array (
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php' => 
   array (
-    'fileHash' => '4ce31734a3eb0649fb844120d49d81bc53445099',
+    'fileHash' => 'a9fc80006eed26fa6b986049e233c3c9400317ac',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\HookManager.php' => 
@@ -1100,7 +1162,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php' => 
   array (
-    'fileHash' => '9b568d0235623d36ab9b6b73630873fb0c0df6a6',
+    'fileHash' => '5fff6a77463c320c5384ff43cd347505eb42e5e1',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
@@ -1113,7 +1175,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Auth\\Authenticator.php' => 
   array (
-    'fileHash' => 'c952df79c4de7e4cee62b04f2cb3144a524d7957',
+    'fileHash' => '9681d0976be89d5be63d6ef024f70d895cd247c8',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1165,7 +1227,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php' => 
   array (
-    'fileHash' => '3f7a13fb94e42c9f3e1dfec4fbbf50a704741864',
+    'fileHash' => '478ad6389effd5b601510e35fa1cf4f0805e7e09',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1179,6 +1241,14 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ConfigPaths.php' => 
+  array (
+    'fileHash' => '46f3adeeeca3c44949aa4fcb05a2dbd83b4cb296',
+    'dependentFiles' => 
+    array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\Env.php' => 
@@ -1245,7 +1315,8 @@ return [
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php',
-      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php' => 
@@ -1273,10 +1344,11 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php' => 
   array (
-    'fileHash' => 'b0bca89b6e4dc3f18230c931e96d731fad5f418a',
+    'fileHash' => 'c99ce794724b5406a3e3e6d510e3380f30d89b7d',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php' => 
@@ -1371,13 +1443,15 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\Rbac.php' => 
   array (
-    'fileHash' => 'e5eb315a416e6eb9a1999b95cf3d790d651772ed',
+    'fileHash' => '922749b5ff1dfac0d5b681ad026578acb281ae9d',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
-      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php',
-      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
-      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php' => 
@@ -1387,8 +1461,20 @@ return [
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
-      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
-      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TablePolicy.php' => 
+  array (
+    'fileHash' => 'de33d68a85047832985e18f90082af5c707947d1',
+    'dependentFiles' => 
+    array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
@@ -1402,9 +1488,10 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\Validator.php' => 
   array (
-    'fileHash' => 'e4b75f1e312327f9d6545cb0ffa30b826c4265a3',
+    'fileHash' => '9c0e14f7b6b3188c5a7debfce287da1730ddd240',
     'dependentFiles' => 
     array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php' => 
@@ -1417,6 +1504,13 @@ return [
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php' => 
   array (
     'fileHash' => 'ef7de6a6a77a3a92a65c4e1b4c27857830d96bec',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php' => 
+  array (
+    'fileHash' => '5355f0d6066d26967e84ab261adf175629291d07',
     'dependentFiles' => 
     array (
     ),
@@ -2214,6 +2308,17 @@ return [
               array (
               ),
             )),
+            2 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'configDir',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
           ),
            'attributes' => 
           array (
@@ -2233,10 +2338,12 @@ return [
               'cachemanager' => 'App\\Cache\\CacheManager',
               'apiconfig' => 'App\\Config\\ApiConfig',
               'cacheconfig' => 'App\\Config\\CacheConfig',
+              'configpaths' => 'App\\Config\\ConfigPaths',
               'action' => 'App\\Http\\Action',
               'response' => 'App\\Http\\Response',
               'ratelimitmiddleware' => 'App\\Http\\Middleware\\RateLimitMiddleware',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'corsmiddleware' => 'App\\Http\\Middleware\\CorsMiddleware',
               'errorresponder' => 'App\\Http\\ErrorResponder',
               'apicontroller' => 'App\\Http\\Controllers\\ApiController',
@@ -2297,10 +2404,10 @@ return [
  * API Authenticator (canonical)
  *
  * Provides multiple authentication methods for securing API access.
- * Supports API keys, Basic Auth, JWT tokens, and OAuth (placeholder).
+ * Supports API keys, Basic Auth, and JWT tokens (OAuth reserved / not implemented).
  *
  * Features:
- * - Multiple authentication methods (API Key, Basic Auth, JWT, OAuth)
+ * - Multiple authentication methods (API Key, Basic Auth, JWT)
  * - JWT token generation and validation
  * - Role-based access via JWT claims
  * - Configurable authentication requirements
@@ -2440,7 +2547,7 @@ return [
 	 * - apikey: Checks X-API-Key header or api_key query parameter
 	 * - basic: HTTP Basic Authentication with username/password
 	 * - jwt: Bearer token validation with JWT
-	 * - oauth: OAuth bearer token (placeholder implementation)
+	 * - oauth: Reserved / not implemented (always fails closed)
 	 */',
              'namespace' => 'App\\Auth',
              'uses' => 
@@ -4971,7 +5078,7 @@ return [
            'phpDoc' => 
           \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
              'phpDocString' => '/**
-     * @return array<string,array{tables:list<string>,actions:list<string>}>
+     * @return array<string, array<string, list<string>>>
      */',
              'namespace' => 'App\\Config',
              'uses' => 
@@ -4996,6 +5103,84 @@ return [
           ),
         )),
         12 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getAllowedTables',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Config',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        13 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getDeniedTables',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Config',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        14 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getTablePolicy',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'App\\Security\\TablePolicy',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        15 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getUserRoles',
            'phpDoc' => 
@@ -5025,7 +5210,7 @@ return [
           array (
           ),
         )),
-        13 => 
+        16 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getUserRole',
            'phpDoc' => 
@@ -5066,7 +5251,7 @@ return [
           array (
           ),
         )),
-        14 => 
+        17 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getRateLimitConfig',
            'phpDoc' => 
@@ -5096,7 +5281,7 @@ return [
           array (
           ),
         )),
-        15 => 
+        18 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getLoggingConfig',
            'phpDoc' => 
@@ -5126,7 +5311,7 @@ return [
           array (
           ),
         )),
-        16 => 
+        19 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getMonitoringConfig',
            'phpDoc' => 
@@ -5156,7 +5341,7 @@ return [
           array (
           ),
         )),
-        17 => 
+        20 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'isMonitoringEnabled',
            'phpDoc' => 
@@ -5186,7 +5371,7 @@ return [
           array (
           ),
         )),
-        18 => 
+        21 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'toArray',
            'phpDoc' => 
@@ -5216,7 +5401,7 @@ return [
           array (
           ),
         )),
-        19 => 
+        22 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'enableAuth',
            'phpDoc' => 
@@ -5246,7 +5431,7 @@ return [
           array (
           ),
         )),
-        20 => 
+        23 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'disableAuth',
            'phpDoc' => 
@@ -5276,7 +5461,7 @@ return [
           array (
           ),
         )),
-        21 => 
+        24 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'setAuthMethod',
            'phpDoc' => 
@@ -5317,7 +5502,7 @@ return [
           array (
           ),
         )),
-        22 => 
+        25 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'addApiKey',
            'phpDoc' => 
@@ -5358,7 +5543,7 @@ return [
           array (
           ),
         )),
-        23 => 
+        26 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeApiKey',
            'phpDoc' => 
@@ -5399,7 +5584,7 @@ return [
           array (
           ),
         )),
-        24 => 
+        27 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'addBasicUser',
            'phpDoc' => 
@@ -5451,7 +5636,7 @@ return [
           array (
           ),
         )),
-        25 => 
+        28 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeBasicUser',
            'phpDoc' => 
@@ -5492,7 +5677,7 @@ return [
           array (
           ),
         )),
-        26 => 
+        29 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'setJwtSecret',
            'phpDoc' => 
@@ -5533,7 +5718,7 @@ return [
           array (
           ),
         )),
-        27 => 
+        30 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'assignUserRole',
            'phpDoc' => 
@@ -5585,7 +5770,7 @@ return [
           array (
           ),
         )),
-        28 => 
+        31 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeUserRole',
            'phpDoc' => 
@@ -6363,6 +6548,204 @@ return [
                'byRef' => false,
                'variadic' => false,
                'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ConfigPaths.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Config\\ConfigPaths',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Lookup order:
+ * 1. Explicit directory argument
+ * 2. PHPCRUD_CONFIG_DIR environment variable
+ * 3. ./config relative to current working directory (project root when using the package as a library)
+ * 4. Package-shipped config/ directory
+ */',
+         'namespace' => 'App\\Config',
+         'uses' => 
+        array (
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => false,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'resolveDir',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'explicit',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'file',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'name',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'dir',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'api',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'dir',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'db',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'dir',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'cache',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => true,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'dir',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
                'attributes' => 
               array (
               ),
@@ -7877,6 +8260,28 @@ return [
               array (
               ),
             )),
+            5 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tablePolicy',
+               'type' => 'App\\Security\\TablePolicy',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            6 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'rbac',
+               'type' => '?App\\Security\\Rbac',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
           ),
            'attributes' => 
           array (
@@ -7888,7 +8293,7 @@ return [
            'phpDoc' => 
           \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
              'phpDocString' => '/**
-     * @return array{0:array<int,string>,1:int}
+     * @return array{0:list<string>|array{error:string},1:int}
      */',
              'namespace' => 'App\\Http\\Controllers',
              'uses' => 
@@ -7896,7 +8301,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -7912,6 +8319,17 @@ return [
            'returnType' => 'array',
            'parameters' => 
           array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'role',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
           ),
            'attributes' => 
           array (
@@ -7931,7 +8349,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -7989,7 +8409,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8058,7 +8480,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8127,7 +8551,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8196,7 +8622,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8266,7 +8694,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8346,7 +8776,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8415,7 +8847,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8484,7 +8918,9 @@ return [
               'schemainspector' => 'App\\Database\\SchemaInspector',
               'apigenerator' => 'App\\ApiGenerator',
               'cachemanager' => 'App\\Cache\\CacheManager',
+              'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
+              'tablepolicy' => 'App\\Security\\TablePolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -11209,6 +11645,61 @@ return [
           array (
           ),
         )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'filterVisibleTables',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+	 * Keep tables the role can at least list or read.
+	 *
+	 * @param list<string> $tables
+	 * @return list<string>
+	 */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'role',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tables',
+               'type' => 'array',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
       ),
        'attributes' => 
       array (
@@ -11341,6 +11832,250 @@ return [
               array (
               ),
             )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TablePolicy.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Security\\TablePolicy',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Restricts which tables the API may touch, independent of RBAC.
+ *
+ * - allowed_tables empty  → all tables permitted (except denied)
+ * - allowed_tables non-empty → whitelist mode
+ * - denied_tables always blocked
+ */',
+         'namespace' => 'App\\Security',
+         'uses' => 
+        array (
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => false,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => '__construct',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @param list<string> $allowed
+     * @param list<string> $denied
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => NULL,
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'allowed',
+               'type' => 'array',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'denied',
+               'type' => 'array',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'isAllowed',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'filter',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @param list<string> $tables
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tables',
+               'type' => 'array',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getAllowed',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getDenied',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'hasAllowlist',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
           ),
            'attributes' => 
           array (
@@ -12289,6 +13024,158 @@ return [
         6 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'testList',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'HardeningTest',
+       'phpDoc' => NULL,
+       'abstract' => false,
+       'final' => true,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTablePolicyAllowlistAndDenylist',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTablePolicyEmptyAllowlistMeansAllExceptDenied',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testRbacFiltersInvisibleTables',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTablesEndpointAppliesPolicyAndRbac',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTablesEndpointForbiddenWithoutRoleWhenAuthOn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDeniedTableBlocksList',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testBetweenOperatorIsValid',
            'phpDoc' => NULL,
            'byRef' => false,
            'public' => true,

@@ -279,5 +279,26 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
       ),
     ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php' => 
+    array (
+      0 => '5355f0d6066d26967e84ab261adf175629291d07',
+      1 => 
+      array (
+        0 => 'hardeningtest',
+      ),
+      2 => 
+      array (
+        0 => 'testtablepolicyallowlistanddenylist',
+        1 => 'testtablepolicyemptyallowlistmeansallexceptdenied',
+        2 => 'testrbacfiltersinvisibletables',
+        3 => 'testtablesendpointappliespolicyandrbac',
+        4 => 'testtablesendpointforbiddenwithoutrolewhenauthon',
+        5 => 'testdeniedtableblockslist',
+        6 => 'testbetweenoperatorisvalid',
+      ),
+      3 => 
+      array (
+      ),
+    ),
   ),
 ));

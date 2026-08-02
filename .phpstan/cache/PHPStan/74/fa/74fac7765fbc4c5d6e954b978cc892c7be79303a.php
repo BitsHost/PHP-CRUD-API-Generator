@@ -7,7 +7,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
   array (
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php' => 
     array (
-      0 => '4ce31734a3eb0649fb844120d49d81bc53445099',
+      0 => 'a9fc80006eed26fa6b986049e233c3c9400317ac',
       1 => 
       array (
         0 => 'app\\apigenerator',
@@ -44,7 +44,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php' => 
     array (
-      0 => '9b568d0235623d36ab9b6b73630873fb0c0df6a6',
+      0 => '5fff6a77463c320c5384ff43cd347505eb42e5e1',
       1 => 
       array (
         0 => 'app\\application\\router',
@@ -53,9 +53,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
         0 => 'app\\application\\__construct',
         1 => 'app\\application\\route',
-        2 => 'app\\application\\getratelimitidentifier',
-        3 => 'app\\application\\getrequestheaders',
-        4 => 'app\\application\\logresponse',
+        2 => 'app\\application\\apicontroller',
+        3 => 'app\\application\\requirepost',
+        4 => 'app\\application\\readbody',
+        5 => 'app\\application\\getratelimitidentifier',
+        6 => 'app\\application\\getrequestheaders',
+        7 => 'app\\application\\logresponse',
       ),
       3 => 
       array (
@@ -63,7 +66,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Auth\\Authenticator.php' => 
     array (
-      0 => 'c952df79c4de7e4cee62b04f2cb3144a524d7957',
+      0 => '9681d0976be89d5be63d6ef024f70d895cd247c8',
       1 => 
       array (
         0 => 'app\\auth\\authenticator',
@@ -187,7 +190,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php' => 
     array (
-      0 => '3f7a13fb94e42c9f3e1dfec4fbbf50a704741864',
+      0 => '478ad6389effd5b601510e35fa1cf4f0805e7e09',
       1 => 
       array (
         0 => 'app\\config\\apiconfig',
@@ -206,23 +209,26 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         9 => 'app\\config\\getjwtexpiration',
         10 => 'app\\config\\getjwtalgorithm',
         11 => 'app\\config\\getroles',
-        12 => 'app\\config\\getuserroles',
-        13 => 'app\\config\\getuserrole',
-        14 => 'app\\config\\getratelimitconfig',
-        15 => 'app\\config\\getloggingconfig',
-        16 => 'app\\config\\getmonitoringconfig',
-        17 => 'app\\config\\ismonitoringenabled',
-        18 => 'app\\config\\toarray',
-        19 => 'app\\config\\enableauth',
-        20 => 'app\\config\\disableauth',
-        21 => 'app\\config\\setauthmethod',
-        22 => 'app\\config\\addapikey',
-        23 => 'app\\config\\removeapikey',
-        24 => 'app\\config\\addbasicuser',
-        25 => 'app\\config\\removebasicuser',
-        26 => 'app\\config\\setjwtsecret',
-        27 => 'app\\config\\assignuserrole',
-        28 => 'app\\config\\removeuserrole',
+        12 => 'app\\config\\getallowedtables',
+        13 => 'app\\config\\getdeniedtables',
+        14 => 'app\\config\\gettablepolicy',
+        15 => 'app\\config\\getuserroles',
+        16 => 'app\\config\\getuserrole',
+        17 => 'app\\config\\getratelimitconfig',
+        18 => 'app\\config\\getloggingconfig',
+        19 => 'app\\config\\getmonitoringconfig',
+        20 => 'app\\config\\ismonitoringenabled',
+        21 => 'app\\config\\toarray',
+        22 => 'app\\config\\enableauth',
+        23 => 'app\\config\\disableauth',
+        24 => 'app\\config\\setauthmethod',
+        25 => 'app\\config\\addapikey',
+        26 => 'app\\config\\removeapikey',
+        27 => 'app\\config\\addbasicuser',
+        28 => 'app\\config\\removebasicuser',
+        29 => 'app\\config\\setjwtsecret',
+        30 => 'app\\config\\assignuserrole',
+        31 => 'app\\config\\removeuserrole',
       ),
       3 => 
       array (
@@ -395,7 +401,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php' => 
     array (
-      0 => 'b0bca89b6e4dc3f18230c931e96d731fad5f418a',
+      0 => 'c99ce794724b5406a3e3e6d510e3380f30d89b7d',
       1 => 
       array (
         0 => 'app\\http\\controllers\\apicontroller',
@@ -413,6 +419,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         8 => 'app\\http\\controllers\\delete',
         9 => 'app\\http\\controllers\\bulkcreate',
         10 => 'app\\http\\controllers\\bulkdelete',
+        11 => 'app\\http\\controllers\\denyiftableblocked',
       ),
       3 => 
       array (
@@ -606,7 +613,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\Rbac.php' => 
     array (
-      0 => 'e5eb315a416e6eb9a1999b95cf3d790d651772ed',
+      0 => '922749b5ff1dfac0d5b681ad026578acb281ae9d',
       1 => 
       array (
         0 => 'app\\security\\rbac',
@@ -615,6 +622,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
         0 => 'app\\security\\__construct',
         1 => 'app\\security\\isallowed',
+        2 => 'app\\security\\filtervisibletables',
       ),
       3 => 
       array (
@@ -657,7 +665,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\Validator.php' => 
     array (
-      0 => 'e4b75f1e312327f9d6545cb0ffa30b826c4265a3',
+      0 => '9c0e14f7b6b3188c5a7debfce287da1730ddd240',
       1 => 
       array (
         0 => 'app\\support\\validator',
@@ -687,6 +695,45 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       2 => 
       array (
         0 => 'app\\config\\load',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ConfigPaths.php' => 
+    array (
+      0 => '46f3adeeeca3c44949aa4fcb05a2dbd83b4cb296',
+      1 => 
+      array (
+        0 => 'app\\config\\configpaths',
+      ),
+      2 => 
+      array (
+        0 => 'app\\config\\resolvedir',
+        1 => 'app\\config\\file',
+        2 => 'app\\config\\api',
+        3 => 'app\\config\\db',
+        4 => 'app\\config\\cache',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TablePolicy.php' => 
+    array (
+      0 => 'de33d68a85047832985e18f90082af5c707947d1',
+      1 => 
+      array (
+        0 => 'app\\security\\tablepolicy',
+      ),
+      2 => 
+      array (
+        0 => 'app\\security\\__construct',
+        1 => 'app\\security\\isallowed',
+        2 => 'app\\security\\filter',
+        3 => 'app\\security\\getallowed',
+        4 => 'app\\security\\getdenied',
+        5 => 'app\\security\\hasallowlist',
       ),
       3 => 
       array (
