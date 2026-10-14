@@ -51,6 +51,8 @@ class ApiGenerator
      */
     private SchemaInspector $inspector;
     private \App\Database\Dialect\DialectInterface $dialect;
+    private ?\App\Security\TenantContext $tenant = null;
+    private ?\App\Security\TenantPolicy $tenantPolicy = null;
 
     /**
      * Initialize API Generator
@@ -62,6 +64,80 @@ class ApiGenerator
         $this->pdo = $pdo;
         $this->inspector = new SchemaInspector($pdo, $dialect);
         $this->dialect = $dialect ?? new \App\Database\Dialect\MySqlDialect();
+    }
+
+    /**
+     * Attach request-scoped tenant (null = multitenancy off / no-op).
+     */
+    public function setTenantScope(?\App\Security\TenantContext $tenant, ?\App\Security\TenantPolicy $policy): void
+    {
+        $this->tenant = $tenant;
+        $this->tenantPolicy = $policy;
+    }
+
+    public function clearTenantScope(): void
+    {
+        $this->tenant = null;
+        $this->tenantPolicy = null;
+    }
+
+    private function tenantApplies(string $table): bool
+    {
+        return $this->tenant !== null
+            && $this->tenantPolicy !== null
+            && $this->tenantPolicy->appliesTo($table, $this->inspector);
+    }
+
+    /**
+     * @param list<string> $where
+     * @param array<string,mixed> $params
+     */
+    private function applyTenantWhere(string $table, array &$where, array &$params): void
+    {
+        if (!$this->tenantApplies($table)) {
+            return;
+        }
+        $col = $this->tenantPolicy->getColumn();
+        $where[] = $this->dialect->quoteIdent($col) . ' = :_mt_tenant';
+        $params['_mt_tenant'] = $this->tenant->getId();
+    }
+
+    /**
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
+     */
+    private function injectTenantOnWrite(string $table, array $data): array
+    {
+        if (!$this->tenantApplies($table) || !$this->tenantPolicy->enforceOnWrite()) {
+            return $data;
+        }
+        $col = $this->tenantPolicy->getColumn();
+        $data[$col] = $this->tenant->getId();
+        return $data;
+    }
+
+    /**
+     * Drop client-supplied filters on the tenant column (server forces the value).
+     */
+    private function stripTenantFromFilter(string $table, mixed $filter): mixed
+    {
+        if (!is_string($filter) || $filter === '' || !$this->tenantApplies($table)) {
+            return $filter;
+        }
+        $col = $this->tenantPolicy->getColumn();
+        $kept = [];
+        foreach (explode(',', $filter) as $f) {
+            $f = trim($f);
+            if ($f === '') {
+                continue;
+            }
+            $bits = explode(':', $f, 3);
+            if ($bits[0] === $col) {
+                continue;
+            }
+            $kept[] = $f;
+        }
+        return $kept === [] ? null : implode(',', $kept);
     }
 
     /**
@@ -113,6 +189,7 @@ class ApiGenerator
     {
     $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
+        $opts['filter'] = $this->stripTenantFromFilter($table, $opts['filter'] ?? null);
 
         // --- Field Selection ---
         $selectedFields = '*';
@@ -255,6 +332,9 @@ class ApiGenerator
             }
         }
 
+        // --- Multitenancy (forced; client cannot override) ---
+        $this->applyTenantWhere($table, $where, $params);
+
         // --- Pagination ---
         $page = max(1, (int)($opts['page'] ?? 1));
         $pageSize = max(1, min(100, (int)($opts['page_size'] ?? 20))); // max 100 rows per page
@@ -319,10 +399,12 @@ class ApiGenerator
     public function read(string $table, int|string $id): ?array
     {
         $pk = $this->inspector->getPrimaryKey($table);
-        $stmt = $this->pdo->prepare(
-            'SELECT * FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' = :id'
-        );
-        $stmt->execute(['id' => $id]);
+        $where = [$this->dialect->quoteIdent($pk) . ' = :id'];
+        $params = ['id' => $id];
+        $this->applyTenantWhere($table, $where, $params);
+        $sql = 'SELECT * FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . implode(' AND ', $where);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row === false ? null : $row;
     }
@@ -355,6 +437,7 @@ class ApiGenerator
      */
     public function create(string $table, array $data): array
     {
+        $data = $this->injectTenantOnWrite($table, $data);
         $cols = array_keys($data);
         $placeholders = array_map(fn($col) => ":$col", $cols);
         $sql = sprintf(
@@ -398,6 +481,10 @@ class ApiGenerator
     public function update(string $table, int|string $id, array $data): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
+        // Never let client change tenant ownership via body
+        if ($this->tenantApplies($table)) {
+            unset($data[$this->tenantPolicy->getColumn()]);
+        }
         $sets = [];
         foreach ($data as $col => $val) {
             $sets[] = $this->dialect->quoteIdent($col) . " = :$col";
@@ -406,15 +493,18 @@ class ApiGenerator
         if (empty($sets)) {
             return ["error" => "No fields to update. Send at least one column."];
         }
+        $where = [$this->dialect->quoteIdent($pk) . ' = :id'];
+        $params = $data;
+        $params['id'] = $id;
+        $this->applyTenantWhere($table, $where, $params);
         $sql = sprintf(
-            'UPDATE %s SET %s WHERE %s = :id',
+            'UPDATE %s SET %s WHERE %s',
             $this->dialect->quoteIdent($table),
-            implode(', ', $sets)
-            , $this->dialect->quoteIdent($pk)
+            implode(', ', $sets),
+            implode(' AND ', $where)
         );
         $stmt = $this->pdo->prepare($sql);
-        $data['id'] = $id;
-        $stmt->execute($data);
+        $stmt->execute($params);
         // Check if any row was actually updated
         if ($stmt->rowCount() === 0) {
             // Check if the row exists at all
@@ -459,10 +549,13 @@ class ApiGenerator
     public function delete(string $table, int|string $id): array
     {
         $pk = $this->inspector->getPrimaryKey($table);
+        $where = [$this->dialect->quoteIdent($pk) . ' = :id'];
+        $params = ['id' => $id];
+        $this->applyTenantWhere($table, $where, $params);
         $stmt = $this->pdo->prepare(
-            'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' = :id'
+            'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . implode(' AND ', $where)
         );
-        $stmt->execute(['id' => $id]);
+        $stmt->execute($params);
         if ($stmt->rowCount() === 0) {
             return ['error' => "Item with id $id not found in $table."];
         }
@@ -557,7 +650,9 @@ class ApiGenerator
             $params[$key] = $id;
         }
 
-        $sql = 'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . $this->dialect->quoteIdent($pk) . ' IN (' . implode(',', $placeholders) . ')';
+        $where = [$this->dialect->quoteIdent($pk) . ' IN (' . implode(',', $placeholders) . ')'];
+        $this->applyTenantWhere($table, $where, $params);
+        $sql = 'DELETE FROM ' . $this->dialect->quoteIdent($table) . ' WHERE ' . implode(' AND ', $where);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         
@@ -600,6 +695,7 @@ class ApiGenerator
     {
     $columns = $this->inspector->getColumns($table);
         $colNames = array_column($columns, 'Field');
+        $opts['filter'] = $this->stripTenantFromFilter($table, $opts['filter'] ?? null);
 
         // --- Filtering (same as list method) ---
         $where = [];
@@ -705,6 +801,8 @@ class ApiGenerator
                 }
             }
         }
+
+        $this->applyTenantWhere($table, $where, $params);
 
         $sql = 'SELECT COUNT(*) FROM ' . $this->dialect->quoteIdent($table);
         if ($where) {

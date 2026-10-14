@@ -22,6 +22,9 @@ use App\Http\Response;
 use App\Http\Middleware\RateLimitMiddleware;
 use App\Security\RbacGuard;
 use App\Security\TablePolicy;
+use App\Security\TenantContext;
+use App\Security\TenantPolicy;
+use App\Security\TenantResolver;
 use App\Http\Middleware\CorsMiddleware;
 use App\Http\ErrorResponder;
 use App\Http\Controllers\ApiController;
@@ -45,6 +48,8 @@ class Router
     private Rbac $rbac;
     private RbacGuard $rbacGuard;
     private TablePolicy $tablePolicy;
+    private TenantPolicy $tenantPolicy;
+    private ?TenantContext $tenant = null;
     private RateLimitMiddleware $rateLimitMiddleware;
     private RequestLogger $logger;
     private ?Monitor $monitor = null;
@@ -66,6 +71,7 @@ class Router
         $this->apiConfig = ApiConfig::fromFile(ConfigPaths::api($configDir));
         $this->authEnabled = $this->apiConfig->isAuthEnabled();
         $this->tablePolicy = $this->apiConfig->getTablePolicy();
+        $this->tenantPolicy = $this->apiConfig->getTenantPolicy();
         // Normalize userRoles to array<string, list<string>>
         $userRolesMap = array_map(fn($r) => [$r], $this->apiConfig->getUserRoles());
         $this->rbac = new Rbac(
@@ -142,6 +148,15 @@ class Router
                     ]);
                 }
             }
+        }
+
+        // Resolve tenant after auth (fail closed when multitenancy enabled)
+        try {
+            $this->tenant = (new TenantResolver($this->tenantPolicy))->resolve($this->auth);
+        } catch (\RuntimeException $e) {
+            $this->logResponse(['error' => $e->getMessage()], 403, $query);
+            Response::json(['error' => $e->getMessage()], 403);
+            return;
         }
 
         try {
@@ -252,7 +267,9 @@ class Router
             $this->rbacGuard,
             $this->authEnabled,
             $this->tablePolicy,
-            $this->rbac
+            $this->rbac,
+            $this->tenantPolicy,
+            $this->tenant
         );
     }
 
@@ -284,6 +301,19 @@ class Router
 
     private function getRateLimitIdentifier(): string
     {
+        if ($this->tenant !== null) {
+            return 'tenant:' . $this->tenant->getId();
+        }
+        // Best-effort before full resolve (rate limit runs early in the pipeline)
+        if ($this->tenantPolicy->isEnabled()) {
+            if ($this->tenantPolicy->getApiKeyTenant()) {
+                return 'tenant:' . $this->tenantPolicy->getApiKeyTenant();
+            }
+            $claim = $this->auth->getJwtClaim($this->tenantPolicy->getClaim());
+            if ($claim !== null && $claim !== '') {
+                return 'tenant:' . $claim;
+            }
+        }
         $user = $this->auth->getCurrentUser();
         if ($user) {
             return 'user:' . $user;

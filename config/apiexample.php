@@ -130,6 +130,28 @@ return [
     'denied_tables' => ['api_users', 'api_key_usage'],
 
     // ========================================
+    // MULTITENANCY (optional — OFF by default)
+    // ========================================
+    // When enabled, server forces tenant_id on reads/writes (client cannot override).
+    // Leave disabled for simple single-tenant apps.
+    'multitenancy' => [
+        'enabled' => false,
+        'column' => 'tenant_id',
+        'source' => 'jwt',              // jwt | header | request_attr
+        'claim' => 'tenant_id',         // JWT claim name
+        'header' => 'X-Tenant-Id',      // used when source=header (trusted gateway)
+        'enforce_on_write' => true,     // inject/overwrite column on create
+        'require_column' => true,       // 403 if scoped table lacks the column
+        'tables' => ['*'],              // or ['cars','locations',…]
+        // Map Basic/config users → tenant when not using JWT claim from DB
+        'basic_user_tenants' => [
+            // 'admin' => '1',
+        ],
+        // When auth_method=apikey, bind all keys to one tenant (or leave null)
+        'api_key_tenant' => null,
+    ],
+
+    // ========================================
     // RBAC (Role-Based Access Control) SETTINGS
     // ========================================
     // Define what each role can do with which tables

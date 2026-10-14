@@ -460,7 +460,7 @@ return [
       1 => 
       array (
         0 => 'http_response_code',
-        1 => 210,
+        1 => 228,
       ),
     ),
   ),
@@ -591,40 +591,52 @@ return [
       12 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getUserRoles',
+        1 => 'isMultitenancyEnabled',
         2 => 'App\\Config\\ApiConfig',
       ),
       13 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getUserRole',
+        1 => 'getMultitenancyConfig',
         2 => 'App\\Config\\ApiConfig',
       ),
       14 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getRateLimitConfig',
+        1 => 'getUserRoles',
         2 => 'App\\Config\\ApiConfig',
       ),
       15 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getLoggingConfig',
+        1 => 'getUserRole',
         2 => 'App\\Config\\ApiConfig',
       ),
       16 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'getMonitoringConfig',
+        1 => 'getRateLimitConfig',
         2 => 'App\\Config\\ApiConfig',
       ),
       17 => 
       array (
         0 => 'App\\Config\\ApiConfig',
-        1 => 'isMonitoringEnabled',
+        1 => 'getLoggingConfig',
         2 => 'App\\Config\\ApiConfig',
       ),
       18 => 
+      array (
+        0 => 'App\\Config\\ApiConfig',
+        1 => 'getMonitoringConfig',
+        2 => 'App\\Config\\ApiConfig',
+      ),
+      19 => 
+      array (
+        0 => 'App\\Config\\ApiConfig',
+        1 => 'isMonitoringEnabled',
+        2 => 'App\\Config\\ApiConfig',
+      ),
+      20 => 
       array (
         0 => 'App\\Config\\ApiConfig',
         1 => 'toArray',
@@ -724,13 +736,6 @@ return [
     'PHPStan\\Rules\\DeadCode\\ConstructorWithoutImpurePointsCollector' => 
     array (
       0 => 'App\\Database\\SchemaInspector',
-    ),
-  ),
-  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php' => 
-  array (
-    'PHPStan\\Rules\\DeadCode\\ConstructorWithoutImpurePointsCollector' => 
-    array (
-      0 => 'App\\Http\\Controllers\\ApiController',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php' => 
@@ -913,6 +918,97 @@ return [
       ),
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantContext.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'App\\Security\\TenantContext',
+        1 => 'getId',
+        2 => 'App\\Security\\TenantContext',
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantPolicy.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'isEnabled',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      1 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getColumn',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      2 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getSource',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      3 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getClaim',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      4 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getHeader',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      5 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'enforceOnWrite',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      6 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'requireColumn',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      7 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getTables',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      8 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getBasicUserTenants',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      9 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'getApiKeyTenant',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+      10 => 
+      array (
+        0 => 'App\\Security\\TenantPolicy',
+        1 => 'toArray',
+        2 => 'App\\Security\\TenantPolicy',
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\ConstructorWithoutImpurePointsCollector' => 
+    array (
+      0 => 'App\\Security\\TenantResolver',
+    ),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
   array (
     'PHPStan\\Rules\\DeadCode\\MethodWithoutImpurePointsCollector' => 
@@ -967,6 +1063,66 @@ return [
       ),
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 19,
+      ),
+      1 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 20,
+      ),
+      2 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 52,
+      ),
+      3 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 53,
+      ),
+      4 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 57,
+      ),
+      5 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturn',
+        2 => 90,
+      ),
+    ),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
   array (
     'PHPStan\\Rules\\DeadCode\\PossiblyPureFuncCallCollector' => 
@@ -995,6 +1151,38 @@ return [
         ),
         1 => 'logRequest',
         2 => 225,
+      ),
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php' => 
+  array (
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureMethodCallCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 
+        array (
+          0 => 'PHPUnit\\Framework\\MockObject\\Builder\\InvocationMocker',
+        ),
+        1 => 'willReturnCallback',
+        2 => 39,
+      ),
+      1 => 
+      array (
+        0 => 
+        array (
+          0 => 'App\\Security\\TenantResolver',
+        ),
+        1 => 'resolve',
+        2 => 84,
+      ),
+    ),
+    'PHPStan\\Rules\\DeadCode\\PossiblyPureNewCollector' => 
+    array (
+      0 => 
+      array (
+        0 => 'App\\Security\\TenantContext',
+        1 => 60,
       ),
     ),
   ),
@@ -1142,7 +1330,7 @@ return [
 	'dependencies' => array (
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php' => 
   array (
-    'fileHash' => 'a9fc80006eed26fa6b986049e233c3c9400317ac',
+    'fileHash' => '7da703b23ea27e29c79e24c2b2c2217cf5e12b59',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1150,6 +1338,7 @@ return [
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\AdvancedFilterTest.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\ApiGeneratorTest.php',
       4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\HookManager.php' => 
@@ -1162,7 +1351,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php' => 
   array (
-    'fileHash' => '5fff6a77463c320c5384ff43cd347505eb42e5e1',
+    'fileHash' => '15717b1ae47f328b60213296186db4dcbc139376',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
@@ -1175,17 +1364,19 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Auth\\Authenticator.php' => 
   array (
-    'fileHash' => '9681d0976be89d5be63d6ef024f70d895cd247c8',
+    'fileHash' => 'ab9e608debc44432feb58b0ba85331dbd872f968',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php',
-      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
-      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php',
-      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php',
-      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php',
-      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php',
-      7 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\api_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\debug_login.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\json_login_test.php',
+      7 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\jwt_login_test.php',
+      8 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\quick_login.php',
+      9 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\test_all.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheInterface.php' => 
@@ -1201,7 +1392,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheManager.php' => 
   array (
-    'fileHash' => 'e92cef394efa74e14a209ff586ea590cd11362b1',
+    'fileHash' => '7f4ed835da9e018fe43635d0376c08bd836283f2',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1227,7 +1418,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php' => 
   array (
-    'fileHash' => '478ad6389effd5b601510e35fa1cf4f0805e7e09',
+    'fileHash' => 'b72e1bb4c8f2a99d1a905520ca99bbf1808d0e98',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1307,7 +1498,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\SchemaInspector.php' => 
   array (
-    'fileHash' => '60bf805f8d2008bdbded1659dc45c32147b4440d',
+    'fileHash' => 'ab702f62984b306643d51d6531c1ad0d7be27ac8',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php',
@@ -1315,8 +1506,11 @@ return [
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php',
-      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
-      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantPolicy.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      7 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+      8 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php',
+      9 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\dialect_mysql_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Docs\\OpenApiGenerator.php' => 
@@ -1344,11 +1538,12 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php' => 
   array (
-    'fileHash' => 'c99ce794724b5406a3e3e6d510e3380f30d89b7d',
+    'fileHash' => '894fb5a2f4b61cf62a4a776b331ce0c6ab481080',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\DocsController.php' => 
@@ -1361,7 +1556,7 @@ return [
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php' => 
   array (
-    'fileHash' => '61e8f3ae1ce6c796e79704537380dfedbccfe335',
+    'fileHash' => 'a8b1fedc13d41d05d4c7b882a745ba6e6f3eb593',
     'dependentFiles' => 
     array (
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
@@ -1450,8 +1645,9 @@ return [
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
-      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
-      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\RbacGuard.php' => 
@@ -1462,8 +1658,9 @@ return [
       0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
-      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
-      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\_rbac_guard_denied.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\rbac_guard_test.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TablePolicy.php' => 
@@ -1475,6 +1672,43 @@ return [
       1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php',
       2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
       3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\HardeningTest.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantContext.php' => 
+  array (
+    'fileHash' => '299854ee3a2977524af364ee9ac52cdab5a0a6ad',
+    'dependentFiles' => 
+    array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantPolicy.php' => 
+  array (
+    'fileHash' => '8976ffb0815e1f741ac2d1c0d5af2faeac0fad46',
+    'dependentFiles' => 
+    array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      2 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php',
+      3 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php',
+      4 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php',
+      5 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php',
+      6 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php',
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php' => 
+  array (
+    'fileHash' => '8064a846a51ae9d8de9e5ea547115d117389c02f',
+    'dependentFiles' => 
+    array (
+      0 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php',
+      1 => 'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php',
     ),
   ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
@@ -1515,6 +1749,13 @@ return [
     array (
     ),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php' => 
+  array (
+    'fileHash' => '621e6c22a0ceeb8fb9a4d276bb72f0ac2640d4ad',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
   array (
     'fileHash' => '25d4c7d38a3af0c3c75d241fd12f6563b937ecd8',
@@ -1525,6 +1766,13 @@ return [
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RequestLoggerTest.php' => 
   array (
     'fileHash' => 'a6a5ee83d1a001587021d149c0762701d5033394',
+    'dependentFiles' => 
+    array (
+    ),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php' => 
+  array (
+    'fileHash' => '010a8aa099b662e0ec88bee6eaca5dde02ccaf9e',
     'dependentFiles' => 
     array (
     ),
@@ -1731,6 +1979,78 @@ return [
         )),
         1 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'setTenantScope',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * Attach request-scoped tenant (null = multitenancy off / no-op).
+     */',
+             'namespace' => 'App',
+             'uses' => 
+            array (
+              'pdo' => 'PDO',
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tenant',
+               'type' => '?App\\Security\\TenantContext',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'policy',
+               'type' => '?App\\Security\\TenantPolicy',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'clearTenantScope',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'list',
            'phpDoc' => 
           \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
@@ -1784,7 +2104,7 @@ return [
           array (
           ),
         )),
-        2 => 
+        4 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'read',
            'phpDoc' => 
@@ -1839,7 +2159,7 @@ return [
           array (
           ),
         )),
-        3 => 
+        5 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'create',
            'phpDoc' => 
@@ -1894,7 +2214,7 @@ return [
           array (
           ),
         )),
-        4 => 
+        6 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'update',
            'phpDoc' => 
@@ -1961,7 +2281,7 @@ return [
           array (
           ),
         )),
-        5 => 
+        7 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'delete',
            'phpDoc' => 
@@ -2016,7 +2336,7 @@ return [
           array (
           ),
         )),
-        6 => 
+        8 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'bulkCreate',
            'phpDoc' => 
@@ -2071,7 +2391,7 @@ return [
           array (
           ),
         )),
-        7 => 
+        9 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'bulkDelete',
            'phpDoc' => 
@@ -2126,7 +2446,7 @@ return [
           array (
           ),
         )),
-        8 => 
+        10 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'count',
            'phpDoc' => 
@@ -2344,6 +2664,9 @@ return [
               'ratelimitmiddleware' => 'App\\Http\\Middleware\\RateLimitMiddleware',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
+              'tenantresolver' => 'App\\Security\\TenantResolver',
               'corsmiddleware' => 'App\\Http\\Middleware\\CorsMiddleware',
               'errorresponder' => 'App\\Http\\ErrorResponder',
               'apicontroller' => 'App\\Http\\Controllers\\ApiController',
@@ -2706,6 +3029,49 @@ return [
         )),
         6 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getJwtClaim',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+	 * Read a claim from the current Bearer JWT (if any).
+	 */',
+             'namespace' => 'App\\Auth',
+             'uses' => 
+            array (
+              'jwt' => 'Firebase\\JWT\\JWT',
+              'key' => 'Firebase\\JWT\\Key',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'mixed',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'claim',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getCurrentUser',
            'phpDoc' => NULL,
            'byRef' => false,
@@ -2722,7 +3088,7 @@ return [
           array (
           ),
         )),
-        7 => 
+        8 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getCurrentUserRole',
            'phpDoc' => NULL,
@@ -3359,6 +3725,17 @@ return [
                'byRef' => false,
                'variadic' => false,
                'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            2 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tenantId',
+               'type' => '?string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
                'attributes' => 
               array (
               ),
@@ -5182,6 +5559,72 @@ return [
         )),
         15 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'isMultitenancyEnabled',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        16 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getMultitenancyConfig',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return array<string,mixed>
+     */',
+             'namespace' => 'App\\Config',
+             'uses' => 
+            array (
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        17 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getTenantPolicy',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'App\\Security\\TenantPolicy',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        18 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getUserRoles',
            'phpDoc' => 
           \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
@@ -5210,7 +5653,7 @@ return [
           array (
           ),
         )),
-        16 => 
+        19 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getUserRole',
            'phpDoc' => 
@@ -5251,7 +5694,7 @@ return [
           array (
           ),
         )),
-        17 => 
+        20 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getRateLimitConfig',
            'phpDoc' => 
@@ -5281,7 +5724,7 @@ return [
           array (
           ),
         )),
-        18 => 
+        21 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getLoggingConfig',
            'phpDoc' => 
@@ -5311,7 +5754,7 @@ return [
           array (
           ),
         )),
-        19 => 
+        22 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'getMonitoringConfig',
            'phpDoc' => 
@@ -5341,7 +5784,7 @@ return [
           array (
           ),
         )),
-        20 => 
+        23 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'isMonitoringEnabled',
            'phpDoc' => 
@@ -5371,7 +5814,7 @@ return [
           array (
           ),
         )),
-        21 => 
+        24 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'toArray',
            'phpDoc' => 
@@ -5401,7 +5844,7 @@ return [
           array (
           ),
         )),
-        22 => 
+        25 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'enableAuth',
            'phpDoc' => 
@@ -5431,7 +5874,7 @@ return [
           array (
           ),
         )),
-        23 => 
+        26 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'disableAuth',
            'phpDoc' => 
@@ -5461,7 +5904,7 @@ return [
           array (
           ),
         )),
-        24 => 
+        27 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'setAuthMethod',
            'phpDoc' => 
@@ -5502,7 +5945,7 @@ return [
           array (
           ),
         )),
-        25 => 
+        28 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'addApiKey',
            'phpDoc' => 
@@ -5543,7 +5986,7 @@ return [
           array (
           ),
         )),
-        26 => 
+        29 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeApiKey',
            'phpDoc' => 
@@ -5584,7 +6027,7 @@ return [
           array (
           ),
         )),
-        27 => 
+        30 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'addBasicUser',
            'phpDoc' => 
@@ -5636,7 +6079,7 @@ return [
           array (
           ),
         )),
-        28 => 
+        31 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeBasicUser',
            'phpDoc' => 
@@ -5677,7 +6120,7 @@ return [
           array (
           ),
         )),
-        29 => 
+        32 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'setJwtSecret',
            'phpDoc' => 
@@ -5718,7 +6161,7 @@ return [
           array (
           ),
         )),
-        30 => 
+        33 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'assignUserRole',
            'phpDoc' => 
@@ -5770,7 +6213,7 @@ return [
           array (
           ),
         )),
-        31 => 
+        34 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'removeUserRole',
            'phpDoc' => 
@@ -7751,6 +8194,46 @@ return [
         )),
         4 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'hasColumn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'column',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'quoteIdent',
            'phpDoc' => NULL,
            'byRef' => false,
@@ -8282,6 +8765,28 @@ return [
               array (
               ),
             )),
+            7 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tenantPolicy',
+               'type' => '?App\\Security\\TenantPolicy',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+            8 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'tenant',
+               'type' => '?App\\Security\\TenantContext',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
           ),
            'attributes' => 
           array (
@@ -8304,6 +8809,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8352,6 +8859,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8412,6 +8921,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8483,6 +8994,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8554,6 +9067,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8625,6 +9140,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8697,6 +9214,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8779,6 +9298,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8850,6 +9371,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -8921,6 +9444,8 @@ return [
               'rbac' => 'App\\Security\\Rbac',
               'rbacguard' => 'App\\Security\\RbacGuard',
               'tablepolicy' => 'App\\Security\\TablePolicy',
+              'tenantcontext' => 'App\\Security\\TenantContext',
+              'tenantpolicy' => 'App\\Security\\TenantPolicy',
               'qv' => 'App\\Support\\QueryValidator',
             ),
              'constUses' => 
@@ -12087,6 +12612,656 @@ return [
       ),
     )),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantContext.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Security\\TenantContext',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Immutable tenant id for request scope. Null context means multitenancy is off
+ * or not applicable — ApiGenerator then behaves as in v2.1.
+ */',
+         'namespace' => 'App\\Security',
+         'uses' => 
+        array (
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => true,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => '__construct',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => NULL,
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'id',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getId',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantPolicy.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Security\\TenantPolicy',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Mirrors TablePolicy style: config-driven, no SQL.
+ */',
+         'namespace' => 'App\\Security',
+         'uses' => 
+        array (
+          'schemainspector' => 'App\\Database\\SchemaInspector',
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => true,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => '__construct',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @param array<string,mixed> $config
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => NULL,
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'config',
+               'type' => 'array',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => true,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'isEnabled',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getColumn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getSource',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getClaim',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getHeader',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'enforceOnWrite',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'requireColumn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        8 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getTables',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return list<string>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        9 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getBasicUserTenants',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return array<string,string>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        10 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'getApiKeyTenant',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => '?string',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        11 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'isTableConfigured',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        12 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'appliesTo',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * Whether SQL/tenant injection should apply for this table.
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'bool',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'inspector',
+               'type' => 'App\\Database\\SchemaInspector',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        13 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'denyIfNotReady',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return array{0:array{error:string},1:int}|null
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => '?array',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'table',
+               'type' => 'string',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+            1 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'inspector',
+               'type' => 'App\\Database\\SchemaInspector',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        14 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'toArray',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return array<string,mixed>
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'schemainspector' => 'App\\Database\\SchemaInspector',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'array',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'App\\Security\\TenantResolver',
+       'phpDoc' => 
+      \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+         'phpDocString' => '/**
+ * Fail closed when multitenancy is enabled but no tenant can be resolved.
+ */',
+         'namespace' => 'App\\Security',
+         'uses' => 
+        array (
+          'authenticator' => 'App\\Auth\\Authenticator',
+        ),
+         'constUses' => 
+        array (
+        ),
+      )),
+       'abstract' => false,
+       'final' => true,
+       'extends' => NULL,
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => '__construct',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => NULL,
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'policy',
+               'type' => 'App\\Security\\TenantPolicy',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'resolve',
+           'phpDoc' => 
+          \PHPStan\Dependency\ExportedNode\ExportedPhpDocNode::__set_state(array(
+             'phpDocString' => '/**
+     * @return TenantContext|null Null when multitenancy is disabled
+     * @throws \\RuntimeException When enabled but tenant cannot be resolved
+     */',
+             'namespace' => 'App\\Security',
+             'uses' => 
+            array (
+              'authenticator' => 'App\\Auth\\Authenticator',
+            ),
+             'constUses' => 
+            array (
+            ),
+          )),
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => '?App\\Security\\TenantContext',
+           'parameters' => 
+          array (
+            0 => 
+            \PHPStan\Dependency\ExportedNode\ExportedParameterNode::__set_state(array(
+               'name' => 'auth',
+               'type' => 'App\\Auth\\Authenticator',
+               'byRef' => false,
+               'variadic' => false,
+               'hasDefault' => false,
+               'attributes' => 
+              array (
+              ),
+            )),
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Support\\QueryValidator.php' => 
   array (
     0 => 
@@ -13197,6 +14372,104 @@ return [
       ),
     )),
   ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'MultitenancyTest',
+       'phpDoc' => NULL,
+       'abstract' => false,
+       'final' => true,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testControllerDeniesTenantTableWithoutColumn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testControllerAllowsWhenColumnPresent',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDisabledMultitenancyDoesNotRequireTenant',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTenantContextId',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
   'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\RateLimiterTest.php' => 
   array (
     0 => 
@@ -13741,6 +15014,176 @@ return [
         12 => 
         \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
            'name' => 'testLogLevels',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+      ),
+       'attributes' => 
+      array (
+      ),
+    )),
+  ),
+  'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php' => 
+  array (
+    0 => 
+    \PHPStan\Dependency\ExportedNode\ExportedClassNode::__set_state(array(
+       'name' => 'TenantPolicyTest',
+       'phpDoc' => NULL,
+       'abstract' => false,
+       'final' => true,
+       'extends' => 'PHPUnit\\Framework\\TestCase',
+       'implements' => 
+      array (
+      ),
+       'usedTraits' => 
+      array (
+      ),
+       'traitUseAdaptations' => 
+      array (
+      ),
+       'statements' => 
+      array (
+        0 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testDisabledByDefault',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        1 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTableAllowlist',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        2 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testWildcardTables',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        3 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testAppliesToRequiresColumn',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        4 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testTenantContextRejectsEmpty',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        5 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testResolverReturnsNullWhenDisabled',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        6 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testResolverFailsClosedWhenEnabledWithoutTenant',
+           'phpDoc' => NULL,
+           'byRef' => false,
+           'public' => true,
+           'private' => false,
+           'abstract' => false,
+           'final' => false,
+           'static' => false,
+           'returnType' => 'void',
+           'parameters' => 
+          array (
+          ),
+           'attributes' => 
+          array (
+          ),
+        )),
+        7 => 
+        \PHPStan\Dependency\ExportedNode\ExportedMethodNode::__set_state(array(
+           'name' => 'testResolverUsesApiKeyTenant',
            'phpDoc' => NULL,
            'byRef' => false,
            'public' => true,

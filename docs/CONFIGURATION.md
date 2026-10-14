@@ -408,3 +408,27 @@ Or via env: `API_ALLOWED_TABLES`, `API_DENIED_TABLES` (comma-separated).
 Denied tables are blocked even for admin. `action=tables` also respects RBAC visibility.
 
 See [UPGRADE_2.1.md](UPGRADE_2.1.md).
+
+---
+
+## Multitenancy (v2.2+, optional)
+
+Off by default. When enabled, the server forces the tenant column on every scoped query/write.
+
+```php
+'multitenancy' => [
+    'enabled' => false,
+    'column' => 'tenant_id',
+    'source' => 'jwt', // jwt | header | request_attr
+    'claim' => 'tenant_id',
+    'header' => 'X-Tenant-Id',
+    'enforce_on_write' => true,
+    'require_column' => true,
+    'tables' => ['*'],
+    'basic_user_tenants' => [],
+    'api_key_tenant' => null,
+],
+```
+
+Classes: `App\Security\TenantContext`, `TenantResolver`, `TenantPolicy`.  
+Upgrade notes: [UPGRADE_2.2.md](UPGRADE_2.2.md).

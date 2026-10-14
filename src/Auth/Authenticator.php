@@ -184,6 +184,24 @@ class Authenticator
 	}
 
 	/**
+	 * Read a claim from the current Bearer JWT (if any).
+	 */
+	public function getJwtClaim(string $claim): mixed
+	{
+		$headers = $this->getHeaders();
+		$authHeader = $headers['Authorization'] ?? '';
+		if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+			return null;
+		}
+		try {
+			$decoded = JWT::decode($matches[1], new Key($this->config['jwt_secret'], 'HS256'));
+			return $decoded->{$claim} ?? null;
+		} catch (\Exception $e) {
+			return null;
+		}
+	}
+
+	/**
 	 * Get HTTP request headers
 	 *
 	 * @return array<string,string>

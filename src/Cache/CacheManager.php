@@ -193,7 +193,7 @@ class CacheManager
     /**
      * @param array<string,mixed> $params
      */
-    public function generateKey(string $table, array $params): string
+    public function generateKey(string $table, array $params, ?string $tenantId = null): string
     {
         // Sort params for consistent keys
         ksort($params);
@@ -205,9 +205,14 @@ class CacheManager
             md5((string) json_encode($params))
         );
 
+        // Always isolate cache by tenant when multitenancy is active
+        $userSuffix = '';
+        if ($tenantId !== null && $tenantId !== '') {
+            $userSuffix .= ':tenant:' . substr(hash('sha256', $tenantId), 0, 16);
+        }
+
         // Add user variation if configured
         $varyBy = $this->config['varyBy'] ?? [];
-        $userSuffix = '';
 
         if (in_array('api_key', $varyBy)) {
             $apiKey = $this->getApiKeyFromRequest();

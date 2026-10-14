@@ -300,5 +300,45 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       array (
       ),
     ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\MultitenancyTest.php' => 
+    array (
+      0 => '621e6c22a0ceeb8fb9a4d276bb72f0ac2640d4ad',
+      1 => 
+      array (
+        0 => 'multitenancytest',
+      ),
+      2 => 
+      array (
+        0 => 'testcontrollerdeniestenanttablewithoutcolumn',
+        1 => 'testcontrollerallowswhencolumnpresent',
+        2 => 'testdisabledmultitenancydoesnotrequiretenant',
+        3 => 'testtenantcontextid',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\tests\\TenantPolicyTest.php' => 
+    array (
+      0 => '010a8aa099b662e0ec88bee6eaca5dde02ccaf9e',
+      1 => 
+      array (
+        0 => 'tenantpolicytest',
+      ),
+      2 => 
+      array (
+        0 => 'testdisabledbydefault',
+        1 => 'testtableallowlist',
+        2 => 'testwildcardtables',
+        3 => 'testappliestorequirescolumn',
+        4 => 'testtenantcontextrejectsempty',
+        5 => 'testresolverreturnsnullwhendisabled',
+        6 => 'testresolverfailsclosedwhenenabledwithouttenant',
+        7 => 'testresolverusesapikeytenant',
+      ),
+      3 => 
+      array (
+      ),
+    ),
   ),
 ));

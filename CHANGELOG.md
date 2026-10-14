@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.2.0 - Optional multitenancy (2026-10-14)
+
+### Multitenancy (off by default)
+- New `multitenancy` config block: `enabled`, `column`, `source` (jwt|header|request_attr), claim/header, table allowlist.
+- `TenantContext`, `TenantResolver`, `TenantPolicy` under `App\Security\` (same OOP style as TablePolicy/Rbac).
+- When enabled: forced `WHERE tenant_id = ?` on list/count/read/update/delete/bulk_delete; create/bulk_create inject tenant; client filter/body cannot override.
+- JWT login embeds `tenant_id` from `api_users.tenant_id` or `basic_user_tenants` map.
+- Cache keys include tenant hash when scoped; doctor reports MT status.
+- Docs: `docs/UPGRADE_2.2.md`; README + configuration notes.
+
 ## 2.1.0 - Hardening & install DX (2026-08-02)
 
 ### Security / trust

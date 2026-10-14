@@ -3,7 +3,7 @@
 Expose your MySQL/MariaDB database as a secure, flexible, REST-like **data API**.  
 Auth (API key, Basic, JWT), OpenAPI docs, rate limiting, logging — **zero code generation**.
 
-**Version:** 2.1.0 · [Changelog](CHANGELOG.md) · [Docs index](docs/README.md) · [Upgrade from ≤2.0.1](docs/UPGRADE_2.1.md)
+**Version:** 2.2.0 · [Changelog](CHANGELOG.md) · [Docs index](docs/README.md) · [Upgrade 2.1](docs/UPGRADE_2.1.md) · [Upgrade 2.2 (multitenancy)](docs/UPGRADE_2.2.md)
 
 ---
 
@@ -29,6 +29,7 @@ Guide: **[Client-side joins](docs/CLIENT_SIDE_JOINS.md)**.
 - Full CRUD + **bulk** create/delete
 - Auth: API Key, Basic, JWT (`oauth` reserved — **not implemented**)
 - **Table exposure policy** — `allowed_tables` / `denied_tables`
+- **Optional multitenancy** — config toggle; server-forced `tenant_id` (off by default)
 - Rate limiting, request logging, optional monitoring
 - Filters: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `like`, `in`, `notin`, `null`, `notnull`, `between`
 - Field selection, multi-column sort, pagination meta
@@ -127,6 +128,15 @@ return [
     // Empty allowlist = all except denied. Non-empty = whitelist only.
     'allowed_tables' => [], // e.g. ['users', 'orders']
     'denied_tables' => ['api_users', 'api_key_usage'],
+
+    // Optional SaaS row scoping (leave false for simple apps)
+    'multitenancy' => [
+        'enabled' => false,
+        'column' => 'tenant_id',
+        'source' => 'jwt',
+        'claim' => 'tenant_id',
+        'tables' => ['*'],
+    ],
 
     'rate_limit' => [
         'enabled' => true,

@@ -46,14 +46,13 @@ class LoginController
 
         $authenticated = false;
         $userRole = 'readonly';
+        $tenantId = null;
 
         // Try database authentication first (if enabled)
         if (!empty($this->auth->config['use_database_auth'])) {
             $pdo = $this->db->getPdo();
             $stmt = $pdo->prepare(
-                "SELECT id, username, email, password_hash, role, active 
-                 FROM api_users 
-                 WHERE username = :username AND active = 1"
+                "SELECT * FROM api_users WHERE username = :username AND active = 1"
             );
             $stmt->execute(['username' => $user]);
             $dbUser = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -61,6 +60,9 @@ class LoginController
             if ($dbUser && password_verify($pass, $dbUser['password_hash'])) {
                 $authenticated = true;
                 $userRole = $dbUser['role'];
+                if (array_key_exists('tenant_id', $dbUser) && $dbUser['tenant_id'] !== null && $dbUser['tenant_id'] !== '') {
+                    $tenantId = (string)$dbUser['tenant_id'];
+                }
 
                 // Update last login
                 $updateStmt = $pdo->prepare("UPDATE api_users SET last_login = NOW() WHERE id = :id");
@@ -87,8 +89,20 @@ class LoginController
                 ]);
             }
 
-            // Create JWT with user role
+            // Map config users → tenant when DB did not supply one
+            if ($tenantId === null) {
+                $mt = $this->auth->config['multitenancy'] ?? [];
+                $map = is_array($mt['basic_user_tenants'] ?? null) ? $mt['basic_user_tenants'] : [];
+                if (isset($map[$user]) && $map[$user] !== '') {
+                    $tenantId = (string)$map[$user];
+                }
+            }
+
+            // Create JWT with user role (+ tenant_id when available)
             $payload = ['sub' => $user, 'role' => $userRole];
+            if ($tenantId !== null) {
+                $payload['tenant_id'] = $tenantId;
+            }
             $token = $this->auth->createJwt($payload);
 
             // Decode token to get expiration time

@@ -14,6 +14,7 @@ Compose related data and business workflows **outside** the API (JS / app / upMV
 | [../README.md](../README.md) | Overview, install, endpoints |
 | [QUICK_START.md](QUICK_START.md) | 5-minute setup |
 | [UPGRADE_2.1.md](UPGRADE_2.1.md) | Migrating from ≤2.0.1 |
+| [UPGRADE_2.2.md](UPGRADE_2.2.md) | Optional multitenancy |
 | [CLIENT_SIDE_JOINS.md](CLIENT_SIDE_JOINS.md) | Related data in the client |
 | [../CHANGELOG.md](../CHANGELOG.md) | Release history |
 

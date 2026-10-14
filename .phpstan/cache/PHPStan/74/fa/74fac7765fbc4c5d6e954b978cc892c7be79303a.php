@@ -7,7 +7,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
   array (
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\ApiGenerator.php' => 
     array (
-      0 => 'a9fc80006eed26fa6b986049e233c3c9400317ac',
+      0 => '7da703b23ea27e29c79e24c2b2c2217cf5e12b59',
       1 => 
       array (
         0 => 'app\\apigenerator',
@@ -15,14 +15,20 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
       2 => 
       array (
         0 => 'app\\__construct',
-        1 => 'app\\list',
-        2 => 'app\\read',
-        3 => 'app\\create',
-        4 => 'app\\update',
-        5 => 'app\\delete',
-        6 => 'app\\bulkcreate',
-        7 => 'app\\bulkdelete',
-        8 => 'app\\count',
+        1 => 'app\\settenantscope',
+        2 => 'app\\cleartenantscope',
+        3 => 'app\\tenantapplies',
+        4 => 'app\\applytenantwhere',
+        5 => 'app\\injecttenantonwrite',
+        6 => 'app\\striptenantfromfilter',
+        7 => 'app\\list',
+        8 => 'app\\read',
+        9 => 'app\\create',
+        10 => 'app\\update',
+        11 => 'app\\delete',
+        12 => 'app\\bulkcreate',
+        13 => 'app\\bulkdelete',
+        14 => 'app\\count',
       ),
       3 => 
       array (
@@ -44,7 +50,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Application\\Router.php' => 
     array (
-      0 => '5fff6a77463c320c5384ff43cd347505eb42e5e1',
+      0 => '15717b1ae47f328b60213296186db4dcbc139376',
       1 => 
       array (
         0 => 'app\\application\\router',
@@ -66,7 +72,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Auth\\Authenticator.php' => 
     array (
-      0 => '9681d0976be89d5be63d6ef024f70d895cd247c8',
+      0 => 'ab9e608debc44432feb58b0ba85331dbd872f968',
       1 => 
       array (
         0 => 'app\\auth\\authenticator',
@@ -78,11 +84,12 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         2 => 'app\\auth\\requireauth',
         3 => 'app\\auth\\createjwt',
         4 => 'app\\auth\\validatejwt',
-        5 => 'app\\auth\\getheaders',
-        6 => 'app\\auth\\requirebasicauth',
-        7 => 'app\\auth\\getcurrentuser',
-        8 => 'app\\auth\\getcurrentuserrole',
-        9 => 'app\\auth\\authenticatefromdatabase',
+        5 => 'app\\auth\\getjwtclaim',
+        6 => 'app\\auth\\getheaders',
+        7 => 'app\\auth\\requirebasicauth',
+        8 => 'app\\auth\\getcurrentuser',
+        9 => 'app\\auth\\getcurrentuserrole',
+        10 => 'app\\auth\\authenticatefromdatabase',
       ),
       3 => 
       array (
@@ -111,7 +118,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Cache\\CacheManager.php' => 
     array (
-      0 => 'e92cef394efa74e14a209ff586ea590cd11362b1',
+      0 => '7f4ed835da9e018fe43635d0376c08bd836283f2',
       1 => 
       array (
         0 => 'app\\cache\\cachemanager',
@@ -190,7 +197,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Config\\ApiConfig.php' => 
     array (
-      0 => '478ad6389effd5b601510e35fa1cf4f0805e7e09',
+      0 => 'b72e1bb4c8f2a99d1a905520ca99bbf1808d0e98',
       1 => 
       array (
         0 => 'app\\config\\apiconfig',
@@ -212,23 +219,26 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         12 => 'app\\config\\getallowedtables',
         13 => 'app\\config\\getdeniedtables',
         14 => 'app\\config\\gettablepolicy',
-        15 => 'app\\config\\getuserroles',
-        16 => 'app\\config\\getuserrole',
-        17 => 'app\\config\\getratelimitconfig',
-        18 => 'app\\config\\getloggingconfig',
-        19 => 'app\\config\\getmonitoringconfig',
-        20 => 'app\\config\\ismonitoringenabled',
-        21 => 'app\\config\\toarray',
-        22 => 'app\\config\\enableauth',
-        23 => 'app\\config\\disableauth',
-        24 => 'app\\config\\setauthmethod',
-        25 => 'app\\config\\addapikey',
-        26 => 'app\\config\\removeapikey',
-        27 => 'app\\config\\addbasicuser',
-        28 => 'app\\config\\removebasicuser',
-        29 => 'app\\config\\setjwtsecret',
-        30 => 'app\\config\\assignuserrole',
-        31 => 'app\\config\\removeuserrole',
+        15 => 'app\\config\\ismultitenancyenabled',
+        16 => 'app\\config\\getmultitenancyconfig',
+        17 => 'app\\config\\gettenantpolicy',
+        18 => 'app\\config\\getuserroles',
+        19 => 'app\\config\\getuserrole',
+        20 => 'app\\config\\getratelimitconfig',
+        21 => 'app\\config\\getloggingconfig',
+        22 => 'app\\config\\getmonitoringconfig',
+        23 => 'app\\config\\ismonitoringenabled',
+        24 => 'app\\config\\toarray',
+        25 => 'app\\config\\enableauth',
+        26 => 'app\\config\\disableauth',
+        27 => 'app\\config\\setauthmethod',
+        28 => 'app\\config\\addapikey',
+        29 => 'app\\config\\removeapikey',
+        30 => 'app\\config\\addbasicuser',
+        31 => 'app\\config\\removebasicuser',
+        32 => 'app\\config\\setjwtsecret',
+        33 => 'app\\config\\assignuserrole',
+        34 => 'app\\config\\removeuserrole',
       ),
       3 => 
       array (
@@ -339,7 +349,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Database\\SchemaInspector.php' => 
     array (
-      0 => '60bf805f8d2008bdbded1659dc45c32147b4440d',
+      0 => 'ab702f62984b306643d51d6531c1ad0d7be27ac8',
       1 => 
       array (
         0 => 'app\\database\\schemainspector',
@@ -350,7 +360,8 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         1 => 'app\\database\\gettables',
         2 => 'app\\database\\getcolumns',
         3 => 'app\\database\\getprimarykey',
-        4 => 'app\\database\\quoteident',
+        4 => 'app\\database\\hascolumn',
+        5 => 'app\\database\\quoteident',
       ),
       3 => 
       array (
@@ -401,7 +412,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\ApiController.php' => 
     array (
-      0 => 'c99ce794724b5406a3e3e6d510e3380f30d89b7d',
+      0 => '894fb5a2f4b61cf62a4a776b331ce0c6ab481080',
       1 => 
       array (
         0 => 'app\\http\\controllers\\apicontroller',
@@ -420,6 +431,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         9 => 'app\\http\\controllers\\bulkcreate',
         10 => 'app\\http\\controllers\\bulkdelete',
         11 => 'app\\http\\controllers\\denyiftableblocked',
+        12 => 'app\\http\\controllers\\denyiftenantnotready',
       ),
       3 => 
       array (
@@ -443,7 +455,7 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
     ),
     'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Http\\Controllers\\LoginController.php' => 
     array (
-      0 => '61e8f3ae1ce6c796e79704537380dfedbccfe335',
+      0 => 'a8b1fedc13d41d05d4c7b882a745ba6e6f3eb593',
       1 => 
       array (
         0 => 'app\\http\\controllers\\logincontroller',
@@ -734,6 +746,71 @@ return \PHPStan\Cache\CacheItem::__set_state(array(
         3 => 'app\\security\\getallowed',
         4 => 'app\\security\\getdenied',
         5 => 'app\\security\\hasallowlist',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantContext.php' => 
+    array (
+      0 => '299854ee3a2977524af364ee9ac52cdab5a0a6ad',
+      1 => 
+      array (
+        0 => 'app\\security\\tenantcontext',
+      ),
+      2 => 
+      array (
+        0 => 'app\\security\\__construct',
+        1 => 'app\\security\\getid',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantPolicy.php' => 
+    array (
+      0 => '8976ffb0815e1f741ac2d1c0d5af2faeac0fad46',
+      1 => 
+      array (
+        0 => 'app\\security\\tenantpolicy',
+      ),
+      2 => 
+      array (
+        0 => 'app\\security\\__construct',
+        1 => 'app\\security\\isenabled',
+        2 => 'app\\security\\getcolumn',
+        3 => 'app\\security\\getsource',
+        4 => 'app\\security\\getclaim',
+        5 => 'app\\security\\getheader',
+        6 => 'app\\security\\enforceonwrite',
+        7 => 'app\\security\\requirecolumn',
+        8 => 'app\\security\\gettables',
+        9 => 'app\\security\\getbasicusertenants',
+        10 => 'app\\security\\getapikeytenant',
+        11 => 'app\\security\\istableconfigured',
+        12 => 'app\\security\\appliesto',
+        13 => 'app\\security\\denyifnotready',
+        14 => 'app\\security\\toarray',
+      ),
+      3 => 
+      array (
+      ),
+    ),
+    'D:\\GitHub\\PHP-CRUD-API-Generator\\src\\Security\\TenantResolver.php' => 
+    array (
+      0 => '8064a846a51ae9d8de9e5ea547115d117389c02f',
+      1 => 
+      array (
+        0 => 'app\\security\\tenantresolver',
+      ),
+      2 => 
+      array (
+        0 => 'app\\security\\__construct',
+        1 => 'app\\security\\resolve',
+        2 => 'app\\security\\fromjwtorauth',
+        3 => 'app\\security\\fromheader',
+        4 => 'app\\security\\fromrequestattr',
+        5 => 'app\\security\\getheaders',
       ),
       3 => 
       array (

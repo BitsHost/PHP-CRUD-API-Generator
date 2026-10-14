@@ -94,6 +94,21 @@ if (($raw['auth_method'] ?? '') === 'oauth') {
     $errors++;
 }
 
+$mt = $api->getMultitenancyConfig();
+if (!empty($mt['enabled'])) {
+    echo "[OK]   Multitenancy ENABLED (column=" . ($mt['column'] ?? 'tenant_id') . ", source=" . ($mt['source'] ?? 'jwt') . ")\n";
+    if (($mt['source'] ?? 'jwt') === 'jwt' && ($raw['auth_method'] ?? '') === 'apikey' && empty($mt['api_key_tenant'])) {
+        echo "[WARN] Multitenancy + apikey without api_key_tenant — requests will 403 unless JWT/header/request_attr supplies tenant.\n";
+        $warnings++;
+    }
+    if (($mt['source'] ?? '') === 'header') {
+        echo "[WARN] Multitenancy source=header — only safe behind a trusted gateway that sets the header.\n";
+        $warnings++;
+    }
+} else {
+    echo "[OK]   Multitenancy disabled (simple / single-tenant mode)\n";
+}
+
 $dashboard = $packageRoot . '/dashboard.html';
 $health = $packageRoot . '/health.php';
 if (is_file($dashboard) || is_file($health)) {

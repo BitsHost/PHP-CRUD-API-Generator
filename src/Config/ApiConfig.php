@@ -73,6 +73,8 @@ class ApiConfig
     private array $allowedTables;
     /** @var list<string> */
     private array $deniedTables;
+    /** @var array<string,mixed> */
+    private array $multitenancyConfig;
 
     /**
      * Initialize API configuration
@@ -156,6 +158,13 @@ class ApiConfig
         $this->monitoringConfig = $config['monitoring'] ?? [
             'enabled' => false,
         ];
+
+        // Multitenancy (off by default — simple apps unchanged)
+        $mt = $config['multitenancy'] ?? [];
+        $this->multitenancyConfig = is_array($mt) ? $mt : [];
+        if (!array_key_exists('enabled', $this->multitenancyConfig)) {
+            $this->multitenancyConfig['enabled'] = false;
+        }
     }
 
     /**
@@ -301,6 +310,24 @@ class ApiConfig
         return new \App\Security\TablePolicy($this->allowedTables, $this->deniedTables);
     }
 
+    public function isMultitenancyEnabled(): bool
+    {
+        return (bool)($this->multitenancyConfig['enabled'] ?? false);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function getMultitenancyConfig(): array
+    {
+        return $this->multitenancyConfig;
+    }
+
+    public function getTenantPolicy(): \App\Security\TenantPolicy
+    {
+        return new \App\Security\TenantPolicy($this->multitenancyConfig);
+    }
+
     /**
      * Get user role mappings
      */
@@ -383,6 +410,7 @@ class ApiConfig
             'user_roles' => $this->userRoles,
             'allowed_tables' => $this->allowedTables,
             'denied_tables' => $this->deniedTables,
+            'multitenancy' => $this->multitenancyConfig,
             'rate_limit' => $this->rateLimitConfig,
             'logging' => $this->loggingConfig,
             'monitoring' => $this->monitoringConfig,

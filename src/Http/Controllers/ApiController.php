@@ -17,6 +17,8 @@ use App\Cache\CacheManager;
 use App\Security\Rbac;
 use App\Security\RbacGuard;
 use App\Security\TablePolicy;
+use App\Security\TenantContext;
+use App\Security\TenantPolicy;
 use App\Support\QueryValidator as QV;
 
 class ApiController
@@ -28,8 +30,12 @@ class ApiController
         private RbacGuard $rbacGuard,
         private bool $authEnabled,
         private TablePolicy $tablePolicy,
-        private ?Rbac $rbac = null
-    ) {}
+        private ?Rbac $rbac = null,
+        private ?TenantPolicy $tenantPolicy = null,
+        private ?TenantContext $tenant = null
+    ) {
+        $this->api->setTenantScope($this->tenant, $this->tenantPolicy);
+    }
 
     // ==================== Schema endpoints ====================
     /**
@@ -79,6 +85,9 @@ class ApiController
         if ($denied = $this->denyIfTableBlocked($table)) {
             return $denied;
         }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
+            return $denied;
+        }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'list');
         $opts = [
             'filter' => $query['filter'] ?? null,
@@ -94,7 +103,8 @@ class ApiController
         $headers = [];
         $result = null;
         $allowCache = ($this->cache !== null) && $this->cache->shouldCache($table);
-        $cacheKey = $allowCache ? $this->cache->generateKey($table, $opts) : null;
+        $tenantId = $this->tenant?->getId();
+        $cacheKey = $allowCache ? $this->cache->generateKey($table, $opts, $tenantId) : null;
         if ($allowCache && $cacheKey) {
             $result = $this->cache->get($cacheKey);
             if ($result !== null) {
@@ -126,6 +136,9 @@ class ApiController
         if ($denied = $this->denyIfTableBlocked($table)) {
             return $denied;
         }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
+            return $denied;
+        }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'list');
         $opts = [ 'filter' => $query['filter'] ?? null ];
         return [$this->api->count($table, $opts), 200];
@@ -141,6 +154,9 @@ class ApiController
             return [["error" => "Invalid table name"], 400];
         }
         if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
+        }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
             return $denied;
         }
         if (!QV::id($id)) {
@@ -162,6 +178,9 @@ class ApiController
         if ($denied = $this->denyIfTableBlocked($table)) {
             return $denied;
         }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
+            return $denied;
+        }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'create');
         $result = $this->api->create($table, $data);
         if ($this->cache) { $this->cache->invalidateTable($table); }
@@ -179,6 +198,9 @@ class ApiController
             return [["error" => "Invalid or missing table parameter"], 400];
         }
         if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
+        }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
             return $denied;
         }
         if (!QV::id($id)) {
@@ -202,6 +224,9 @@ class ApiController
         if ($denied = $this->denyIfTableBlocked($table)) {
             return $denied;
         }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
+            return $denied;
+        }
         if (!QV::id($id)) {
             return [["error" => "Invalid id parameter"], 400];
         }
@@ -221,6 +246,9 @@ class ApiController
             return [["error" => "Invalid or missing table parameter"], 400];
         }
         if ($denied = $this->denyIfTableBlocked($table)) {
+            return $denied;
+        }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
             return $denied;
         }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'create');
@@ -244,6 +272,9 @@ class ApiController
         if ($denied = $this->denyIfTableBlocked($table)) {
             return $denied;
         }
+        if ($denied = $this->denyIfTenantNotReady($table)) {
+            return $denied;
+        }
         $this->rbacGuard->guard($this->authEnabled, $role, $table, 'delete');
         if (empty($ids)) {
             return [["error" => 'Invalid or empty ids array. Send JSON with "ids" field.'], 400];
@@ -262,5 +293,16 @@ class ApiController
             return [['error' => "Forbidden: table '$table' is not exposed by API policy"], 403];
         }
         return null;
+    }
+
+    /**
+     * @return array{0:array{error:string},1:int}|null
+     */
+    private function denyIfTenantNotReady(string $table): ?array
+    {
+        if ($this->tenantPolicy === null) {
+            return null;
+        }
+        return $this->tenantPolicy->denyIfNotReady($table, $this->inspector);
     }
 }

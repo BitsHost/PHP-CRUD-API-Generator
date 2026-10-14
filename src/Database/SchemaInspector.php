@@ -40,6 +40,17 @@ class SchemaInspector
         return $this->dialect->getPrimaryKey($this->pdo, $table);
     }
 
+    public function hasColumn(string $table, string $column): bool
+    {
+        foreach ($this->getColumns($table) as $col) {
+            $name = $col['Field'] ?? $col['name'] ?? $col['column_name'] ?? null;
+            if (is_string($name) && strcasecmp($name, $column) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function quoteIdent(string $ident): string
     {
         return $this->dialect->quoteIdent($ident);
