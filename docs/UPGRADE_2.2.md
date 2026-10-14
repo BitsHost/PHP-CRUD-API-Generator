@@ -26,6 +26,7 @@
 
 3. Prefer **JWT**: login token must include `tenant_id` (from `api_users.tenant_id` or `basic_user_tenants`).
 4. Run `php scripts/doctor.php`.
+5. (Local only) Optional demo rows: `php scripts/seed-mt-demo.php` — seeds locations/cars/extras/… for tenants 1–3.
 
 ## Security rules
 

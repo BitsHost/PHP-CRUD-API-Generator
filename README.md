@@ -158,7 +158,48 @@ Full RBAC examples: `config/apiexample.php`. Details: [CONFIGURATION.md](docs/CO
 Copy `.env.example` → `.env`. Overrides include:
 
 `DB_*`, `API_AUTH_METHOD`, `API_KEYS`, `BASIC_*_PASSWORD`, `JWT_*`,  
-`API_ALLOWED_TABLES`, `API_DENIED_TABLES` (comma-separated).
+`API_ALLOWED_TABLES`, `API_DENIED_TABLES` (comma-separated),  
+`API_MT_ENABLED`, `API_MT_COLUMN`, `API_MT_SOURCE`, `API_MT_CLAIM`, `API_MT_HEADER`, `API_MT_API_KEY_TENANT`.
+
+---
+
+## Multitenancy (optional — OFF by default)
+
+Simple apps leave it off. SaaS / shared-DB apps turn it on; the server forces `tenant_id` in SQL (client filters cannot bypass).
+
+| Mode | Config / env | Behavior |
+|------|----------------|----------|
+| **Off** (default) | `multitenancy.enabled => false` or `API_MT_ENABLED=false` | Normal CRUD; all rows visible per RBAC |
+| **On** | `enabled => true` or `API_MT_ENABLED=true` | Every scoped list/read/count/update/delete is limited to the resolved tenant; creates overwrite the tenant column |
+
+```php
+'multitenancy' => [
+    'enabled' => false,              // flip to true for SaaS
+    'column' => 'tenant_id',
+    'source' => 'jwt',               // jwt | header | request_attr
+    'claim' => 'tenant_id',
+    'header' => 'X-Tenant-Id',       // only if source=header (trusted gateway)
+    'enforce_on_write' => true,
+    'require_column' => true,        // 403 if a scoped table lacks the column
+    'tables' => ['*'],               // or ['users','orders','locations']
+    'basic_user_tenants' => [        // Basic auth → tenant map
+        'admin' => '1',
+    ],
+    'api_key_tenant' => null,        // or set when auth_method=apikey
+],
+```
+
+**Resolve tenant from:** JWT claim (preferred — login embeds `api_users.tenant_id` when that column exists), or `basic_user_tenants`, or `api_key_tenant`, or trusted `X-Tenant-Id` when `source=header`.
+
+Full notes: [UPGRADE_2.2.md](docs/UPGRADE_2.2.md) · [CONFIGURATION.md](docs/CONFIGURATION.md).
+
+**Local demo data** (optional): if your DB already has a `tenants` table and empty fleet tables, seed labeled rows for tenants 1–3:
+
+```bash
+php scripts/seed-mt-demo.php
+```
+
+Re-runnable — only deletes/reinserts rows marked `MT Demo` / `MT-*`.
 
 ---
 
@@ -170,6 +211,7 @@ Copy `.env.example` → `.env`. Overrides include:
 - [ ] Dashboard/health locked down
 - [ ] `php scripts/doctor.php` clean enough for your threat model
 - [ ] DB user least privilege
+- [ ] If SaaS: `API_MT_ENABLED=true` + tenant column indexed + JWT/basic tenant mapping
 
 [AUTHENTICATION.md](docs/AUTHENTICATION.md) · [SECURITY.md](SECURITY.md)
 
@@ -208,31 +250,76 @@ Entry: `index.php` or `public/index.php` + `action=`.
 
 ---
 
-## Example `curl`
+## Example `curl` (MT off — default)
 
 ```sh
+# Discover schema
 curl -u admin:secret "http://localhost:8000/index.php?action=tables"
+curl -u admin:secret "http://localhost:8000/index.php?action=columns&table=users"
 
+# List / filter / sort / paginate
+curl -u admin:secret \
+  "http://localhost:8000/index.php?action=list&table=users&page=1&page_size=10&sort=-id"
+curl -u admin:secret \
+  "http://localhost:8000/index.php?action=list&table=users&filter=role:eq:tenant_owner&fields=id,username,role"
+curl -u admin:secret \
+  "http://localhost:8000/index.php?action=count&table=users&filter=role:eq:tenant_owner"
+
+# Read one
+curl -u admin:secret \
+  "http://localhost:8000/index.php?action=read&table=users&id=2"
+
+# Create / update / delete (POST)
+curl -u admin:secret -X POST -H "Content-Type: application/json" \
+  -d '{"name":"Alice","email":"alice@example.com"}' \
+  "http://localhost:8000/index.php?action=create&table=users"
+curl -u admin:secret -X POST -H "Content-Type: application/json" \
+  -d '{"email":"new@example.com"}' \
+  "http://localhost:8000/index.php?action=update&table=users&id=2"
+curl -u admin:secret -X POST \
+  "http://localhost:8000/index.php?action=delete&table=users&id=2"
+
+# API key + JWT
 curl -H "X-API-Key: YOUR_KEY" \
   "http://localhost:8000/index.php?action=list&table=users"
-
 curl -X POST -d "username=admin&password=secret" \
   "http://localhost:8000/index.php?action=login"
-
 curl -H "Authorization: Bearer <token>" \
   "http://localhost:8000/index.php?action=list&table=users"
 
-# Delete requires POST
-curl -u admin:secret -X POST \
-  "http://localhost:8000/index.php?action=delete&table=users&id=1"
-
-curl -X POST -H "Content-Type: application/json" \
+# Bulk
+curl -u admin:secret -X POST -H "Content-Type: application/json" \
   -d '[{"name":"Alice","email":"alice@example.com"}]' \
   "http://localhost:8000/index.php?action=bulk_create&table=users"
-
-curl -X POST -H "Content-Type: application/json" \
+curl -u admin:secret -X POST -H "Content-Type: application/json" \
   -d '{"ids":[1,2,3]}' \
   "http://localhost:8000/index.php?action=bulk_delete&table=users"
+```
+
+### Example `curl` (MT on)
+
+Enable in config or `.env` (`API_MT_ENABLED=true`). Prefer JWT with a `tenant_id` claim; for local Basic auth set `basic_user_tenants` (e.g. `'admin' => '1'`).
+
+```sh
+# After login, token carries tenant_id — list is server-scoped (only that tenant)
+curl -H "Authorization: Bearer <token>" \
+  "http://localhost:8000/index.php?action=list&table=users&fields=id,tenant_id,username"
+
+# Client cannot escape: this filter is stripped; you still only see your tenant
+curl -H "Authorization: Bearer <token>" \
+  "http://localhost:8000/index.php?action=list&table=users&filter=tenant_id:eq:999"
+
+curl -H "Authorization: Bearer <token>" \
+  "http://localhost:8000/index.php?action=count&table=users"
+
+# Create: body tenant_id is overwritten by the server
+curl -H "Authorization: Bearer <token>" -X POST -H "Content-Type: application/json" \
+  -d '{"name":"Downtown","city":"Bucharest","tenant_id":999}' \
+  "http://localhost:8000/index.php?action=create&table=locations"
+
+# Gateway mode only (source=header) — do not expose this to browsers
+curl -u admin:secret -H "X-Tenant-Id: 1" \
+  "http://localhost:8000/index.php?action=list&table=users"
 ```
 
 ---

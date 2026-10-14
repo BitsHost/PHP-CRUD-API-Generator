@@ -430,5 +430,16 @@ Off by default. When enabled, the server forces the tenant column on every scope
 ],
 ```
 
+Environment overrides:
+
+| Env | Default | Notes |
+|-----|---------|--------|
+| `API_MT_ENABLED` | `false` | `true` / `1` enables |
+| `API_MT_COLUMN` | `tenant_id` | DB column name |
+| `API_MT_SOURCE` | `jwt` | `jwt` \| `header` \| `request_attr` |
+| `API_MT_CLAIM` | `tenant_id` | JWT claim |
+| `API_MT_HEADER` | `X-Tenant-Id` | Used when `source=header` |
+| `API_MT_API_KEY_TENANT` | _(null)_ | Bind all API keys to one tenant |
+
 Classes: `App\Security\TenantContext`, `TenantResolver`, `TenantPolicy`.  
-Upgrade notes: [UPGRADE_2.2.md](UPGRADE_2.2.md).
+Upgrade notes: [UPGRADE_2.2.md](UPGRADE_2.2.md) · curl examples in the main [README](../README.md).
